@@ -1,4 +1,4 @@
-import { getConfig } from './utils/common.utils';
+import { getConfig } from './_lib/utils/common.utils';
 export const AZURE_AD_B2C_TENANT_NAME: string = getConfig(
   'AZURE_AD_B2C_TENANT_NAME',
   process.env.NEXT_PUBLIC_AZURE_AD_B2C_TENANT_NAME

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useEffect } from 'react';
-import { logError } from './utils/logging.utils';
+import { logError } from './_lib/utils/logging.utils';
 import { Button } from '@heroui/react';
 
 export default function Error({

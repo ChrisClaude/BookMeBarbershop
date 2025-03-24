@@ -2,7 +2,7 @@
 import { Link } from '@heroui/react';
 import React from 'react';
 import Logo from './Logo';
-import { CONTENT } from '@/utils/content.utils';
+import { CONTENT } from '@/_lib/utils/content.utils';
 
 const Header = () => {
   return (

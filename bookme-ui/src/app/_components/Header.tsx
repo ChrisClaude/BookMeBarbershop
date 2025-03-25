@@ -31,7 +31,7 @@ const Header = () => {
       </nav>
       <Button
         color="primary"
-        // onPress={() => switchLanguage(language === 'en' ? 'pl' : 'en')}
+        onPress={() => switchLanguage(language === 'en' ? 'pl' : 'en')}
       >
         {language.toUpperCase()}
       </Button>

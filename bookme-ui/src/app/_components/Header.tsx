@@ -1,11 +1,12 @@
 'use client';
-import { Button } from '@heroui/react';
 import React from 'react';
 import Logo from './Logo';
 import { CONTENT } from '@/_lib/utils/content.utils';
 import useLanguageState from '@/_hooks/useLanguageState';
 import Link from 'next/link';
 import '../../../node_modules/flag-icons/css/flag-icons.min.css';
+import { FaFacebookF } from 'react-icons/fa';
+import { FaInstagram } from 'react-icons/fa6';
 
 const Header = () => {
   const { language, switchLanguage } = useLanguageState();
@@ -36,7 +37,15 @@ const Header = () => {
           </li>
         </ul>
       </nav>
-      <div>
+      <div className="flex items-center justify-between gap-x-36">
+        <div className="flex gap-x-5 items-center">
+          <a href="#">
+            <FaInstagram size={26} />
+          </a>
+          <a href="#">
+            <FaFacebookF size={26} />
+          </a>
+        </div>
         <div>
           <button
             onClick={() => switchLanguage(language === 'en' ? 'pl' : 'en')}>

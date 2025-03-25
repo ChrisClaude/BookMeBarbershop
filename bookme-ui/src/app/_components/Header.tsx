@@ -1,9 +1,10 @@
 'use client';
-import { Button, Link } from '@heroui/react';
+import { Button } from '@heroui/react';
 import React from 'react';
 import Logo from './Logo';
 import { CONTENT } from '@/_lib/utils/content.utils';
 import useLanguageState from '@/_hooks/useLanguageState';
+import Link from 'next/link';
 
 const Header = () => {
   const { language, switchLanguage } = useLanguageState();
@@ -21,7 +22,7 @@ const Header = () => {
             <Link href="/">{CONTENT[language].home.services}</Link>
           </li>
           <li>
-            <Link href="/">{CONTENT[language].home.services}</Link>
+            <Link href="/">{CONTENT[language].home.gallery}</Link>
           </li>
           <li>
             <Link href="/">{CONTENT[language].home.contact}</Link>
@@ -30,7 +31,8 @@ const Header = () => {
       </nav>
       <Button
         color="primary"
-        onPress={() => switchLanguage(language === 'en' ? 'pl' : 'en')}>
+        // onPress={() => switchLanguage(language === 'en' ? 'pl' : 'en')}
+      >
         {language.toUpperCase()}
       </Button>
     </header>

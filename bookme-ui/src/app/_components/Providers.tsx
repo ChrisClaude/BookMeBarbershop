@@ -4,18 +4,14 @@ import React from 'react';
 import { HeroUIProvider } from '@heroui/react';
 import StoreProvider from './StoreProvider';
 
-const AppClientComponentWrapper = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <StoreProvider>
-      <HeroUIProvider>
+    <HeroUIProvider>
+      <StoreProvider>
         <SessionProvider>{children}</SessionProvider>
-      </HeroUIProvider>
-    </StoreProvider>
+      </StoreProvider>
+    </HeroUIProvider>
   );
 };
 
-export default AppClientComponentWrapper;
+export default Providers;

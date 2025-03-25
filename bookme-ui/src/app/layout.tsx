@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Script from 'next/script';
-import AppClientComponentWrapper from './_components/AppClientComponentWrapper';
+import Providers from './_components/Providers';
 import { COOKIE_BOT_DOMAIN_GROUP_ID } from './config';
 
 import { Montserrat } from 'next/font/google';
@@ -29,7 +29,7 @@ export default function RootLayout({
         src={`https://consent.cookiebot.com/uc.js?cbid=${COOKIE_BOT_DOMAIN_GROUP_ID}`}
       />
       <body>
-        <AppClientComponentWrapper>{children}</AppClientComponentWrapper>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

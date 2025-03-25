@@ -13,6 +13,7 @@ This is a web application to allow customers to book appointments with a hairdre
 | Admin Dashboard | ❌ Not Started |
 | Service Management | ❌ Not Started |
 Language support (ENG and PL)| ❌ Not Started |
+Store Language preference in local storage (ENG and PL)| ❌ Not Started |
 
 Legend:
 - ✅ Completed

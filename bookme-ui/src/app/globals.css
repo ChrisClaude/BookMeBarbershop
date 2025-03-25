@@ -33,6 +33,14 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.banner-bg {
+  background: linear-gradient(
+    109.72deg,
+    rgb(240, 240, 240) 0.94%,
+    rgb(213, 213, 213) 92.31%
+  );
+}
+
 .nav-link {
   @apply transition-all duration-500 relative font-semibold hover:text-accent;
 }

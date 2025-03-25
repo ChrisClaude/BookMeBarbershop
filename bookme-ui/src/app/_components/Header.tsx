@@ -19,20 +19,27 @@ const Header = () => {
       <nav>
         <ul className="flex gap-6 uppercase">
           <li>
-            <Link href="/">{CONTENT[language].home.services}</Link>
+            <Link
+              href="/"
+              className="nav-link">
+              {CONTENT[language].home.services}
+            </Link>
           </li>
           <li>
-            <Link href="/">{CONTENT[language].home.gallery}</Link>
+            <Link
+              href="/"
+              className="nav-link">
+              {CONTENT[language].home.gallery}
+            </Link>
           </li>
           <li>
-            <Link href="/">{CONTENT[language].home.contact}</Link>
+            <Link href="/" className='nav-link'>{CONTENT[language].home.contact}</Link>
           </li>
         </ul>
       </nav>
       <Button
         color="primary"
-        onPress={() => switchLanguage(language === 'en' ? 'pl' : 'en')}
-      >
+        onPress={() => switchLanguage(language === 'en' ? 'pl' : 'en')}>
         {language.toUpperCase()}
       </Button>
     </header>

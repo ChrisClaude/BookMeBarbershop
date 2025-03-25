@@ -1,4 +1,5 @@
 export const CONTENT = {
+  brandName: "Robert Barbershop",
   en: {
     home: {
       title: 'BookMe',

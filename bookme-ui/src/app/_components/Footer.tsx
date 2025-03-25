@@ -8,6 +8,7 @@ import {
   FaFacebook,
   FaXTwitter,
 } from 'react-icons/fa6';
+import { CONTENT } from '@/_lib/utils/content.utils';
 
 const Footer = () => {
   return (
@@ -16,7 +17,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Barbershop</h3>
+            <h3 className="text-lg font-semibold">{CONTENT.brandName}</h3>
             <p className="text-gray-400 text-sm">
               Create professional resumes with the power of AI
             </p>
@@ -118,7 +119,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400 text-sm">
           <p>
             {' '}
-            {new Date().getFullYear()} AI Resume Builder. All rights reserved.
+            {new Date().getFullYear()} {CONTENT.brandName}. All rights reserved.
           </p>
         </div>
       </div>

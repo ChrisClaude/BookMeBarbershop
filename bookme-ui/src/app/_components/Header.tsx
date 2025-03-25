@@ -10,14 +10,14 @@ const Header = () => {
   const { language, switchLanguage } = useLanguageState();
 
   return (
-    <header className="flex justify-between items-center p-4">
-      <div className="text-2xl font-bold">
+    <header className="flex justify-between items-center py-6 px-48">
+      <div>
         <Link href="/">
           <Logo />
         </Link>
       </div>
       <nav>
-        <ul className="flex gap-6">
+        <ul className="flex gap-6 uppercase">
           <li>
             <Link href="/">{CONTENT[language].home.services}</Link>
           </li>

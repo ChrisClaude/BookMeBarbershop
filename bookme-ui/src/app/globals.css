@@ -72,9 +72,15 @@ body {
 }
 
 .action-button {
-  @apply fixed bottom-4 right-0 px-5 py-14 text-xl uppercase bg-foreground text-background tracking-widest z-10 transition-all duration-500;
+  @apply fixed bottom-4 -right-2 px-7 py-14 text-xl uppercase bg-foreground text-background tracking-widest z-10 transition-all duration-500;
   background: linear-gradient(315deg, #000000 90%, #00000000 90%);
   animation: shadow-anm 1.2s infinite ease-in-out;
+}
+
+.action-button:hover {
+  animation: none;
+  right: 0;
+  background: linear-gradient(315deg, var(--accent) 90%, #00000000 90%);
 }
 
 .writing-v-rl {

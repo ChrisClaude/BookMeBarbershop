@@ -14,6 +14,7 @@ import { IoIosWifi } from 'react-icons/io';
 import { IoDiamondOutline } from 'react-icons/io5';
 import { PiCoffee } from 'react-icons/pi';
 import { Language } from '@/_lib/features/language/language-slice';
+import Gallery from './Gallery';
 
 const HomePageContent = ({ language }: { language: Language }) => {
   return (
@@ -116,6 +117,7 @@ const HomePageContent = ({ language }: { language: Language }) => {
         <h1 className="text-3xl font-bold uppercase text-center mb-8">
           Gallery
         </h1>
+        <Gallery />
       </section>
       {/* Contact */}
       <section className="py-28 px-48">

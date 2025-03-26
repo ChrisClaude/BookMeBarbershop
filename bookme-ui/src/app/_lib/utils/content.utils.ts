@@ -50,6 +50,12 @@ export const CONTENT = {
           ],
         },
       },
+      gallerySection: {
+        title: 'Gallery',
+      },
+      contactSection: {
+        title: 'Contact',
+      },
     },
   },
   pl: {
@@ -102,6 +108,12 @@ export const CONTENT = {
             },
           ],
         },
+      },
+      gallerySection: {
+        title: 'Galeria',
+      },
+      contactSection: {
+        title: 'Kontakt',
       },
     },
   },

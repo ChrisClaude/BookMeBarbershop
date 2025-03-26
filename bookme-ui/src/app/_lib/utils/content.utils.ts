@@ -27,6 +27,29 @@ export const CONTENT = {
           description: 'We have free high-speed internet for our guests',
         },
       ],
+      serviceSection: {
+        title: 'Services',
+        tableData: {
+          headers: ['Name', 'Price', 'Estimated time'],
+          rows: [
+            {
+              name: 'Haircut',
+              price: 'PLN 50',
+              estimatedTime: '1 hour',
+            },
+            {
+              name: 'Shave',
+              price: 'PLN 30',
+              estimatedTime: '30 minutes',
+            },
+            {
+              name: 'Haircut and shave',
+              price: 'PLN 50',
+              estimatedTime: '1 hour 30 minutes',
+            },
+          ],
+        },
+      },
     },
   },
   pl: {
@@ -57,6 +80,29 @@ export const CONTENT = {
           description: 'Mamy darmowe szybkie internety dla naszych gości',
         },
       ],
+      serviceSection: {
+        title: 'Usługi',
+        tableData: {
+          headers: ['Nazwa', 'Cena', 'Szacowany czas'],
+          rows: [
+            {
+              name: 'Fryzura',
+              price: 'PLN 50',
+              estimatedTime: '1 godzina',
+            },
+            {
+              name: 'Szyja',
+              price: 'PLN 30',
+              estimatedTime: '30 minut',
+            },
+            {
+              name: 'Fryzura i szyja',
+              price: 'PLN 50',
+              estimatedTime: '1 godzina 30 minut',
+            },
+          ],
+        },
+      },
     },
   },
 };

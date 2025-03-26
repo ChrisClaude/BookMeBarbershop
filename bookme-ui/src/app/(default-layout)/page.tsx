@@ -88,16 +88,28 @@ export default function Home() {
         <h1 className="text-3xl font-bold uppercase text-center mb-8">
           Services
         </h1>
-        <Table aria-label="collection of services">
+        <Table aria-label="collection of services" isStriped>
           <TableHeader>
-            <TableColumn>Name</TableColumn>
-            <TableColumn>Price</TableColumn>
+            <TableColumn className="text-xl">
+              {CONTENT[language].home.serviceSection.tableData.headers[0]}
+            </TableColumn>
+            <TableColumn className="text-xl">
+              {CONTENT[language].home.serviceSection.tableData.headers[1]}
+            </TableColumn>
+            <TableColumn className="text-xl">
+              {CONTENT[language].home.serviceSection.tableData.headers[2]}
+            </TableColumn>
           </TableHeader>
           <TableBody>
-            <TableRow key="1">
-              <TableCell>Haircut</TableCell>
-              <TableCell>PLN 50</TableCell>
-            </TableRow>
+            {CONTENT[language].home.serviceSection.tableData.rows.map(
+              (row, index) => (
+                <TableRow key={index}>
+                  <TableCell className="text-lg">{row.name}</TableCell>
+                  <TableCell className="text-lg">{row.price}</TableCell>
+                  <TableCell className="text-lg">{row.estimatedTime}</TableCell>
+                </TableRow>
+              )
+            )}
           </TableBody>
         </Table>
       </section>

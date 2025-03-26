@@ -30,13 +30,13 @@ const GALLERY_IMAGES = [
   },
   {
     src: '/img/barber_gallery_6.jpeg',
-    alt: 'Hair coloring',
-    title: 'Color Treatment'
+    alt: 'Fade',
+    title: 'Fade'
   },
   {
     src: '/img/barber_gallery_7.jpeg',
-    alt: 'Hair coloring',
-    title: 'Color Treatment'
+    alt: 'Fade',
+    title: 'Fade'
   }
 ];
 
@@ -49,7 +49,7 @@ const Gallery = () => {
           className="group cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-105"
           isPressable
         >
-          <CardBody className="p-0 relative aspect-square">
+          <CardBody className="p-0 relative aspect-square overflow-hidden">
             <Image
               src={image.src}
               alt={image.alt}

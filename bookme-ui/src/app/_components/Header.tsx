@@ -9,7 +9,7 @@ import { FaFacebookF } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
 
 const Header = () => {
-  const { language, switchLanguage } = useLanguageState();
+  const { language } = useLanguageState();
 
   return (
     <header className="flex justify-between items-center py-6 px-48 banner-bg">
@@ -47,12 +47,11 @@ const Header = () => {
           </a>
         </div>
         <div>
-          <button
-            onClick={() => switchLanguage(language === 'en' ? 'pl' : 'en')}>
+          <Link href={`/${language === 'en' ? 'pl' : 'en'}`}>
             <span
               className={`fi fi-${language === 'en' ? 'gb' : 'pl'} fis h-1`}
               style={{ height: '27px', width: '38px' }}></span>
-          </button>
+          </Link>
         </div>
       </div>
     </header>

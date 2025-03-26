@@ -8,15 +8,20 @@ export default function Home() {
 
   return (
     <div>
-      <main className="py-28 px-48 banner-bg flex flex-col gap-y-16">
-        <div className="flex flex-col gap-y-7 w-2/3">
-          <h1 className="text-5xl font-bold uppercase">
+      <main className="py-28 px-48 banner-bg flex flex-col gap-y-16 h-[50rem]">
+        <div className="flex flex-col gap-y-8 lg:w-[44rem] w-full">
+          <h1 className="text-6xl font-bold uppercase">
             {CONTENT[language].home.bannerHeader}
           </h1>
-          <p className="text-lg">{CONTENT[language].home.bannerDescription}</p>
+          <p className="text-xl lg:w-w-[35rem] w-full">
+            {CONTENT[language].home.bannerDescription}
+          </p>
         </div>
         <div>
-          <Button color="primary" size="lg">
+          <Button
+            color="primary"
+            size="lg"
+            className="px-12 py-8 text-lg uppercase">
             {CONTENT[language].home.bookingActionButton}
           </Button>
         </div>

@@ -11,6 +11,7 @@ export const CONTENT = {
       bannerDescription:
         'We offer a wide range of haircuts and styles to suit your needs. We are dedicated to make your hair and beard look its best.',
       bookingActionButton: 'Book now',
+      bookNow: 'Book now',
     },
   },
   pl: {
@@ -24,6 +25,7 @@ export const CONTENT = {
       bannerDescription:
         'Oferujemy szeroki wybór fryzur i stylów, aby spełnić Twoje potrzeby. Dbamy o to, aby Twój włos i broda wyglądały na najlepszy możliwy sposób.',
       bookingActionButton: 'Zarezerwuj teraz',
+      bookNow: 'Rezervacja',
     },
   },
 };

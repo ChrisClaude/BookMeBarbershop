@@ -72,7 +72,11 @@ body {
 }
 
 .action-button {
-  @apply fixed bottom-32 -right-20 px-12 py-5 text-xl uppercase rotate-90 bg-foreground text-background tracking-widest z-10 transition-all duration-500;
-  background: linear-gradient(215deg, #000000 90%, #00000000 90%);
+  @apply fixed bottom-4 right-0 px-5 py-14 text-xl uppercase bg-foreground text-background tracking-widest z-10 transition-all duration-500;
+  background: linear-gradient(315deg, #000000 90%, #00000000 90%);
   animation: shadow-anm 1.2s infinite ease-in-out;
+}
+
+.writing-v-rl {
+  writing-mode: vertical-rl;
 }

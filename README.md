@@ -12,7 +12,8 @@ This is a web application to allow customers to book appointments with a hairdre
 | Email Notifications | ❌ Not Started |
 | Admin Dashboard | ❌ Not Started |
 | Service Management | ❌ Not Started |
-Language support (ENG and PL)| ❌ Not Started |
+Language support (ENG and PL)| 🟡 In Progress |
+Update language flags with svg files| 🟡 Not Started |
 Store Language preference in local storage (ENG and PL)| ❌ Not Started |
 
 Legend:

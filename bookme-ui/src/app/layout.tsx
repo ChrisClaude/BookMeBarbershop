@@ -4,10 +4,15 @@ import Script from 'next/script';
 import Providers from './_components/Providers';
 import { COOKIE_BOT_DOMAIN_GROUP_ID } from './config';
 
-import { Montserrat } from 'next/font/google';
+import { Montserrat, Open_Sans } from 'next/font/google';
 
-const montserrat = Montserrat({
+export const montserrat = Montserrat({
   subsets: ['latin'],
+});
+
+export const roboto_mono = Open_Sans({
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

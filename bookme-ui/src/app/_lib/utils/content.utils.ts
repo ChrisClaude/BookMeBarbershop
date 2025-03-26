@@ -1,5 +1,5 @@
 export const CONTENT = {
-  brandName: "Robert Barbershop",
+  brandName: 'Robert Barbershop',
   en: {
     home: {
       title: 'BookMe',
@@ -12,6 +12,21 @@ export const CONTENT = {
         'We offer a wide range of haircuts and styles to suit your needs. We are dedicated to make your hair and beard look its best.',
       bookingActionButton: 'Book now',
       bookNow: 'Book now',
+      goodies: [
+        {
+          title: 'Professionals',
+          description: 'We are professionals in our field. You can trust us.',
+        },
+        {
+          title: 'Free tea and coffee',
+          description:
+            'We offer tea and coffee for free while waiting in a queue',
+        },
+        {
+          title: 'Free internet',
+          description: 'We have free high-speed internet for our guests',
+        },
+      ],
     },
   },
   pl: {
@@ -26,6 +41,22 @@ export const CONTENT = {
         'Oferujemy szeroki wybór fryzur i stylów, aby spełnić Twoje potrzeby. Dbamy o to, aby Twój włos i broda wyglądały na najlepszy możliwy sposób.',
       bookingActionButton: 'Zarezerwuj teraz',
       bookNow: 'Rezervacja',
+      goodies: [
+        {
+          title: 'Profesjonalisci',
+          description:
+            'Jesteśmy profesjonalistami w naszym dziedzincie. Możesz nam ufać.',
+        },
+        {
+          title: 'Darmowe herbatki i kawa',
+          description:
+            'Oferujemy darmowe herbatki i kawę podczas oczekiwania w kolejce',
+        },
+        {
+          title: 'Darmowe internety',
+          description: 'Mamy darmowe szybkie internety dla naszych gości',
+        },
+      ],
     },
   },
 };

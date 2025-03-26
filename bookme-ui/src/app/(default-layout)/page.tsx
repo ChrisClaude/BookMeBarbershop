@@ -1,7 +1,15 @@
 'use client';
 import useLanguageState from '@/_hooks/useLanguageState';
 import { CONTENT } from '@/_lib/utils/content.utils';
-import { Button } from '@heroui/react';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@heroui/react';
 import Image from 'next/image';
 import { IoIosWifi } from 'react-icons/io';
 import { IoDiamondOutline } from 'react-icons/io5';
@@ -14,7 +22,7 @@ export default function Home() {
     <>
       {/* Banner */}
       <section>
-        <div className="relative py-28 px-48 banner-bg flex flex-col gap-y-16 h-[50rem]">
+        <div className="relative py-28 px-48 banner-bg flex flex-col gap-y-16 h-[52rem]">
           <div className="flex flex-col gap-y-8 lg:w-[44rem] w-full">
             <h1 className="text-6xl font-bold uppercase">
               {CONTENT[language].home.bannerHeader}
@@ -46,7 +54,7 @@ export default function Home() {
         </button>
       </section>
       {/* Goodies */}
-      <section className="grid grid-cols-3 py-28 px-48 gap-28">
+      <section className="grid grid-cols-3 py-28 px-48 gap-28 bg-slate-50">
         <div className="flex flex-col gap-y-4 items-center">
           <IoDiamondOutline size={90} />
           <h2 className="text-xl font-semibold">
@@ -76,11 +84,35 @@ export default function Home() {
         </div>
       </section>
       {/* Services */}
-      <section></section>
+      <section className="py-28 px-48">
+        <h1 className="text-3xl font-bold uppercase text-center mb-8">
+          Services
+        </h1>
+        <Table aria-label="collection of services">
+          <TableHeader>
+            <TableColumn>Name</TableColumn>
+            <TableColumn>Price</TableColumn>
+          </TableHeader>
+          <TableBody>
+            <TableRow key="1">
+              <TableCell>Haircut</TableCell>
+              <TableCell>PLN 50</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </section>
       {/* Gallery */}
-      <section></section>
+      <section className="py-28 px-48 bg-slate-50">
+        <h1 className="text-3xl font-bold uppercase text-center mb-8">
+          Gallery
+        </h1>
+      </section>
       {/* Contact */}
-      <section></section>
+      <section className="py-28 px-48">
+        <h1 className="text-3xl font-bold uppercase text-center mb-8">
+          Contact
+        </h1>
+      </section>
     </>
   );
 }

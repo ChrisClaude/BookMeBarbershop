@@ -53,19 +53,19 @@ const Contact = () => {
             <ContactInfo
               icon={<FaPhone size={22} />}
               title={CONTENT[language].home.contactSection.phone}
-              content="+48 123 456 789"
-              link="tel:+48123456789"
+              content="+48 729 553 607"
+              link="tel:+48729553607"
             />
             <ContactInfo
               icon={<FaEnvelope size={22} />}
               title={CONTENT[language].home.contactSection.email}
-              content="robert@barbershop.pl"
-              link="mailto:robert@barbershop.pl"
+              content="christ.tchambila@gmail.com"
+              link="mailto:christ.tchambila@gmail.com"
             />
             <ContactInfo
               icon={<FaLocationDot size={22} />}
               title={CONTENT[language].home.contactSection.address}
-              content="ul. Półwiejska 42, 61-888 Poznań"
+              content="ul. Gasiorowkich 4D, 60-704 Poznań"
               link="https://maps.google.com/?q=ul.+Półwiejska+42,+61-888+Poznań"
             />
           </div>

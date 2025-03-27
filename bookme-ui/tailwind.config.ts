@@ -19,6 +19,18 @@ module.exports = {
           DEFAULT: '#171717',
         },
       },
+      keyframes: {
+        bounce: {
+          '0%, 100%': {
+            transform: 'translateY(0)',
+            opacity: '0.5',
+          },
+          '50%': {
+            transform: 'translateY(-1rem)',
+            opacity: '1',
+          },
+        },
+      },
     },
   },
   darkMode: 'class',

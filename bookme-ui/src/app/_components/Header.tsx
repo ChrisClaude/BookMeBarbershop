@@ -6,6 +6,7 @@ import useLanguageState from '@/_hooks/useLanguageState';
 import Link from 'next/link';
 import '../../../node_modules/flag-icons/css/flag-icons.min.css';
 import { FaInstagram } from 'react-icons/fa6';
+import Image from 'next/image';
 
 const Header = () => {
   const { language } = useLanguageState();
@@ -41,16 +42,25 @@ const Header = () => {
           {/* <a href="#">
             <FaFacebookF size={26} />
           </a> */}
-          <a href="https://www.instagram.com/sans_tache_papi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-target='_blank'>
+          <a
+            href="https://www.instagram.com/sans_tache_papi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+            target="_blank">
             <FaInstagram size={26} />
           </a>
         </div>
         <div>
           <Link href={`/${language === 'en' ? 'pl' : 'en'}`}>
-            <span
-              className={`fi fi-${language === 'en' ? 'gb' : 'pl'} fis h-1`}
-              style={{ height: '27px', width: '38px' }}></span>
+            <Image
+              src={
+                language === 'pl'
+                  ? '/img/flag_poland.svg'
+                  : '/img/flag_united_kingdom.svg'
+              }
+              alt="English Flag"
+              width={35}
+              height={30}
+              className="inline-block"
+            />
           </Link>
         </div>
       </div>

@@ -85,7 +85,9 @@ const HomePageContent = ({ language }: { language: Language }) => {
       </section>
       {/* Services */}
       <section className="py-28 px-48">
-        <h1 className="text-3xl font-bold uppercase text-center mb-8">
+        <h1
+          className="text-3xl font-bold uppercase text-center mb-8"
+          id="services">
           {CONTENT[language].home.serviceSection.title}
         </h1>
         <Table aria-label="collection of services" isStriped>
@@ -115,14 +117,18 @@ const HomePageContent = ({ language }: { language: Language }) => {
       </section>
       {/* Gallery */}
       <section className="py-28 px-48 bg-slate-50">
-        <h1 className="text-3xl font-bold uppercase text-center mb-8">
+        <h1
+          className="text-3xl font-bold uppercase text-center mb-8"
+          id="gallery">
           {CONTENT[language].home.gallerySection.title}
         </h1>
         <Gallery />
       </section>
       {/* Contact */}
       <section className="py-28 px-48">
-        <h1 className="text-3xl font-bold uppercase text-center mb-8">
+        <h1
+          className="text-3xl font-bold uppercase text-center mb-8"
+          id="contact">
           {CONTENT[language].home.contactSection.title}
         </h1>
         <Contact />

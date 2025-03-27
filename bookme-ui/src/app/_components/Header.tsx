@@ -5,7 +5,6 @@ import { CONTENT } from '@/_lib/utils/content.utils';
 import useLanguageState from '@/_hooks/useLanguageState';
 import Link from 'next/link';
 import '../../../node_modules/flag-icons/css/flag-icons.min.css';
-import { FaFacebookF } from 'react-icons/fa';
 import { FaInstagram } from 'react-icons/fa6';
 
 const Header = () => {
@@ -21,17 +20,17 @@ const Header = () => {
       <nav>
         <ul className="flex gap-6 uppercase">
           <li>
-            <Link href="/" className="nav-link">
+            <Link href="#services" className="nav-link">
               {CONTENT[language].home.services}
             </Link>
           </li>
           <li>
-            <Link href="/" className="nav-link">
+            <Link href="#gallery" className="nav-link">
               {CONTENT[language].home.gallery}
             </Link>
           </li>
           <li>
-            <Link href="/" className="nav-link">
+            <Link href="#contact" className="nav-link">
               {CONTENT[language].home.contact}
             </Link>
           </li>
@@ -39,11 +38,12 @@ const Header = () => {
       </nav>
       <div className="flex items-center justify-between gap-x-36">
         <div className="flex gap-x-5 items-center">
-          <a href="#">
-            <FaInstagram size={26} />
-          </a>
-          <a href="#">
+          {/* <a href="#">
             <FaFacebookF size={26} />
+          </a> */}
+          <a href="https://www.instagram.com/sans_tache_papi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+target='_blank'>
+            <FaInstagram size={26} />
           </a>
         </div>
         <div>

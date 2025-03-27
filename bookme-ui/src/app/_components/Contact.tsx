@@ -4,7 +4,6 @@ import {
   FaPhone,
   FaEnvelope,
   FaLocationDot,
-  FaFacebookF,
   FaInstagram,
 } from 'react-icons/fa6';
 import { CONTENT } from '@/_lib/utils/content.utils';
@@ -106,16 +105,16 @@ const Contact = () => {
               {CONTENT[language].home.contactSection.followUs}
             </h2>
             <div className="flex gap-4">
-              <a
+              {/* <a
                 href="https://facebook.com/robertbarbershop"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
                 <FaFacebookF size={20} />
-              </a>
+              </a> */}
               <a
-                href="https://instagram.com/robertbarbershop"
+                href="https://www.instagram.com/sans_tache_papi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"

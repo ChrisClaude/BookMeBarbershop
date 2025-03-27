@@ -15,6 +15,7 @@ import { IoDiamondOutline } from 'react-icons/io5';
 import { PiCoffee } from 'react-icons/pi';
 import { Language } from '@/_lib/features/language/language-slice';
 import Gallery from './Gallery';
+import Contact from './Contact';
 
 const HomePageContent = ({ language }: { language: Language }) => {
   return (
@@ -124,6 +125,7 @@ const HomePageContent = ({ language }: { language: Language }) => {
         <h1 className="text-3xl font-bold uppercase text-center mb-8">
           {CONTENT[language].home.contactSection.title}
         </h1>
+        <Contact />
       </section>
     </>
   );

@@ -1,6 +1,12 @@
 import React from 'react';
 import { Card, CardBody, Divider } from '@heroui/react';
-import { FaPhone, FaEnvelope, FaLocationDot, FaFacebookF, FaInstagram } from 'react-icons/fa6';
+import {
+  FaPhone,
+  FaEnvelope,
+  FaLocationDot,
+  FaFacebookF,
+  FaInstagram,
+} from 'react-icons/fa6';
 import { CONTENT } from '@/_lib/utils/content.utils';
 import useLanguageState from '@/_hooks/useLanguageState';
 
@@ -16,9 +22,7 @@ const ContactInfo = ({
   link?: string;
 }) => (
   <div className="flex items-center gap-5 p-4 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
-    <div className="text-primary p-4 bg-primary/10 rounded-full">
-      {icon}
-    </div>
+    <div className="text-primary p-4 bg-primary/10 rounded-full">{icon}</div>
     <div>
       <h3 className="text-sm text-gray-600 font-semibold">{title}</h3>
       {link ? (
@@ -26,8 +30,7 @@ const ContactInfo = ({
           href={link}
           className="text-lg font-medium text-gray-800 hover:text-primary transition-colors"
           target="_blank"
-          rel="noopener noreferrer"
-        >
+          rel="noopener noreferrer">
           {content}
         </a>
       ) : (
@@ -66,7 +69,7 @@ const Contact = () => {
               icon={<FaLocationDot size={22} />}
               title={CONTENT[language].home.contactSection.address}
               content="ul. Gasiorowkich 4D, 60-704 Poznań"
-              link="https://maps.google.com/?q=ul.+Półwiejska+42,+61-888+Poznań"
+              link="https://maps.google.com/?q=ul.+Gasiorowkich+4D,+60-704+Poznań"
             />
           </div>
 
@@ -88,7 +91,9 @@ const Contact = () => {
               </div>
               <div className="flex justify-between px-4 py-2 bg-gray-50 rounded-lg">
                 <span>{CONTENT[language].home.contactSection.sunday}</span>
-                <span className="font-semibold">{CONTENT[language].home.contactSection.closed}</span>
+                <span className="font-semibold">
+                  {CONTENT[language].home.contactSection.closed}
+                </span>
               </div>
             </div>
           </div>
@@ -106,8 +111,7 @@ const Contact = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
-              >
+                className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
                 <FaFacebookF size={20} />
               </a>
               <a
@@ -115,8 +119,7 @@ const Contact = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="p-3 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded-full hover:opacity-80 transition"
-              >
+                className="p-3 bg-gradient-to-r from-pink-500 to-yellow-500 text-white rounded-full hover:opacity-80 transition">
                 <FaInstagram size={20} />
               </a>
             </div>
@@ -128,7 +131,7 @@ const Contact = () => {
       <Card className="h-full min-h-[400px] shadow-lg">
         <CardBody className="p-0 h-full">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2434.0370003216447!2d16.92451!3d52.40341!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47045b3437!2zUG_Fgnx3aWVqc2thIDQyLCA2MS04ODggUG96bmHFhA!5e0!3m2!1sen!2spl!4v1635959123456!5m2!1sen!2spl"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2434.3989895914942!2d16.90262025796878!3d52.39944470013142!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47045b2d0bc95c39%3A0x76bdd654fd6e8667!2sG%C4%85siorowskich%204D%2C%2060-704%20Pozna%C5%84!5e0!3m2!1sen!2spl!4v1743094366659!5m2!1sen!2spl"
             className="w-full h-full border-0 rounded-lg"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

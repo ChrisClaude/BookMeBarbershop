@@ -9,4 +9,5 @@ public class User
     public string Surname { get; set; }
     public string Email { get; set; }
     public List<UserRole> UserRoles { get; set; }
+    public List<Booking> Bookings { get; set; }
 }

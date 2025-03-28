@@ -7,10 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../BookMe.Application/BookMe.Application.csproj" />
+    <ProjectReference Include="../BookMe.Infrastructure/BookMe.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,9 +2,8 @@ using System;
 
 namespace BookMe.Application.Entities;
 
-public class Booking
+public class Booking : BaseEntity
 {
-    public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid TimeSlotId { get; set; }
     public BookingStatus Status { get; set; }

@@ -63,20 +63,34 @@ button {
   @apply transition-all duration-500 relative font-semibold hover:text-accent;
 }
 
-.nav-link::after {
-  content: '';
-  display: block;
-  width: 0;
-  height: 0.2rem;
-  background: var(--accent);
-  position: absolute;
-  top: 100%;
-  left: 0;
-  transition: width 0.5s ease;
+/* Modify the nav-link hover effect for mobile */
+@media (max-width: 1024px) {
+  .nav-link::after {
+    display: none;
+  }
+
+  .nav-link {
+    @apply block py-2;
+  }
 }
 
-.nav-link:hover::after {
-  width: 100%;
+/* Keep your existing nav-link styles for desktop */
+@media (min-width: 1024px) {
+  .nav-link::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0.2rem;
+    background: var(--accent);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transition: width 0.5s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
 }
 
 @keyframes shadow-anm {

@@ -22,7 +22,7 @@ const HomePageContent = ({ language }: { language: Language }) => {
     <>
       {/* Banner */}
       <section className="relative bg-banner py-12 md:py-20 lg:py-28 px-4 md:px-8 lg:px-48 min-h-[40rem] lg:h-[52rem]">
-        <div className="absolute top-0 left-0 z-10 w-full h-full bg-gray-300 bg-opacity-75 lg:relative flex flex-col gap-y-8 md:gap-y-12 lg:gap-y-16">
+        <div className="py-12 lg:py-0 px-8 lg:px-0 absolute top-0 left-0 z-10 w-full h-full bg-gray-300 bg-opacity-75 lg:relative flex flex-col gap-y-8 md:gap-y-12 lg:gap-y-16">
           <div className="flex flex-col gap-y-4 md:gap-y-6 lg:gap-y-8 w-full lg:w-[44rem]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase">
               {CONTENT[language].home.bannerHeader}
@@ -50,7 +50,7 @@ const HomePageContent = ({ language }: { language: Language }) => {
             className=""
           />
         </div>
-        <button className="action-button writing-v-rl hidden lg:block">
+        <button className="action-button writing-v-rl">
           {CONTENT[language].home.bookNow}
         </button>
       </section>

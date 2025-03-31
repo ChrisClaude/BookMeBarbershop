@@ -5,7 +5,6 @@ import Footer from '@/_components/Footer';
 const DefaultLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <Header />
       <main>{children}</main>
       <Footer />
     </>

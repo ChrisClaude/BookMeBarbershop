@@ -105,6 +105,13 @@ button {
   }
 }
 
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
 .action-button {
   @apply fixed bottom-0 -right-2 px-3 py-5 text-lg lg:px-7 lg:py-14 lg:text-xl uppercase bg-foreground text-background tracking-widest z-10 transition-all duration-500;
   background: linear-gradient(315deg, #000000 90%, #00000000 90%);

@@ -16,6 +16,7 @@ import { PiCoffee } from 'react-icons/pi';
 import { Language } from '@/_lib/features/language/language-slice';
 import Gallery from './Gallery';
 import Contact from './Contact';
+import Ripple from './Ripple';
 
 const HomePageContent = ({ language }: { language: Language }) => {
   return (
@@ -50,7 +51,8 @@ const HomePageContent = ({ language }: { language: Language }) => {
             className=""
           />
         </div>
-        <button className="action-button writing-v-rl">
+        <button className="action-button writing-v-rl relative overflow-hidden">
+          <Ripple color="#ffffff" duration={850} />
           {CONTENT[language].home.bookNow}
         </button>
       </section>

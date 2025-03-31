@@ -22,12 +22,12 @@ const ContactInfo = ({
 }) => (
   <div className="flex items-center gap-5 p-4 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
     <div className="text-primary p-4 bg-primary/10 rounded-full">{icon}</div>
-    <div>
+    <div className="overflow-hidden">
       <h3 className="text-sm text-gray-600 font-semibold">{title}</h3>
       {link ? (
         <a
           href={link}
-          className="text-lg font-medium text-gray-800 hover:text-primary transition-colors"
+          className="text-lg font-medium text-gray-800 hover:text-primary transition-colors text-wrap"
           target="_blank"
           rel="noopener noreferrer">
           {content}

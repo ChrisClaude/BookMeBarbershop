@@ -6,16 +6,17 @@ This is a web application to allow customers to book appointments with a hairdre
 | Requirement | Status |
 |------------|--------|
 | User Authentication | 🟡 In Progress |
-| UI (desktop and mobile) | 🟡 In Progress |
+| home page (desktop and mobile) | ✅ Completed |
 | Appointment Booking | ❌ Not Started |
 | Calendar Integration | ❌ Not Started |
 | Email Notifications | ❌ Not Started |
 | Admin Dashboard | ❌ Not Started |
 | Service Management | ❌ Not Started |
-Language support (ENG and PL)| 🟡 In Progress |
+Language support (ENG and PL)| ✅ Completed |
 Update language flags with svg files| 🟡 Not Started |
 Store Language preference in local storage (ENG and PL)| ❌ Not Started |
-Create an application wide loader| ❌ Not Started |
+Create an application wide loader| ✅ Completed |
+| Add cookiebot| 🟡 In Progress  |
 
 Legend:
 - ✅ Completed

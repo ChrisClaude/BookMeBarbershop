@@ -51,7 +51,7 @@ button {
   font-family: var(--font-montserrat);
 }
 
-.banner-bg {
+.bg-banner {
   background: linear-gradient(
     109.72deg,
     rgb(240, 240, 240) 0.94%,

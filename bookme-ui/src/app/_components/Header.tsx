@@ -63,7 +63,7 @@ const Header = () => {
   );
 
   return (
-    <header className="banner-bg">
+    <header className="bg-banner">
       {/* Desktop Header */}
       <div className="hidden lg:flex justify-between items-center py-6 px-48">
         <div>

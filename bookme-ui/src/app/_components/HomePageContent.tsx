@@ -21,8 +21,8 @@ const HomePageContent = ({ language }: { language: Language }) => {
   return (
     <>
       {/* Banner */}
-      <section>
-        <div className="relative py-12 md:py-20 lg:py-28 px-4 md:px-8 lg:px-48 banner-bg flex flex-col gap-y-8 md:gap-y-12 lg:gap-y-16 min-h-[40rem] lg:h-[52rem]">
+      <section className="relative bg-banner py-12 md:py-20 lg:py-28 px-4 md:px-8 lg:px-48 min-h-[40rem] lg:h-[52rem]">
+        <div className="absolute top-0 left-0 z-10 w-full h-full bg-gray-300 bg-opacity-75 lg:relative flex flex-col gap-y-8 md:gap-y-12 lg:gap-y-16">
           <div className="flex flex-col gap-y-4 md:gap-y-6 lg:gap-y-8 w-full lg:w-[44rem]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase">
               {CONTENT[language].home.bannerHeader}
@@ -39,16 +39,16 @@ const HomePageContent = ({ language }: { language: Language }) => {
               {CONTENT[language].home.bookingActionButton}
             </Button>
           </div>
+        </div>
 
-          <div className="relative lg:absolute lg:bottom-0 lg:right-24 mt-8 lg:mt-0">
-            <Image
-              src="/img/banner_image.png"
-              width={600}
-              height={600}
-              alt="Picture of a barber"
-              // className="w-full max-w-[300px] md:max-w-[400px] lg:w-[800px] mx-auto"
-            />
-          </div>
+        <div className="absolute bottom-0 right-0 lg:right-24">
+          <Image
+            src="/img/banner_image.png"
+            width={600}
+            height={600}
+            alt="Picture of a barber"
+            className=""
+          />
         </div>
         <button className="action-button writing-v-rl hidden lg:block">
           {CONTENT[language].home.bookNow}

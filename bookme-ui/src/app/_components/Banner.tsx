@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { CONTENT } from '@/_lib/utils/content.utils';
 import { Button } from '@heroui/react';
 import Image from 'next/image';
 import Ripple from './Ripple';
 import { Language } from '@/_lib/features/language/language-slice';
+import { useRouter } from 'next/navigation';
 
 const Banner = ({ language }: { language: Language }) => {
+  const router = useRouter();
+
+  const navigateToCustomerPortal = useCallback(() => {
+    router.push('/customer/bookings');
+  }, [router]);
+
   return (
     <section className="relative bg-banner py-12 md:py-20 lg:py-28 px-4 md:px-8 lg:px-48 min-h-[40rem] h-[52rem]">
       <div className="py-20 lg:py-0 px-8 lg:px-0 absolute top-0 left-0 z-10 w-full h-full bg-[#d5d5d5] bg-opacity-75 lg:bg-transparent lg:relative flex flex-col gap-y-8 md:gap-y-12 lg:gap-y-16">
@@ -21,7 +28,8 @@ const Banner = ({ language }: { language: Language }) => {
           <Button
             color="primary"
             size="lg"
-            className="px-10 py-7 lg:px-12 lg:py-8 text-base md:text-lg uppercase">
+            className="px-10 py-7 lg:px-12 lg:py-8 text-base md:text-lg uppercase"
+            onPress={navigateToCustomerPortal}>
             {CONTENT[language].home.bookingActionButton}
           </Button>
         </div>
@@ -36,7 +44,9 @@ const Banner = ({ language }: { language: Language }) => {
           className=""
         />
       </div>
-      <button className="action-button writing-v-rl relative overflow-hidden">
+      <button
+        className="action-button writing-v-rl relative overflow-hidden"
+        onClick={navigateToCustomerPortal}>
         <Ripple color="#ffffff" duration={850} />
         {CONTENT[language].home.bookNow}
       </button>

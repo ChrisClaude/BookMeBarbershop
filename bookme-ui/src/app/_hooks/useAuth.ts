@@ -37,7 +37,7 @@ export const useAuth = () => {
     });
   }, []);
 
-  const profile = useMemo<Profile | undefined>(() => {
+  const userProfile = useMemo<Profile | undefined>(() => {
     return {
       id: 'test-id',
       name: data?.user?.name,
@@ -46,5 +46,5 @@ export const useAuth = () => {
     };
   }, [data?.user]);
 
-  return { session: data, status, isUserSignedIn, login, logout, profile };
+  return { session: data, status, isUserSignedIn, login, logout, userProfile };
 };

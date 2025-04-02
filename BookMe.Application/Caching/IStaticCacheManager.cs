@@ -1,7 +1,7 @@
 using System;
 using BookMe.Application.Caching;
 
-namespace BookMe.Application.Interfaces;
+namespace BookMe.Application.Caching;
 
 public interface IStaticCacheManager : IDisposable, ICacheKeyService
 {

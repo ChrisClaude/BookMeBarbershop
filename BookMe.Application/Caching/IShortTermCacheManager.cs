@@ -1,7 +1,7 @@
 using System;
 using BookMe.Application.Caching;
 
-namespace BookMe.Application.Interfaces;
+namespace BookMe.Application.Caching;
 
 public interface IShortTermCacheManager : ICacheKeyService
 {
@@ -30,6 +30,6 @@ public interface IShortTermCacheManager : ICacheKeyService
   /// A task that represents the asynchronous operation
   /// The task result contains the cached value associated with the specified key
   /// </returns>
-  Task<T> GetAsync<T>(Func<Task<T>> acquire, CacheKey cacheKey, params object[] cacheKeyParameters);
+  Task<T> GetAsync<T>(CacheKey cacheKey, params object[] cacheKeyParameters);
 
 }

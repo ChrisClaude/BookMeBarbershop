@@ -65,10 +65,15 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         if (getCacheKey == null)
             return await GetEntityAsync();
 
-        ICacheKeyService cacheManager = useShortTermCache ? _shortTermCacheManager : _staticCacheManager;
-        var cacheKey = getCacheKey(cacheManager);
+        // ICacheKeyService cacheManager = useShortTermCache ? _shortTermCacheManager : _staticCacheManager;
+        // var cacheKey = getCacheKey(cacheManager);
 
-        return await cacheManager.GetAsync(cacheKey, id.Value, GetEntityAsync);
+        if (useShortTermCache)
+        {
+            return await _shortTermCacheManager.GetAsync(cacheKey, id.Value, GetEntityAsync);
+        }
+
+        return await _staticCacheManager.GetAsync(cacheKey, id.Value, GetEntityAsync);
     }
 
     public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true)

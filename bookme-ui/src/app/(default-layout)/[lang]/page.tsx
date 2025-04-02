@@ -1,21 +1,21 @@
-'use client';
-import HomePageContent from '@/_components/HomePageContent';
-import useLanguageState from '@/_hooks/useLanguageState';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+"use client";
+import HomePageContent from "@/_components/HomePageContent";
+import useLanguageState from "@/_hooks/useLanguageState";
+import { useRouter } from "next/navigation";
+import { use, useEffect } from "react";
 
-const HomeLang = ({ params }: { params: { lang: string } }) => {
+const HomeLang = ({ params }: { params: Promise<{ lang: string }> }) => {
   const router = useRouter();
+  const { lang } = use(params);
   const { language, switchLanguage } = useLanguageState();
 
   useEffect(() => {
-    if (params.lang === 'en' || params.lang === 'pl') {
-      switchLanguage(params.lang);
+    if (lang === "en" || lang === "pl") {
+      switchLanguage(lang);
       return;
     }
-    router.push('/');
-  }, [params.lang, router, switchLanguage]);
-
+    router.push("/");
+  }, [lang, router, switchLanguage]);
 
   return <HomePageContent language={language} />;
 };

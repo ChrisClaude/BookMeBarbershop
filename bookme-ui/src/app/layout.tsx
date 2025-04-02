@@ -6,12 +6,12 @@ import { COOKIE_BOT_DOMAIN_GROUP_ID } from './config';
 
 import { Montserrat, Open_Sans } from 'next/font/google';
 
-export const montserrat = Montserrat({
+const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
 });
 
-export const roboto_mono = Open_Sans({
+const openSans = Open_Sans({
   subsets: ['latin'],
   display: 'swap',
 });
@@ -34,7 +34,7 @@ export default function RootLayout({
       <Script
         src={`https://consent.cookiebot.com/uc.js?cbid=${COOKIE_BOT_DOMAIN_GROUP_ID}`}
       />
-      <body>
+      <body className={openSans.className}>
         <Providers>{children}</Providers>
       </body>
     </html>

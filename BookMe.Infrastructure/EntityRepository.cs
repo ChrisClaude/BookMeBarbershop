@@ -2,6 +2,7 @@ using System;
 using BookMe.Application.Caching;
 using BookMe.Application.Configurations;
 using BookMe.Application.Entities;
+using BookMe.Application.Exceptions;
 using BookMe.Application.Interfaces;
 using BookMe.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,6 @@ using Microsoft.Extensions.Options;
 
 namespace BookMe.Infrastructure;
 
-/// <summary>
-/// Represents the entity repository implementation
-/// </summary>
-/// <typeparam name="TEntity">Entity type</typeparam>
 public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
     #region Fields
@@ -37,7 +34,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         _context = context;
         _shortTermCacheManager = shortTermCacheManager;
         _staticCacheManager = staticCacheManager;
-        _usingDistributedCache = appSettings.Value.DistributedCacheConfig.DistributedCacheType switch
+        _usingDistributedCache = appSettings?.Value.DistributedCacheConfig.DistributedCacheType switch
         {
             DistributedCacheType.Redis => true,
             DistributedCacheType.SqlServer => true,
@@ -47,418 +44,242 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     #endregion
 
-    #region Utilities
-
-    /// <summary>
-    /// Get all entity entries
-    /// </summary>
-    /// <param name="getAllAsync">Function to select entries</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entries
-    /// </returns>
-    protected virtual async Task<IList<TEntity>> GetEntitiesAsync(Func<Task<IList<TEntity>>> getAllAsync, Func<IStaticCacheManager, CacheKey> getCacheKey)
-    {
-        if (getCacheKey == null)
-            return await getAllAsync();
-
-        //caching
-        var cacheKey = getCacheKey(_staticCacheManager)
-                       ?? _staticCacheManager.PrepareKeyForDefaultCache(CacheDefaults<TEntity>.AllCacheKey);
-        return await _staticCacheManager.GetAsync(cacheKey, getAllAsync);
-    }
-
-    /// <summary>
-    /// Get all entity entries
-    /// </summary>
-    /// <param name="getAllAsync">Function to select entries</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entries
-    /// </returns>
-    protected virtual async Task<IList<TEntity>> GetEntitiesAsync(Func<Task<IList<TEntity>>> getAllAsync, Func<IStaticCacheManager, Task<CacheKey>> getCacheKey)
-    {
-        if (getCacheKey == null)
-            return await getAllAsync();
-
-        //caching
-        var cacheKey = await getCacheKey(_staticCacheManager)
-                       ?? _staticCacheManager.PrepareKeyForDefaultCache(CacheDefaults<TEntity>.AllCacheKey);
-        return await _staticCacheManager.GetAsync(cacheKey, getAllAsync);
-    }
-
-    /// <summary>
-    /// Adds "deleted" filter to query which contains <see cref="ISoftDeletedEntity"/> entries, if its need
-    /// </summary>
-    /// <param name="query">Entity entries</param>
-    /// <param name="includeDeleted">Whether to include deleted items</param>
-    /// <returns>Entity entries</returns>
-    protected virtual IQueryable<TEntity> AddDeletedFilter(IQueryable<TEntity> query, in bool includeDeleted)
-    {
-        if (includeDeleted)
-            return query;
-
-        if (typeof(TEntity).GetInterface(nameof(ISoftDeletedEntity)) == null)
-            return query;
-
-        return query.OfType<ISoftDeletedEntity>().Where(entry => !entry.Deleted).OfType<TEntity>();
-    }
-
-    #endregion
 
     #region Methods
 
-    /// <summary>
-    /// Get the entity entry
-    /// </summary>
-    /// <param name="id">Entity entry identifier</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="BookMe.Core.Entities.ISoftDeletedEntity"/> entities)</param>
-    /// <param name="useShortTermCache">Whether to use short term cache instead of static cache</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entry
-    /// </returns>
     public virtual async Task<TEntity> GetByIdAsync(Guid? id, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true, bool useShortTermCache = false)
     {
         if (!id.HasValue)
             return null;
 
-        async Task<TEntity> getEntityAsync()
+        async Task<TEntity> GetEntityAsync()
         {
-            return await AddDeletedFilter(Table, includeDeleted).FirstOrDefaultAsync(entity => entity.Id == id);
+            var query = Table;
+            if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
+            }
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         if (getCacheKey == null)
-            return await getEntityAsync();
+            return await GetEntityAsync();
 
-        ICacheKeyService cacheKeyService = useShortTermCache ? _shortTermCacheManager : _staticCacheManager;
+        ICacheKeyService cacheManager = useShortTermCache ? _shortTermCacheManager : _staticCacheManager;
+        var cacheKey = getCacheKey(cacheManager);
 
-        //caching
-        var cacheKey = getCacheKey(cacheKeyService)
-                       ?? cacheKeyService.PrepareKeyForDefaultCache(CacheDefaults<TEntity>.ByIdCacheKey, id);
-
-        if (useShortTermCache)
-            return await _shortTermCacheManager.GetAsync(getEntityAsync, cacheKey);
-
-        return await _staticCacheManager.GetAsync(cacheKey, getEntityAsync);
+        return await cacheManager.GetAsync(cacheKey, id.Value, GetEntityAsync);
     }
 
-    /// <summary>
-    /// Get entity entries by identifiers
-    /// </summary>
-    /// <param name="ids">Entity entry identifiers</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="ISoftDeletedEntity"/> entities)</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entries
-    /// </returns>
     public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true)
     {
-        if (ids?.Any() != true)
+        if (ids == null || !ids.Any())
             return new List<TEntity>();
 
-        static IList<TEntity> sortByIdList(IList<Guid> listOfId, IDictionary<Guid, TEntity> entitiesById)
+        async Task<IList<TEntity>> GetEntitiesAsync()
         {
-            var sortedEntities = new List<TEntity>(listOfId.Count);
-
-            foreach (var id in listOfId)
-                if (entitiesById.TryGetValue(id, out var entry))
-                    sortedEntities.Add(entry);
-
-            return sortedEntities;
-        }
-
-        async Task<IList<TEntity>> getByIdsAsync(IList<Guid> listOfId, bool sort = true)
-        {
-            var query = AddDeletedFilter(Table, includeDeleted)
-                .Where(entry => listOfId.Contains(entry.Id));
-
-            return sort
-                ? sortByIdList(listOfId, await query.ToDictionaryAsync(entry => entry.Id))
-                : await query.ToListAsync();
+            var query = Table;
+            if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
+            }
+            return await query.Where(e => ids.Contains(e.Id)).ToListAsync();
         }
 
         if (getCacheKey == null)
-            return await getByIdsAsync(ids);
+            return await GetEntitiesAsync();
 
-        //caching
         var cacheKey = getCacheKey(_staticCacheManager);
-        if (cacheKey == null && _usingDistributedCache)
-            cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(CacheDefaults<TEntity>.ByIdsCacheKey, ids);
-        if (cacheKey != null)
-            return await _staticCacheManager.GetAsync(cacheKey, async () => await getByIdsAsync(ids));
-
-        //if we are using an in-memory cache, we can optimize by caching each entity individually for maximum reusability.
-        //with a distributed cache, the overhead would be too high.
-        var cachedById = ids
-            .Distinct()
-            .Select(async id => await _staticCacheManager.GetAsync(
-                _staticCacheManager.PrepareKeyForDefaultCache(CacheDefaults<TEntity>.ByIdCacheKey, id),
-                default(TEntity)))
-            .Where(entity => entity != default)
-            .ToDictionary(entity => entity.Id, entity => entity);
-        var missingIds = ids.Except(cachedById.Keys).ToList();
-        var missingEntities = missingIds.Count > 0 ? await getByIdsAsync(missingIds, false) : new List<TEntity>();
-
-        foreach (var entity in missingEntities)
-        {
-            await _staticCacheManager.SetAsync(_staticCacheManager.PrepareKeyForDefaultCache(CacheDefaults<TEntity>.ByIdCacheKey, entity.Id), entity);
-            cachedById[entity.Id] = entity;
-        }
-
-        return sortByIdList(ids, cachedById);
+        return await _staticCacheManager.GetAsync(cacheKey, ids, GetEntitiesAsync);
     }
 
-    /// <summary>
-    /// Get all entity entries
-    /// </summary>
-    /// <param name="func">Function to select entries</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="BookMe.Core.Entities.ISoftDeletedEntity"/> entities)</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entries
-    /// </returns>
-    public virtual async Task<IList<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
-        Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true)
+    public virtual async Task<IList<TEntity>> GetAllAsync(
+        Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        Func<ICacheKeyService, CacheKey> getCacheKey = null,
+        bool includeDeleted = true)
     {
-        async Task<IList<TEntity>> getAllAsync()
+        async Task<IList<TEntity>> GetEntitiesAsync()
         {
-            var query = AddDeletedFilter(Table, includeDeleted);
+            var query = Table;
+            if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
+            }
+
             query = func != null ? func(query) : query;
 
             return await query.ToListAsync();
         }
 
-        return await GetEntitiesAsync(getAllAsync, getCacheKey);
+        if (getCacheKey == null)
+            return await GetEntitiesAsync();
+
+        var cacheKey = getCacheKey(_staticCacheManager);
+        return await _staticCacheManager.GetAsync(cacheKey, async () => await GetEntitiesAsync());
     }
 
-
-
-    /// <summary>
-    /// Get all entity entries
-    /// </summary>
-    /// <param name="func">Function to select entries</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="Nop.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entries
-    /// </returns>
-    public virtual async Task<IList<TEntity>> GetAllAsync(
-        Func<IQueryable<TEntity>, Task<IQueryable<TEntity>>> func = null,
-        Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true)
+    public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(
+        Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        int pageIndex = 0,
+        int pageSize = int.MaxValue,
+        bool getOnlyTotalCount = false,
+        bool includeDeleted = true)
     {
-        async Task<IList<TEntity>> getAllAsync()
+        var query = Table;
+
+        if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
         {
-            var query = AddDeletedFilter(Table, includeDeleted);
-            query = func != null ? await func(query) : query;
-
-            return await query.ToListAsync();
+            query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
         }
-
-        return await GetEntitiesAsync(getAllAsync, getCacheKey);
-    }
-
-    /// <summary>
-    /// Get all entity entries
-    /// </summary>
-    /// <param name="func">Function to select entries</param>
-    /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="Nop.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the entity entries
-    /// </returns>
-    public virtual async Task<IList<TEntity>> GetAllAsync(
-        Func<IQueryable<TEntity>, Task<IQueryable<TEntity>>> func = null,
-        Func<ICacheKeyService, Task<CacheKey>> getCacheKey = null, bool includeDeleted = true)
-    {
-        async Task<IList<TEntity>> getAllAsync()
-        {
-            var query = AddDeletedFilter(Table, includeDeleted);
-            query = func != null ? await func(query) : query;
-
-            return await query.ToListAsync();
-        }
-
-        return await GetEntitiesAsync(getAllAsync, getCacheKey);
-    }
-
-    /// <summary>
-    /// Get paged list of all entity entries
-    /// </summary>
-    /// <param name="func">Function to select entries</param>
-    /// <param name="pageIndex">Page index</param>
-    /// <param name="pageSize">Page size</param>
-    /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="Nop.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the paged list of entity entries
-    /// </returns>
-    public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
-        int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false, bool includeDeleted = true)
-    {
-        var query = AddDeletedFilter(Table, includeDeleted);
 
         query = func != null ? func(query) : query;
 
         return await query.ToPagedListAsync(pageIndex, pageSize, getOnlyTotalCount);
     }
 
-    /// <summary>
-    /// Get paged list of all entity entries
-    /// </summary>
-    /// <param name="func">Function to select entries</param>
-    /// <param name="pageIndex">Page index</param>
-    /// <param name="pageSize">Page size</param>
-    /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
-    /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="Nop.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation
-    /// The task result contains the paged list of entity entries
-    /// </returns>
-    public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, Task<IQueryable<TEntity>>> func = null,
-        int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false, bool includeDeleted = true)
-    {
-        var query = AddDeletedFilter(Table, includeDeleted);
-
-        query = func != null ? await func(query) : query;
-
-        return await query.ToPagedListAsync(pageIndex, pageSize, getOnlyTotalCount);
-    }
-
-    /// <summary>
-    /// Insert the entity entry
-    /// </summary>
-    /// <param name="entity">Entity entry</param>
-    /// <param name="publishEvent">Whether to publish event notification</param>
-    /// <returns>A task that represents the asynchronous operation</returns>
     public virtual async Task InsertAsync(TEntity entity, bool publishEvent = true)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        await _context.InsertEntityAsync(entity);
+        try
+        {
+            await _context.Set<TEntity>().AddAsync(entity);
+            await _context.SaveChangesAsync();
 
-        //event notification
-        if (publishEvent)
-            await _eventPublisher.EntityInsertedAsync(entity);
+            if (publishEvent)
+                await _eventPublisher.PublishAsync(new EntityInsertedEvent<TEntity>(entity));
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new RepositoryException($"Error inserting entity of type {typeof(TEntity).Name}", ex);
+        }
     }
-
 
     public virtual async Task InsertAsync(IList<TEntity> entities, bool publishEvent = true)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        await _context.BulkInsertEntitiesAsync(entities);
-        transaction.Complete();
+        try
+        {
+            await _context.Set<TEntity>().AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
 
-        if (!publishEvent)
-            return;
-
-        //event notification
-        foreach (var entity in entities)
-            await _eventPublisher.EntityInsertedAsync(entity);
+            if (publishEvent)
+            {
+                foreach (var entity in entities)
+                {
+                    await _eventPublisher.PublishAsync(new EntityInsertedEvent<TEntity>(entity));
+                }
+            }
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new RepositoryException($"Error inserting entities of type {typeof(TEntity).Name}", ex);
+        }
     }
-
-
-
-
-
 
     public virtual async Task UpdateAsync(TEntity entity, bool publishEvent = true)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        await _context.UpdateEntityAsync(entity);
+        try
+        {
+            _context.Set<TEntity>().Update(entity);
+            await _context.SaveChangesAsync();
 
-        //event notification
-        if (publishEvent)
-            await _eventPublisher.EntityUpdatedAsync(entity);
+            if (publishEvent)
+                await _eventPublisher.PublishAsync(new EntityUpdatedEvent<TEntity>(entity));
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new RepositoryException($"Error updating entity of type {typeof(TEntity).Name}", ex);
+        }
     }
-
-
-
 
     public virtual async Task UpdateAsync(IList<TEntity> entities, bool publishEvent = true)
     {
-        ArgumentNullException.ThrowIfNull(entities);
+        if (entities == null)
+            throw new ArgumentNullException(nameof(entities));
 
-        if (!entities.Any())
-            return;
+        try
+        {
+            _context.Set<TEntity>().UpdateRange(entities);
+            await _context.SaveChangesAsync();
 
-        await _context.UpdateEntitiesAsync(entities);
-
-        //event notification
-        if (!publishEvent)
-            return;
-
-        foreach (var entity in entities)
-            await _eventPublisher.EntityUpdatedAsync(entity);
+            if (publishEvent)
+            {
+                foreach (var entity in entities)
+                {
+                    await _eventPublisher.PublishAsync(new EntityUpdatedEvent<TEntity>(entity));
+                }
+            }
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new RepositoryException($"Error updating entities of type {typeof(TEntity).Name}", ex);
+        }
     }
-
-
-
 
     public virtual async Task DeleteAsync(TEntity entity, bool publishEvent = true)
     {
-        ArgumentNullException.ThrowIfNull(entity);
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity));
 
-        switch (entity)
+        try
         {
-            case ISoftDeletedEntity softDeletedEntity:
+            if (entity is ISoftDeletedEntity softDeletedEntity)
+            {
                 softDeletedEntity.Deleted = true;
-                await _context.UpdateEntityAsync(entity);
-                break;
+                await UpdateAsync(entity, publishEvent);
+            }
+            else
+            {
+                _context.Set<TEntity>().Remove(entity);
+                await _context.SaveChangesAsync();
+            }
 
-            default:
-                await _context.DeleteEntityAsync(entity);
-                break;
+            if (publishEvent)
+                await _eventPublisher.PublishAsync(new EntityDeletedEvent<TEntity>(entity));
         }
-
-        //event notification
-        if (publishEvent)
-            await _eventPublisher.EntityDeletedAsync(entity);
+        catch (DbUpdateException ex)
+        {
+            throw new RepositoryException($"Error deleting entity of type {typeof(TEntity).Name}", ex);
+        }
     }
-
-
-
 
     public virtual async Task DeleteAsync(IList<TEntity> entities, bool publishEvent = true)
     {
         ArgumentNullException.ThrowIfNull(entities);
 
-        if (!entities.Any())
-            return;
-
-        using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-        if (typeof(TEntity).GetInterface(nameof(ISoftDeletedEntity)) == null)
-            await _context.BulkDeleteEntitiesAsync(entities);
-        else
+        try
         {
-            foreach (var entity in entities)
-                ((ISoftDeletedEntity)entity).Deleted = true;
+            if (typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                foreach (var entity in entities)
+                {
+                    ((ISoftDeletedEntity)entity).Deleted = true;
+                }
+                await UpdateAsync(entities, publishEvent);
+            }
+            else
+            {
+                _context.Set<TEntity>().RemoveRange(entities);
+                await _context.SaveChangesAsync();
+            }
 
-            await _context.UpdateEntitiesAsync(entities);
+            if (publishEvent)
+            {
+                foreach (var entity in entities)
+                {
+                    await _eventPublisher.PublishAsync(new EntityDeletedEvent<TEntity>(entity));
+                }
+            }
         }
-
-        transaction.Complete();
-
-        //event notification
-        if (!publishEvent)
-            return;
-
-        foreach (var entity in entities)
-            await _eventPublisher.EntityDeletedAsync(entity);
+        catch (DbUpdateException ex)
+        {
+            throw new RepositoryException($"Error deleting entities of type {typeof(TEntity).Name}", ex);
+        }
     }
-
 
     #endregion
 

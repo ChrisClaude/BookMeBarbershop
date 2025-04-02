@@ -16,8 +16,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     protected readonly IEventPublisher _eventPublisher;
     protected readonly BookMeContext _context;
-    protected readonly IShortTermCacheManager _shortTermCacheManager;
-    protected readonly IStaticCacheManager _staticCacheManager;
+    protected readonly ICacheManager _cacheManager;
     protected readonly bool _usingDistributedCache;
 
     #endregion
@@ -26,18 +25,16 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     public EntityRepository(IEventPublisher eventPublisher,
         BookMeContext context,
-        IShortTermCacheManager shortTermCacheManager,
-        IStaticCacheManager staticCacheManager,
+        ICacheManager cacheManager,
         IOptionsSnapshot<AppSettings> appSettings)
     {
         _eventPublisher = eventPublisher;
         _context = context;
-        _shortTermCacheManager = shortTermCacheManager;
-        _staticCacheManager = staticCacheManager;
-        _usingDistributedCache = appSettings?.Value.DistributedCacheConfig.DistributedCacheType switch
+        _cacheManager = cacheManager;
+        _usingDistributedCache = appSettings?.Value.CacheConfig.CacheType switch
         {
-            DistributedCacheType.Redis => true,
-            DistributedCacheType.SqlServer => true,
+            CacheType.Redis => true,
+            CacheType.SqlServer => true,
             _ => false
         };
     }

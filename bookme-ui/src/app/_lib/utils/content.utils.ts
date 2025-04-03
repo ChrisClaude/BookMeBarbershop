@@ -35,17 +35,17 @@ export const CONTENT = {
             {
               name: 'Haircut',
               price: 'PLN 50',
-              estimatedTime: '1 hour',
+              estimatedTime: '45 minutes',
             },
             {
-              name: 'Shave',
+              name: 'Beard trim',
               price: 'PLN 30',
               estimatedTime: '30 minutes',
             },
             {
-              name: 'Haircut and shave',
+              name: 'Haircut and beard trim',
               price: 'PLN 50',
-              estimatedTime: '1 hour 30 minutes',
+              estimatedTime: '1 hour',
             },
           ],
         },
@@ -109,19 +109,19 @@ export const CONTENT = {
           headers: ['Nazwa', 'Cena', 'Szacowany czas'],
           rows: [
             {
-              name: 'Fryzura',
+              name: 'Ostrzyżenie',
               price: 'PLN 50',
-              estimatedTime: '1 godzina',
+              estimatedTime: '45 minut',
             },
             {
-              name: 'Szyja',
+              name: 'Strzyżenie brody',
               price: 'PLN 30',
               estimatedTime: '30 minut',
             },
             {
-              name: 'Fryzura i szyja',
+              name: 'Ostrzyżenie i Strzyżenie brody',
               price: 'PLN 50',
-              estimatedTime: '1 godzina 30 minut',
+              estimatedTime: '1 godzina',
             },
           ],
         },

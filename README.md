@@ -16,7 +16,7 @@ Language support (ENG and PL)| ✅ Completed |
 Update language flags with svg files| 🟡 Not Started |
 Store Language preference in local storage (ENG and PL)| ❌ Not Started |
 Create an application wide loader| ✅ Completed |
-| Add cookiebot| 🟡 In Progress  |
+| Add cookiebot| ✅ Completed |
 
 Legend:
 - ✅ Completed

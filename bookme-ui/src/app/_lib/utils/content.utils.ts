@@ -67,6 +67,13 @@ export const CONTENT = {
         address: 'Address',
       },
     },
+    modal: {
+      bookingNotAvailable: "Online Booking Coming Soon",
+      bookingMessage: "Our online booking system is under development. Meanwhile, you can easily book your appointment via WhatsApp. We'll respond quickly!",
+      responseTime: "Usually responds within 15 minutes during business hours",
+      close: "Close",
+      openWhatsApp: "Open WhatsApp",
+    },
   },
   pl: {
     home: {
@@ -135,6 +142,13 @@ export const CONTENT = {
         email: 'Email',
         address: 'Adres',
       },
+    },
+    modal: {
+      bookingNotAvailable: "Rezerwacja Online Wkrótce",
+      bookingMessage: "Nasz system rezerwacji online jest w trakcie rozwoju. W międzyczasie możesz łatwo umówić się przez WhatsApp. Odpowiemy szybko!",
+      responseTime: "Zazwyczaj odpowiadamy w ciągu 15 minut w godzinach pracy",
+      close: "Zamknij",
+      openWhatsApp: "Otwórz WhatsApp",
     },
   },
 };

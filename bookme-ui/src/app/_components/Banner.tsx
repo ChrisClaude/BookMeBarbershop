@@ -1,17 +1,24 @@
-import React, { useCallback } from 'react';
-import { CONTENT } from '@/_lib/utils/content.utils';
-import { Button } from '@heroui/react';
-import Image from 'next/image';
-import Ripple from './Ripple';
-import { Language } from '@/_lib/features/language/language-slice';
-import { useRouter } from 'next/navigation';
+import React, { useCallback } from "react";
+import { CONTENT } from "@/_lib/utils/content.utils";
+import { Button, useDisclosure } from "@heroui/react";
+import Image from "next/image";
+import Ripple from "./Ripple";
+import { Language } from "@/_lib/features/language/language-slice";
+import { useRouter } from "next/navigation";
+import { BOOKING_FEATURE_ENABLED } from "@/config";
+import BannerModal from "./BannerModal";
 
 const Banner = ({ language }: { language: Language }) => {
   const router = useRouter();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const navigateToCustomerPortal = useCallback(() => {
-    router.push('/customer/bookings');
-  }, [router]);
+    if (!BOOKING_FEATURE_ENABLED) {
+      onOpen();
+      return;
+    }
+    router.push("/customer/bookings");
+  }, [router, onOpen]);
 
   return (
     <section className="relative bg-banner py-12 md:py-20 lg:py-28 px-4 md:px-8 lg:px-48 min-h-[40rem] h-[52rem]">
@@ -29,7 +36,8 @@ const Banner = ({ language }: { language: Language }) => {
             color="primary"
             size="lg"
             className="px-10 py-7 lg:px-12 lg:py-8 text-base md:text-lg uppercase"
-            onPress={navigateToCustomerPortal}>
+            onPress={navigateToCustomerPortal}
+          >
             {CONTENT[language].home.bookingActionButton}
           </Button>
         </div>
@@ -46,10 +54,12 @@ const Banner = ({ language }: { language: Language }) => {
       </div>
       <button
         className="action-button writing-v-rl relative overflow-hidden"
-        onClick={navigateToCustomerPortal}>
+        onClick={navigateToCustomerPortal}
+      >
         <Ripple color="#ffffff" duration={850} />
         {CONTENT[language].home.bookNow}
       </button>
+      <BannerModal isOpen={isOpen} onOpenChange={onOpenChange} />
     </section>
   );
 };

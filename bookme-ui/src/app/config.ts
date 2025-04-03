@@ -33,3 +33,8 @@ export const COOKIE_BOT_DOMAIN_GROUP_ID: string = getConfig(
   'COOKIE_BOT_DOMAIN_GROUP_ID',
   process.env.COOKIE_BOT_DOMAIN_GROUP_ID
 );
+
+export const BOOKING_FEATURE_ENABLED: boolean = getConfig(
+  'BOOKING_FEATURE_ENABLED',
+  process.env.BOOKING_FEATURE_ENABLED
+) === 'true';

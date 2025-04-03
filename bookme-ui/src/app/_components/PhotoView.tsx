@@ -1,7 +1,7 @@
-'use client';
-import React, { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
-import { RiCloseLine, RiZoomInLine, RiZoomOutLine } from 'react-icons/ri';
+"use client";
+import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { RiCloseLine, RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 
 interface PhotoViewProps {
   isOpen: boolean;
@@ -34,13 +34,13 @@ const PhotoView: React.FC<PhotoViewProps> = ({
   // Handle escape key to close modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
   // Zoom in function
@@ -166,7 +166,13 @@ const PhotoView: React.FC<PhotoViewProps> = ({
 
         {/* Image container */}
         <div
-          className={`relative flex-grow overflow-hidden ${scale > 1 ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'}`}
+          className={`relative flex-grow overflow-hidden ${
+            scale > 1
+              ? isDragging
+                ? "cursor-grabbing"
+                : "cursor-grab"
+              : "cursor-default"
+          }`}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -179,7 +185,7 @@ const PhotoView: React.FC<PhotoViewProps> = ({
             className="absolute w-full h-full transition-transform duration-200"
             style={{
               transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              transformOrigin: 'center',
+              transformOrigin: "center",
             }}
           >
             <div className="relative w-full h-full">
@@ -198,8 +204,8 @@ const PhotoView: React.FC<PhotoViewProps> = ({
         {/* Instructions */}
         <div className="text-white text-center p-2 text-sm">
           {scale > 1
-            ? 'Click and drag to move the image'
-            : 'Use the zoom buttons to zoom in and out'}
+            ? "Click and drag to move the image"
+            : "Use the zoom buttons to zoom in and out"}
         </div>
       </div>
     </div>

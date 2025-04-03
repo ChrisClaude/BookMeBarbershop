@@ -8,7 +8,6 @@ import {
 } from "@heroui/react";
 import { FaWhatsapp } from "react-icons/fa";
 import { CONTENT } from "@/_lib/utils/content.utils";
-import { Language } from "@/_lib/features/language/language-slice";
 import useLanguageState from "@/_hooks/useLanguageState";
 
 interface BannerModalProps {

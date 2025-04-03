@@ -1,7 +1,9 @@
 using System;
 using BookMe.Application.Caching;
+using BookMe.Application.Common.Dtos;
 using BookMe.Application.Configurations;
 using BookMe.Application.Entities;
+using BookMe.Application.Events;
 using BookMe.Application.Exceptions;
 using BookMe.Application.Interfaces;
 using BookMe.Infrastructure.Data;
@@ -44,7 +46,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     #region Methods
 
-    public virtual async Task<TEntity> GetByIdAsync(Guid? id, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true, bool useShortTermCache = false)
+    public virtual async Task<TEntity> GetByIdAsync(Guid? id, CacheKey cacheKey = null, bool includeDeleted = true)
     {
         if (!id.HasValue)
             return null;
@@ -59,21 +61,17 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        if (getCacheKey == null)
+        if (cacheKey == null)
             return await GetEntityAsync();
 
-        // ICacheKeyService cacheManager = useShortTermCache ? _shortTermCacheManager : _staticCacheManager;
-        // var cacheKey = getCacheKey(cacheManager);
+        if (await _cacheManager.GetAsync(cacheKey, out TEntity entity))
+            return entity;
 
-        if (useShortTermCache)
-        {
-            return await _shortTermCacheManager.GetAsync(cacheKey, id.Value, GetEntityAsync);
-        }
 
-        return await _staticCacheManager.GetAsync(cacheKey, id.Value, GetEntityAsync);
+        return await GetEntityAsync();
     }
 
-    public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true)
+    public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, CacheKey cacheKey = null, bool includeDeleted = true)
     {
         if (ids == null || !ids.Any())
             return new List<TEntity>();
@@ -88,16 +86,18 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
             return await query.Where(e => ids.Contains(e.Id)).ToListAsync();
         }
 
-        if (getCacheKey == null)
+        if (cacheKey == null)
             return await GetEntitiesAsync();
 
-        var cacheKey = getCacheKey(_staticCacheManager);
-        return await _staticCacheManager.GetAsync(cacheKey, ids, GetEntitiesAsync);
+        if (await _cacheManager.GetAsync(cacheKey, out IList<TEntity> entities))
+            return entities;
+
+        return await GetEntitiesAsync();
     }
 
     public virtual async Task<IList<TEntity>> GetAllAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
-        Func<ICacheKeyService, CacheKey> getCacheKey = null,
+        CacheKey cacheKey = null,
         bool includeDeleted = true)
     {
         async Task<IList<TEntity>> GetEntitiesAsync()
@@ -113,11 +113,13 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
             return await query.ToListAsync();
         }
 
-        if (getCacheKey == null)
+        if (cacheKey == null)
             return await GetEntitiesAsync();
 
-        var cacheKey = getCacheKey(_staticCacheManager);
-        return await _staticCacheManager.GetAsync(cacheKey, async () => await GetEntitiesAsync());
+        if (await _cacheManager.GetAsync(cacheKey, out IList<TEntity> entities))
+            return entities;
+
+        return await GetEntitiesAsync();
     }
 
     public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(
@@ -136,7 +138,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
         query = func != null ? func(query) : query;
 
-        return await query.ToPagedListAsync(pageIndex, pageSize, getOnlyTotalCount);
+        return await ToPagedListAsync(query, pageIndex, pageSize, getOnlyTotalCount);
     }
 
     public virtual async Task InsertAsync(TEntity entity, bool publishEvent = true)
@@ -283,6 +285,36 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
     }
 
+    #endregion
+
+    #region Utility methods
+    protected virtual async Task<IPagedList<TEntity>> ToPagedListAsync(IQueryable<TEntity> query, int pageIndex, int pageSize, bool getOnlyTotalCount)
+    {
+        if (query == null)
+            throw new ArgumentNullException(nameof(query));
+
+        // Get total count
+        var totalCount = await query.CountAsync();
+
+        // Return if only total count is requested
+        if (getOnlyTotalCount)
+            return new PagedList<TEntity>(new List<TEntity>(), pageIndex, pageSize, totalCount);
+
+        // Adjust page size
+        if (pageSize <= 0)
+            pageSize = int.MaxValue;
+
+        // Adjust page index
+        if (pageIndex <= 0)
+            pageIndex = 0;
+
+        // Get paginated data
+        var items = await query.Skip(pageIndex * pageSize)
+                             .Take(pageSize)
+                             .ToListAsync();
+
+        return new PagedList<TEntity>(items, pageIndex, pageSize, totalCount);
+    }
     #endregion
 
     #region Properties

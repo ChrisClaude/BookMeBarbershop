@@ -67,6 +67,20 @@ const PhotoView: React.FC<PhotoViewProps> = ({
     [scale, position]
   );
 
+  // Handle touch start for mobile dragging
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (scale > 1) {
+        setIsDragging(true);
+        setDragStart({
+          x: e.touches[0].clientX - position.x,
+          y: e.touches[0].clientY - position.y,
+        });
+      }
+    },
+    [scale, position]
+  );
+
   // Handle mouse move for dragging
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
@@ -80,8 +94,27 @@ const PhotoView: React.FC<PhotoViewProps> = ({
     [isDragging, dragStart, scale]
   );
 
+  // Handle touch move for mobile dragging
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (isDragging && scale > 1) {
+        e.preventDefault(); // Prevent screen scrolling while dragging
+        setPosition({
+          x: e.touches[0].clientX - dragStart.x,
+          y: e.touches[0].clientY - dragStart.y,
+        });
+      }
+    },
+    [isDragging, dragStart, scale]
+  );
+
   // Handle mouse up to stop dragging
   const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Handle touch end to stop dragging
+  const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
 
@@ -133,11 +166,14 @@ const PhotoView: React.FC<PhotoViewProps> = ({
 
         {/* Image container */}
         <div
-          className="relative flex-grow overflow-hidden cursor-move"
+          className={`relative flex-grow overflow-hidden ${scale > 1 ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'}`}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             className="absolute w-full h-full transition-transform duration-200"

@@ -10,7 +10,7 @@ public class CacheConfig
     /// Gets or sets a distributed cache type
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public CacheType CacheType { get; protected set; } = CacheType.RedisSynchronizedMemory;
+    public CacheType CacheType { get; protected set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether we should use distributed cache

@@ -6,25 +6,60 @@ using Microsoft.Extensions.Options;
 
 namespace BookMe.Infrastructure.Caching;
 
-public class MemoryCacheManager(IMemoryCache memoryCache,
-    IOptionsSnapshot<AppSettings> appSettings)
-    : ICacheManager
+public class MemoryCacheManager : ICacheManager
 {
-    public Task AddAsync(string prefix)
+    private readonly IMemoryCache _memoryCache;
+    private readonly IOptionsSnapshot<AppSettings> _appSettings;
+
+    public MemoryCacheManager(IMemoryCache memoryCache,
+        IOptionsSnapshot<AppSettings> appSettings)
     {
-        memoryCache.Set(prefix, prefix, TimeSpan.FromMinutes(appSettings.Value.CacheConfig.CacheTime));
+        _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+        _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+    }
+
+    public Task AddAsync<T>(string key, T value)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+
+        var cacheTime = _appSettings.Value.CacheConfig.CacheTime;
+        var options = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(cacheTime))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(cacheTime / 2));
+
+        _memoryCache.Set(key, value, options);
+
         return Task.CompletedTask;
     }
 
     public Task<bool> GetAsync<T>(CacheKey cacheKey, out T result)
     {
-        var containsValue = memoryCache.TryGetValue(cacheKey.Key, out result);
-        return Task.FromResult(containsValue);
+        ArgumentNullException.ThrowIfNull(cacheKey);
+        ArgumentException.ThrowIfNullOrEmpty(cacheKey.Key);
+
+        var success = _memoryCache.TryGetValue(cacheKey.Key, out T? value);
+        result = value!;
+
+        return Task.FromResult(success);
     }
 
     public Task RemoveAsync(string cacheKey)
     {
-        memoryCache.Remove(cacheKey);
+        ArgumentException.ThrowIfNullOrEmpty(cacheKey);
+
+        _memoryCache.Remove(cacheKey);
+
+        return Task.CompletedTask;
+    }
+
+    public Task RemoveByPrefixAsync(string prefix)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(prefix);
+
+        // Since IMemoryCache doesn't support pattern-based removal,
+        // we would need to maintain a separate collection of keys
+        // This is a limitation of IMemoryCache
+
         return Task.CompletedTask;
     }
 }

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { RiCloseLine, RiZoomInLine, RiZoomOutLine } from "react-icons/ri";
 
@@ -21,13 +21,14 @@ const PhotoView: React.FC<PhotoViewProps> = ({
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
   // Reset state when modal is closed
   useEffect(() => {
     if (!isOpen) {
       setScale(1);
       setPosition({ x: 0, y: 0 });
+      setIsDragging(false);
     }
   }, [isOpen]);
 
@@ -53,70 +54,98 @@ const PhotoView: React.FC<PhotoViewProps> = ({
     setScale((prevScale) => Math.max(prevScale - 0.5, 0.5));
   }, []);
 
-  // Handle mouse down for dragging
+  // Mouse event handlers for dragging
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (scale > 1) {
+        e.preventDefault();
         setIsDragging(true);
-        setDragStart({
+        dragStartRef.current = {
           x: e.clientX - position.x,
           y: e.clientY - position.y,
-        });
+        };
       }
     },
     [scale, position]
   );
 
-  // Handle touch start for mobile dragging
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      if (scale > 1) {
-        setIsDragging(true);
-        setDragStart({
-          x: e.touches[0].clientX - position.x,
-          y: e.touches[0].clientY - position.y,
-        });
-      }
-    },
-    [scale, position]
-  );
-
-  // Handle mouse move for dragging
   const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (isDragging && scale > 1) {
-        setPosition({
-          x: e.clientX - dragStart.x,
-          y: e.clientY - dragStart.y,
-        });
-      }
+    (e: MouseEvent) => {
+      if (!isDragging || scale <= 1) return;
+
+      setPosition({
+        x: e.clientX - dragStartRef.current.x,
+        y: e.clientY - dragStartRef.current.y,
+      });
     },
-    [isDragging, dragStart, scale]
+    [isDragging, scale]
   );
 
-  // Handle touch move for mobile dragging
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      if (isDragging && scale > 1) {
-        e.preventDefault(); // Prevent screen scrolling while dragging
-        setPosition({
-          x: e.touches[0].clientX - dragStart.x,
-          y: e.touches[0].clientY - dragStart.y,
-        });
-      }
-    },
-    [isDragging, dragStart, scale]
-  );
-
-  // Handle mouse up to stop dragging
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
   }, []);
 
-  // Handle touch end to stop dragging
+  // Touch event handlers for mobile dragging
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (scale > 1) {
+        setIsDragging(true);
+        dragStartRef.current = {
+          x: e.touches[0].clientX - position.x,
+          y: e.touches[0].clientY - position.y,
+        };
+      }
+    },
+    [scale, position]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!isDragging || scale <= 1) return;
+
+      e.preventDefault(); // Prevent screen scrolling while dragging
+      setPosition({
+        x: e.touches[0].clientX - dragStartRef.current.x,
+        y: e.touches[0].clientY - dragStartRef.current.y,
+      });
+    },
+    [isDragging, scale]
+  );
+
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
+
+  // Set up and clean up global event listeners
+  useEffect(() => {
+    // Only add listeners when dragging is active
+    if (isDragging) {
+      // Add document-level event listeners
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("touchmove", handleTouchMove as EventListener, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd as EventListener);
+    }
+
+    // Clean up function
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener(
+        "touchmove",
+        handleTouchMove as EventListener
+      );
+      document.removeEventListener("touchend", handleTouchEnd as EventListener);
+    };
+  }, [
+    isDragging,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   // Handle click on backdrop to close modal
   const handleBackdropClick = useCallback(
@@ -174,12 +203,7 @@ const PhotoView: React.FC<PhotoViewProps> = ({
               : "cursor-default"
           }`}
           onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
           onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         >
           <div
             className="absolute w-full h-full transition-transform duration-200"
@@ -196,6 +220,7 @@ const PhotoView: React.FC<PhotoViewProps> = ({
                 className="object-contain"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
                 priority
+                draggable={false}
               />
             </div>
           </div>

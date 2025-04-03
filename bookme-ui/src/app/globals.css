@@ -128,3 +128,28 @@ button {
 .writing-v-rl {
   writing-mode: vertical-rl;
 }
+
+/* PhotoView animations */
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.photo-view-enter {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.photo-view-exit {
+  animation: fadeIn 0.3s ease-in-out reverse;
+}

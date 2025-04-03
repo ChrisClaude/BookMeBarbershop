@@ -1,4 +1,6 @@
 using System;
+using BookMe.Application.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace BookMe.Application.Caching;
 
@@ -10,31 +12,17 @@ public class CacheKey
   /// Initialize a new instance with key and prefixes
   /// </summary>
   /// <param name="key">Key</param>
-  public CacheKey(string key)
+  public CacheKey(string key, IOptionsSnapshot<AppSettings> appSettings)
   {
     Key = key;
-  }
-
-  #endregion
-
-  #region Methods
-
-  /// <summary>
-  /// Create a new instance from the current one and fill it with passed parameters
-  /// </summary>
-  /// <param name="createCacheKeyParameters">Function to create parameters</param>
-  /// <param name="keyObjects">Objects to create parameters</param>
-  /// <returns>Cache key</returns>
-  public virtual CacheKey Create(Func<object, object> createCacheKeyParameters, params object[] keyObjects)
-  {
-    var cacheKey = new CacheKey(Key);
-
-    if (!keyObjects.Any())
-      return cacheKey;
-
-    cacheKey.Key = string.Format(cacheKey.Key, keyObjects.Select(createCacheKeyParameters).ToArray());
-
-    return cacheKey;
+    CacheTime = appSettings.Value.CacheConfig.CacheType switch
+    {
+      CacheType.Memory => 10,
+      CacheType.SqlServer => 10,
+      CacheType.Redis => 10,
+      CacheType.RedisSynchronizedMemory => 10,
+      _ => 10
+    };
   }
 
   #endregion
@@ -49,7 +37,7 @@ public class CacheKey
   /// <summary>
   /// Gets or sets a cache time in minutes
   /// </summary>
-  public int CacheTime { get; set; } = 15; // TODO: Make this configurable
+  public int CacheTime { get; set; }
 
   #endregion
 }

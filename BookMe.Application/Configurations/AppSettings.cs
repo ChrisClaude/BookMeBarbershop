@@ -4,6 +4,6 @@ namespace BookMe.Application.Configurations;
 
 public class AppSettings
 {
-  public DistributedCacheConfig DistributedCacheConfig { get; set; }
+  public CacheConfig CacheConfig { get; set; }
 
 }

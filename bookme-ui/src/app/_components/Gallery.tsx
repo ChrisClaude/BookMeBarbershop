@@ -1,8 +1,10 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Card, CardBody } from '@heroui/react';
 import { CONTENT } from '@/_lib/utils/content.utils';
 import { Language } from '@/_lib/features/language/language-slice';
+import PhotoView from './PhotoView';
 
 const GALLERY_IMAGES = [
   {
@@ -43,6 +45,18 @@ const GALLERY_IMAGES = [
 ];
 
 const Gallery = ({ language }: { language: Language }) => {
+  const [selectedImage, setSelectedImage] = useState<typeof GALLERY_IMAGES[0] | null>(null);
+  const [isPhotoViewOpen, setIsPhotoViewOpen] = useState(false);
+
+  const handleImageClick = (image: typeof GALLERY_IMAGES[0]) => {
+    setSelectedImage(image);
+    setIsPhotoViewOpen(true);
+  };
+
+  const handleClosePhotoView = () => {
+    setIsPhotoViewOpen(false);
+  };
+
   return (
     <section className="py-12 md:py-20 lg:py-28 px-4 md:px-8 lg:px-48 bg-slate-50">
       <h1
@@ -55,7 +69,8 @@ const Gallery = ({ language }: { language: Language }) => {
           <Card
             key={index}
             className="group cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-105"
-            isPressable>
+            isPressable
+            onClick={() => handleImageClick(image)}>
             <CardBody className="p-0 relative aspect-square overflow-hidden">
               <Image
                 src={image.src}
@@ -73,6 +88,17 @@ const Gallery = ({ language }: { language: Language }) => {
           </Card>
         ))}
       </div>
+
+      {/* PhotoView component */}
+      {selectedImage && (
+        <PhotoView
+          isOpen={isPhotoViewOpen}
+          onClose={handleClosePhotoView}
+          src={selectedImage.src}
+          alt={selectedImage.alt}
+          title={selectedImage.title}
+        />
+      )}
     </section>
   );
 };

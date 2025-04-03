@@ -1,6 +1,6 @@
 using BookMe.Application;
+using BookMe.Application.Configurations;
 using BookMe.Infrastructure;
-using Microsoft.Extensions.Logging;
 using Scalar.AspNetCore;
 
 namespace BookMeAPI;
@@ -12,9 +12,12 @@ public static class DependencyInjection
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
+        var configuration = builder.Configuration;
+        services.Configure<AppSettings>(
+            configuration.GetSection("AppSettings"));
         services.AddOpenApi();
         services.AddApplication();
-        services.AddInfrastructure(builder.Configuration);
+        services.AddInfrastructure(configuration);
         var logger = services.BuildServiceProvider().GetService<ILogger<Program>>();
 
         ConfigureCors(services, builder.Configuration, logger);

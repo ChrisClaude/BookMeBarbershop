@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace BookMe.Application.Configurations;
 
-public enum DistributedCacheType
+public enum CacheType
 {
   [EnumMember(Value = "memory")]
   Memory,

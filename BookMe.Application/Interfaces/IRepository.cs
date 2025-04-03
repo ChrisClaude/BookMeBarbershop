@@ -12,13 +12,13 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
 {
     #region Methods
 
-    Task<TEntity> GetByIdAsync(Guid? id, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true, bool useShortTermCache = false);
+    Task<TEntity> GetByIdAsync(Guid? id, CacheKey cacheKey = null, bool includeDeleted = true);
 
-    Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, Func<ICacheKeyService, CacheKey> getCacheKey = null, bool includeDeleted = true);
+    Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, CacheKey cacheKey = null, bool includeDeleted = true);
 
     Task<IList<TEntity>> GetAllAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
-        Func<ICacheKeyService, CacheKey> getCacheKey = null,
+        CacheKey cacheKey = null,
         bool includeDeleted = true);
 
     Task<IPagedList<TEntity>> GetAllPagedAsync(

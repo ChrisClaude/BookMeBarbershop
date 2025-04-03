@@ -35,6 +35,6 @@ export const COOKIE_BOT_DOMAIN_GROUP_ID: string = getConfig(
 );
 
 export const BOOKING_FEATURE_ENABLED: boolean = getConfig(
-  'BOOKING_FEATURE_ENABLED',
+  'NEXT_PUBLIC_BOOKING_FEATURE_ENABLED',
   process.env.BOOKING_FEATURE_ENABLED
 ) === 'true';

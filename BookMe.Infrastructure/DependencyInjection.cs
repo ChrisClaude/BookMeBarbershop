@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BookMe.Infrastructure.Data;
+using BookMe.Application.Interfaces;
+using BookMe.Infrastructure.Events;
 
 namespace BookMe.Infrastructure;
 
@@ -14,6 +16,9 @@ public static class DependencyInjection
         {
             options.UseSqlServer(configuration.GetConnectionString("BookMeDb"));
         });
+
+        services.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));
+        services.AddScoped<IEventPublisher, KafkaProducer>();
 
         return services;
     }

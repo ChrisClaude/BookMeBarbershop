@@ -7,6 +7,7 @@ using Elastic.Serilog.Sinks;
 using Elastic.Transport;
 using Scalar.AspNetCore;
 using Serilog;
+using Serilog.Events;
 
 namespace BookMeAPI;
 
@@ -34,28 +35,57 @@ public static class DependencyInjection
 
     private static void ConfigureSerilog(ConfigurationManager configuration)
     {
-        Log.Logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(configuration)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console()
-                    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
-                    .WriteTo.Elasticsearch(new[] { new Uri("http://localhost:9200") }, opts =>
-                    {
-                        opts.DataStream = new DataStreamName("logs", "console-example", "demo");
-                        opts.BootstrapMethod = BootstrapMethod.Failure;
-                        opts.ConfigureChannel = channelOpts =>
-                        {
-                            channelOpts.BufferOptions = new Elastic.Channels.BufferOptions
-                            {
-                                ExportMaxConcurrency = 10
-                            };
-                        };
-                    }, transport =>
-                    {
+        var elasticUri = configuration["Elasticsearch:Uri"] ?? "http://localhost:9200";
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+        var applicationName = "BookMeAPI";
 
-                        transport.Authentication(new ApiKey(configuration["ElasticApiKey"])); // ApiKey
-                    })
-                    .CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("System", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .Enrich.WithMachineName()
+            .Enrich.WithEnvironmentName()
+            .Enrich.WithProperty("Application", applicationName)
+            .WriteTo.Console(
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+            .WriteTo.File(
+                path: "logs/log-.txt",
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 7,
+                fileSizeLimitBytes: 5242880, // 5MB
+                rollOnFileSizeLimit: true,
+                shared: true,
+                flushToDiskInterval: TimeSpan.FromSeconds(1))
+            .WriteTo.Elasticsearch(new[] { new Uri(elasticUri) }, opts =>
+            {
+                // Data stream configuration
+                opts.DataStream = new DataStreamName(
+                    "logs",
+                    applicationName.ToLower(),
+                    environment.ToLower());
+            }, transport =>
+            {
+                if (!string.IsNullOrEmpty(configuration["Elasticsearch:ApiKey"]))
+                {
+                    transport.Authentication(new ApiKey(configuration["Elasticsearch:ApiKey"]));
+                }
+
+                if (!string.IsNullOrEmpty(configuration["Elasticsearch:Username"]) &&
+                    !string.IsNullOrEmpty(configuration["Elasticsearch:Password"]))
+                {
+                    transport.Authentication(new BasicAuthentication(
+                        configuration["Elasticsearch:Username"],
+                        configuration["Elasticsearch:Password"]));
+                }
+            })
+            .WriteTo.Debug()
+            .WriteTo.Conditional(
+                evt => evt.Level == LogEventLevel.Error,
+                sinkConfig => sinkConfig.File(
+                    path: "logs/errors-.txt",
+                    rollingInterval: RollingInterval.Day))
+            .CreateLogger();
     }
 
     public static WebApplication ConfigureRequestPipeline(this WebApplication app)

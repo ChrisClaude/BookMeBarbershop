@@ -1,3 +1,5 @@
+using BookMeAPI;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add secrets configuration in development
@@ -15,8 +17,3 @@ var app = builder.Build();
 app.ConfigureRequestPipeline();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

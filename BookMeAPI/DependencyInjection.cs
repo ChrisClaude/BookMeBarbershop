@@ -1,7 +1,12 @@
 using BookMe.Application;
 using BookMe.Application.Configurations;
 using BookMe.Infrastructure;
+using Elastic.Ingest.Elasticsearch;
+using Elastic.Ingest.Elasticsearch.DataStreams;
+using Elastic.Serilog.Sinks;
+using Elastic.Transport;
 using Scalar.AspNetCore;
+using Serilog;
 
 namespace BookMeAPI;
 
@@ -16,12 +21,41 @@ public static class DependencyInjection
         services.Configure<AppSettings>(
             configuration.GetSection("AppSettings"));
         services.AddOpenApi();
-        services.AddApplication();
-        services.AddInfrastructure(configuration);
-        var logger = services.BuildServiceProvider().GetService<ILogger<Program>>();
+        services.AddApplication()
+            .AddInfrastructure(configuration);
 
-        ConfigureCors(services, builder.Configuration, logger);
+        ConfigureSerilog(configuration);
+
+        builder.Host.UseSerilog();
+
+        ConfigureCors(services, builder.Configuration);
         return builder.Build();
+    }
+
+    private static void ConfigureSerilog(ConfigurationManager configuration)
+    {
+        Log.Logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(configuration)
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console()
+                    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+                    .WriteTo.Elasticsearch(new[] { new Uri("http://localhost:9200") }, opts =>
+                    {
+                        opts.DataStream = new DataStreamName("logs", "console-example", "demo");
+                        opts.BootstrapMethod = BootstrapMethod.Failure;
+                        opts.ConfigureChannel = channelOpts =>
+                        {
+                            channelOpts.BufferOptions = new Elastic.Channels.BufferOptions
+                            {
+                                ExportMaxConcurrency = 10
+                            };
+                        };
+                    }, transport =>
+                    {
+
+                        transport.Authentication(new ApiKey(configuration["ElasticApiKey"])); // ApiKey
+                    })
+                    .CreateLogger();
     }
 
     public static WebApplication ConfigureRequestPipeline(this WebApplication app)
@@ -32,18 +66,21 @@ public static class DependencyInjection
             app.MapScalarApiReference();
         }
 
+        app.UseCors(_corsPolicyName);
+        app.UseSerilogRequestLogging();
+
         app.UseHttpsRedirection();
 
         return app;
     }
 
-    private static void ConfigureCors(IServiceCollection services, ConfigurationManager configuration, ILogger logger)
+    private static void ConfigureCors(IServiceCollection services, ConfigurationManager configuration)
     {
         var allowedCorsOrigins = configuration.GetSection("AllowedCorsOrigins").Get<string[]>();
 
         for (var i = 0; i < allowedCorsOrigins?.Length; i++)
         {
-            logger.LogInformation("{message}", $"Allowed CORS origin {i}: {allowedCorsOrigins[i]}");
+            Log.Information("Allowed CORS origin {i}: {allowedCorsOrigins[i]}", i, allowedCorsOrigins[i]);
         }
 
         services.AddCors(options =>

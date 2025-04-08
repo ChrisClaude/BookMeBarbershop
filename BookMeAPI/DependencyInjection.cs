@@ -9,9 +9,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Events;
 
-namespace BookMeAPI;
-
-public static class DependencyInjection
+internal static class DependencyInjection
 {
     private static readonly string _corsPolicyName = "AllowCorsPolicy";
 
@@ -35,7 +33,7 @@ public static class DependencyInjection
 
     private static void ConfigureSerilog(ConfigurationManager configuration)
     {
-        var elasticUri = configuration["Elasticsearch:Uri"] ?? "http://localhost:9200";
+        var elasticUri = configuration["Elasticsearch:Uri"];
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
         var applicationName = "BookMeAPI";
 

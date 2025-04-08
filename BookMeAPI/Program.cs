@@ -1,4 +1,4 @@
-using BookMeAPI;
+using BookMeAPI.Apis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,5 +15,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.ConfigureRequestPipeline();
+
+app.MapUserApis();
 
 app.Run();

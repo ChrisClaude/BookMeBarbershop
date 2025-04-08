@@ -55,28 +55,28 @@ internal static class DependencyInjection
                 rollOnFileSizeLimit: true,
                 shared: true,
                 flushToDiskInterval: TimeSpan.FromSeconds(1))
-            .WriteTo.Elasticsearch(new[] { new Uri(elasticUri) }, opts =>
-            {
-                // Data stream configuration
-                opts.DataStream = new DataStreamName(
-                    "logs",
-                    applicationName.ToLower(),
-                    environment.ToLower());
-            }, transport =>
-            {
-                if (!string.IsNullOrEmpty(configuration["Elasticsearch:ApiKey"]))
-                {
-                    transport.Authentication(new ApiKey(configuration["Elasticsearch:ApiKey"]));
-                }
+            // .WriteTo.Elasticsearch(new[] { new Uri(elasticUri) }, opts =>
+            // {
+            //     // Data stream configuration
+            //     opts.DataStream = new DataStreamName(
+            //         "logs",
+            //         applicationName.ToLower(),
+            //         environment.ToLower());
+            // }, transport =>
+            // {
+            //     if (!string.IsNullOrEmpty(configuration["Elasticsearch:ApiKey"]))
+            //     {
+            //         transport.Authentication(new ApiKey(configuration["Elasticsearch:ApiKey"]));
+            //     }
 
-                if (!string.IsNullOrEmpty(configuration["Elasticsearch:Username"]) &&
-                    !string.IsNullOrEmpty(configuration["Elasticsearch:Password"]))
-                {
-                    transport.Authentication(new BasicAuthentication(
-                        configuration["Elasticsearch:Username"],
-                        configuration["Elasticsearch:Password"]));
-                }
-            })
+            //     if (!string.IsNullOrEmpty(configuration["Elasticsearch:Username"]) &&
+            //         !string.IsNullOrEmpty(configuration["Elasticsearch:Password"]))
+            //     {
+            //         transport.Authentication(new BasicAuthentication(
+            //             configuration["Elasticsearch:Username"],
+            //             configuration["Elasticsearch:Password"]));
+            //     }
+            // })
             .WriteTo.Debug()
             .WriteTo.Conditional(
                 evt => evt.Level == LogEventLevel.Error,

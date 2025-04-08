@@ -6,3 +6,4 @@ bin/
 *.json
 env-setup/
 appsettings.secrets.json
+logs/

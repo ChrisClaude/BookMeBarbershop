@@ -9,9 +9,7 @@ if (builder.Environment.IsDevelopment())
 }
 
 // Configure services
-builder.ConfigureServices();
-
-var app = builder.Build();
+var app = builder.ConfigureServices();
 
 // Configure the HTTP request pipeline
 app.ConfigureRequestPipeline();

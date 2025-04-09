@@ -31,3 +31,9 @@ dotnet run --project BookMeAPI
 ```
 
 Navigate to `https://localhost:6002/scalar/v1` to view the API documentation.
+
+Setting up elasticsearch:
+[Link to docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/run-elasticsearch-locally.html)
+
+Elasticsearch: `http://localhost:9200`
+Kibana: `http://localhost:5601`

@@ -33,7 +33,7 @@ internal static class DependencyInjection
 
     private static void ConfigureSerilog(ConfigurationManager configuration)
     {
-        var elasticUri = configuration["Elasticsearch:Uri"];
+        var elasticUri = configuration["AppSettings:Elasticsearch:Uri"];
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
         var applicationName = "BookMeAPI";
 
@@ -55,34 +55,36 @@ internal static class DependencyInjection
                 rollOnFileSizeLimit: true,
                 shared: true,
                 flushToDiskInterval: TimeSpan.FromSeconds(1))
-            // .WriteTo.Elasticsearch(new[] { new Uri(elasticUri) }, opts =>
-            // {
-            //     // Data stream configuration
-            //     opts.DataStream = new DataStreamName(
-            //         "logs",
-            //         applicationName.ToLower(),
-            //         environment.ToLower());
-            // }, transport =>
-            // {
-            //     if (!string.IsNullOrEmpty(configuration["Elasticsearch:ApiKey"]))
-            //     {
-            //         transport.Authentication(new ApiKey(configuration["Elasticsearch:ApiKey"]));
-            //     }
+            .WriteTo.Conditional(
+                evt => !string.IsNullOrEmpty(elasticUri),
+                sinkConfig => sinkConfig.Elasticsearch(new[] { new Uri(elasticUri!) }, opts =>
+            {
+                // Data stream configuration
+                opts.DataStream = new DataStreamName(
+                    "logs",
+                    applicationName.ToLower(),
+                    environment.ToLower());
+            }, transport =>
+            {
+                if (!string.IsNullOrEmpty(configuration["AppSettings:Elasticsearch:ApiKey"]))
+                {
+                    transport.Authentication(new ApiKey(configuration["AppSettings:Elasticsearch:ApiKey"]));
+                }
 
-            //     if (!string.IsNullOrEmpty(configuration["Elasticsearch:Username"]) &&
-            //         !string.IsNullOrEmpty(configuration["Elasticsearch:Password"]))
-            //     {
-            //         transport.Authentication(new BasicAuthentication(
-            //             configuration["Elasticsearch:Username"],
-            //             configuration["Elasticsearch:Password"]));
-            //     }
-            // })
+                if (!string.IsNullOrEmpty(configuration["AppSettings:Elasticsearch:Username"]) &&
+                    !string.IsNullOrEmpty(configuration["AppSettings:Elasticsearch:Password"]))
+                {
+                    transport.Authentication(new BasicAuthentication(
+                        configuration["AppSettings:Elasticsearch:Username"],
+                        configuration["AppSettings:Elasticsearch:Password"]));
+                }
+            })
             .WriteTo.Debug()
             .WriteTo.Conditional(
                 evt => evt.Level == LogEventLevel.Error,
                 sinkConfig => sinkConfig.File(
                     path: "logs/errors-.txt",
-                    rollingInterval: RollingInterval.Day))
+                    rollingInterval: RollingInterval.Day)))
             .CreateLogger();
     }
 

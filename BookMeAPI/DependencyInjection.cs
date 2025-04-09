@@ -1,6 +1,7 @@
 using BookMe.Application;
 using BookMe.Application.Configurations;
 using BookMe.Infrastructure;
+using BookMeAPI.MiddleWare;
 using Elastic.Ingest.Elasticsearch;
 using Elastic.Ingest.Elasticsearch.DataStreams;
 using Elastic.Serilog.Sinks;
@@ -30,10 +31,15 @@ internal static class DependencyInjection
             .AddInfrastructure(configuration);
 
         ConfigureSerilog(_appSettings);
-
         builder.Host.UseSerilog();
 
+        ConfigureAuthentication(services, configuration);
         ConfigureCors(services, builder.Configuration);
+
+        // Add exception handler and problem details
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
+
         return builder.Build();
     }
     #endregion
@@ -123,6 +129,10 @@ internal static class DependencyInjection
         app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();
+        app.UseExceptionHandler();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         return app;
     }

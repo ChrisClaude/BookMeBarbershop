@@ -47,14 +47,16 @@ internal static class DependencyInjection
             .Enrich.WithProperty("Application", applicationName)
             .WriteTo.Console(
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
-            .WriteTo.File(
-                path: "logs/log-.txt",
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 7,
-                fileSizeLimitBytes: 5242880, // 5MB
-                rollOnFileSizeLimit: true,
-                shared: true,
-                flushToDiskInterval: TimeSpan.FromSeconds(1))
+            .WriteTo.Conditional(
+                evt => configuration.GetValue<bool>("AppSettings:Serilog:EnableFileLogging"),
+                sinkConfig => sinkConfig.File(
+                    path: "logs/log-.txt",
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: 7,
+                    fileSizeLimitBytes: 5242880, // 5MB
+                    rollOnFileSizeLimit: true,
+                    shared: true,
+                    flushToDiskInterval: TimeSpan.FromSeconds(1)))
             .WriteTo.Conditional(
                 evt => !string.IsNullOrEmpty(elasticUri),
                 sinkConfig => sinkConfig.Elasticsearch(new[] { new Uri(elasticUri!) }, opts =>

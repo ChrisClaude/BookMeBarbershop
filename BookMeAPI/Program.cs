@@ -14,6 +14,7 @@ var app = builder.ConfigureServices();
 // Configure the HTTP request pipeline
 app.ConfigureRequestPipeline();
 
-app.MapUserApis();
+app.MapUserApis()
+    .RequireAuthorization();
 
 app.Run();

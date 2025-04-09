@@ -5,6 +5,8 @@ using Elastic.Ingest.Elasticsearch;
 using Elastic.Ingest.Elasticsearch.DataStreams;
 using Elastic.Serilog.Sinks;
 using Elastic.Transport;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Events;
@@ -12,28 +14,44 @@ using Serilog.Events;
 internal static class DependencyInjection
 {
     private static readonly string _corsPolicyName = "AllowCorsPolicy";
+    private static AppSettings _appSettings = new();
 
+    #region ConfigureServices
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         var services = builder.Services;
         var configuration = builder.Configuration;
+        _appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+
         services.Configure<AppSettings>(
             configuration.GetSection("AppSettings"));
         services.AddOpenApi();
         services.AddApplication()
             .AddInfrastructure(configuration);
 
-        ConfigureSerilog(configuration);
+        ConfigureSerilog(_appSettings);
 
         builder.Host.UseSerilog();
 
         ConfigureCors(services, builder.Configuration);
         return builder.Build();
     }
+    #endregion
 
-    private static void ConfigureSerilog(ConfigurationManager configuration)
+    private static void ConfigureAuthentication(IServiceCollection services, ConfigurationManager configuration)
     {
-        var elasticUri = configuration["AppSettings:Elasticsearch:Uri"];
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(options =>
+            {
+                configuration.Bind("AzureAdB2C", options);
+                options.TokenValidationParameters.NameClaimType = "name";
+            }, options => { configuration.Bind("AzureAdB2C", options); });
+    }
+
+    #region Logging
+    private static void ConfigureSerilog(AppSettings appSettings)
+    {
+        var elasticUri = appSettings.Elasticsearch.Uri;
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
         var applicationName = "BookMeAPI";
 
@@ -48,7 +66,7 @@ internal static class DependencyInjection
             .WriteTo.Console(
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
             .WriteTo.Conditional(
-                evt => configuration.GetValue<bool>("AppSettings:Serilog:EnableFileLogging"),
+                evt => appSettings.Serilog.EnableFileLogging,
                 sinkConfig => sinkConfig.File(
                     path: "logs/log-.txt",
                     rollingInterval: RollingInterval.Day,
@@ -68,17 +86,17 @@ internal static class DependencyInjection
                     environment.ToLower());
             }, transport =>
             {
-                if (!string.IsNullOrEmpty(configuration["AppSettings:Elasticsearch:ApiKey"]))
+                if (!string.IsNullOrEmpty(appSettings.Elasticsearch.ApiKey))
                 {
-                    transport.Authentication(new ApiKey(configuration["AppSettings:Elasticsearch:ApiKey"]));
+                    transport.Authentication(new ApiKey(appSettings.Elasticsearch.ApiKey));
                 }
 
-                if (!string.IsNullOrEmpty(configuration["AppSettings:Elasticsearch:Username"]) &&
-                    !string.IsNullOrEmpty(configuration["AppSettings:Elasticsearch:Password"]))
+                if (!string.IsNullOrEmpty(appSettings.Elasticsearch.Username) &&
+                    !string.IsNullOrEmpty(appSettings.Elasticsearch.Password))
                 {
                     transport.Authentication(new BasicAuthentication(
-                        configuration["AppSettings:Elasticsearch:Username"],
-                        configuration["AppSettings:Elasticsearch:Password"]));
+                        appSettings.Elasticsearch.Username,
+                        appSettings.Elasticsearch.Password));
                 }
             })
             .WriteTo.Debug()
@@ -90,6 +108,9 @@ internal static class DependencyInjection
             .CreateLogger();
     }
 
+    #endregion
+
+    #region ConfigureRequestPipeline
     public static WebApplication ConfigureRequestPipeline(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
@@ -105,7 +126,9 @@ internal static class DependencyInjection
 
         return app;
     }
+    #endregion
 
+    #region ConfigureCors
     private static void ConfigureCors(IServiceCollection services, ConfigurationManager configuration)
     {
         var allowedCorsOrigins = configuration.GetSection("AllowedCorsOrigins").Get<string[]>();
@@ -128,4 +151,5 @@ internal static class DependencyInjection
                 });
         });
     }
+    #endregion
 }

@@ -10,9 +10,9 @@ public static class AuthenticationConfiguration
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(options =>
             {
-                configuration.Bind("AzureAdB2C", options);
+                configuration.Bind("AppSettings:AzureAdB2C", options);
                 options.TokenValidationParameters.NameClaimType = "name";
-            }, options => { configuration.Bind("AzureAdB2C", options); });
+            }, options => { configuration.Bind("AppSettings:AzureAdB2C", options); });
 
         return services;
     }

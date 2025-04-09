@@ -9,7 +9,7 @@ public class AppSettings
   public ElasticsearchConfig Elasticsearch { get; set; }
   public AzureB2CConfig AzureAdB2C { get; set; }
   public SerilogConfig Serilog { get; set; }
-  public string AllowedCorsOrigins { get; set; }
+  public string[] AllowedCorsOrigins { get; set; }
 }
 
 #region other config classes

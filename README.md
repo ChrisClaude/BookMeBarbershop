@@ -17,6 +17,7 @@ Update language flags with svg files| 🟡 Not Started |
 Store Language preference in local storage (ENG and PL)| ❌ Not Started |
 Create an application wide loader| ✅ Completed |
 | Add cookiebot| ✅ Completed |
+| Implement alive and health checks endpoints| ❌ Not Started |
 
 Legend:
 - ✅ Completed

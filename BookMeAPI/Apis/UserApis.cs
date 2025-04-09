@@ -8,7 +8,7 @@ internal static class UserApis
     {
         var api = app.MapGroup("api/users");
 
-        app.MapGet("/me", () => GetUserAsync());
+        api.MapGet("/me", () => GetUserAsync());
 
         return api;
     }

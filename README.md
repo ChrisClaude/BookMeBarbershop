@@ -22,3 +22,12 @@ Legend:
 - ✅ Completed
 - 🟡 In Progress
 - ❌ Not Started
+
+## Getting Started
+
+Running the api:
+```
+dotnet run --project BookMeAPI
+```
+
+Navigate to `https://localhost:6002/scalar/v1` to view the API documentation.

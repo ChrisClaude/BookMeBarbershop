@@ -247,9 +247,9 @@ const getDaysDifference = (
   date1: Date | string | null,
   date2: Date | string | null = today()
 ): number => {
-  // Handle null/invalid inputs
+  // If either date is null, return 0 as per test requirements
   if (!date1 || !date2) {
-    return Number.MAX_SAFE_INTEGER; // Return max value instead of 0 to handle null cases
+    return 0;
   }
 
   // Parse dates if they're strings
@@ -257,7 +257,7 @@ const getDaysDifference = (
   const parsedDate2 = typeof date2 === "string" ? parseDate(date2) : date2;
 
   if (!parsedDate1 || !parsedDate2) {
-    return Number.MAX_SAFE_INTEGER;
+    return 0;
   }
 
   // Calculate difference in days
@@ -281,7 +281,29 @@ const isWithinDays = (
   if (!date || !fromDate) {
     return false;
   }
-  return getDaysDifference(date, fromDate) <= days;
+
+  const parsedDate = typeof date === "string" ? parseDate(date) : date;
+  const parsedFromDate = typeof fromDate === "string" ? parseDate(fromDate) : fromDate;
+
+  if (!parsedDate || !parsedFromDate) {
+    return false;
+  }
+
+  // Normalize both dates to UTC midnight
+  const d1 = new Date(Date.UTC(
+    parsedDate.getUTCFullYear(),
+    parsedDate.getUTCMonth(),
+    parsedDate.getUTCDate()
+  ));
+  const d2 = new Date(Date.UTC(
+    parsedFromDate.getUTCFullYear(),
+    parsedFromDate.getUTCMonth(),
+    parsedFromDate.getUTCDate()
+  ));
+
+  const diffTime = Math.abs(d2.getTime() - d1.getTime());
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays <= days;
 };
 
 /**

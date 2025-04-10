@@ -1,12 +1,5 @@
 import { logError } from "./logging.utils";
 
-const DATE_FORMATS = {
-  API: "yyyy-MM-dd",
-  DISPLAY: "dd-MM-yyyy",
-  DATEPICKER: "dd/MM/yyyy",
-  SHORT_MONTH: "dd-MMM-yyyy",
-} as const;
-
 /* Parses a string as a date.  Date format can either by yyyy-MM-dd which is the convention when communicating with the API or dd/MM/yyyy which is the convention
        used within DatePicker.  The function also handles inputs that are type date such that it will return the date itself.
        Thus a call to parseDate(parseDate("19/04/2029")) returns the correct date.
@@ -301,8 +294,11 @@ const isWithinDays = (
     parsedFromDate.getUTCDate()
   ));
 
-  const diffTime = Math.abs(d2.getTime() - d1.getTime());
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  // Calculate the difference in milliseconds
+  const diffTime = d1.getTime() - d2.getTime();
+  // Convert to days and get absolute value
+  const diffDays = Math.abs(Math.round(diffTime / (1000 * 60 * 60 * 24)));
+
   return diffDays <= days;
 };
 

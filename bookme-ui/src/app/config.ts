@@ -38,3 +38,8 @@ export const BOOKING_FEATURE_ENABLED: boolean = getConfig(
   'NEXT_PUBLIC_BOOKING_FEATURE_ENABLED',
   process.env.BOOKING_FEATURE_ENABLED
 ) === 'true';
+
+export const API_BASE_PATH: string = getConfig(
+  'NEXT_PUBLIC_API_BASE_PATH',
+  process.env.NEXT_PUBLIC_API_BASE_PATH
+);

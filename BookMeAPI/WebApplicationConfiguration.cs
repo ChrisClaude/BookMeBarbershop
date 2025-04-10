@@ -24,6 +24,12 @@ internal static class WebApplicationConfiguration
             configuration.GetSection("AppSettings"));
 
         services
+            .AddControllers()
+            .AddNewtonsoftJson();
+
+        services.AddEndpointsApiExplorer();
+
+        services
             .AddOpenApi()
             .AddApplication()
             .AddInfrastructure(configuration)
@@ -56,9 +62,9 @@ internal static class WebApplicationConfiguration
                     .WithPreferredScheme("OAuth2")
                     .WithOAuth2Authentication(oauth2 =>
                     {
-                        oauth2.TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token";
+                        // oauth2.TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token";
                         oauth2.ClientId = appSettings.AzureAdB2C.ClientId;
-                        oauth2.ClientSecret = appSettings.AzureAdB2C.ClientSecret;
+                        // oauth2.ClientSecret = appSettings.AzureAdB2C.ClientSecret;
                         oauth2.Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" };
                     });
 
@@ -67,9 +73,9 @@ internal static class WebApplicationConfiguration
                     PreferredSecurityScheme = "OAuth2",
                     OAuth2 = new OAuth2Options
                     {
-                        TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token",
+                        // TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token",
                         ClientId = appSettings.AzureAdB2C.ClientId,
-                        ClientSecret = appSettings.AzureAdB2C.ClientSecret,
+                        // ClientSecret = appSettings.AzureAdB2C.ClientSecret,
                         Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" }
                     }
                 };
@@ -80,10 +86,12 @@ internal static class WebApplicationConfiguration
         app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();
+        app.UseRouting();
         app.UseExceptionHandler();
 
         app.UseAuthentication();
         app.UseAuthorization();
+		app.MapControllers();
 
         return app;
     }

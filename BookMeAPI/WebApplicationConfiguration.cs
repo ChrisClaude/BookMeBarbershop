@@ -5,6 +5,7 @@ using BookMe.Infrastructure;
 using BookMeAPI.Configurations;
 using BookMeAPI.MiddleWare;
 using Elastic.Transport;
+using Microsoft.Extensions.Azure;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -52,18 +53,24 @@ internal static class WebApplicationConfiguration
             app.MapScalarApiReference(options =>
             {
                 options
-                    .WithPreferredScheme("ApiKey")
-                    .WithApiKeyAuthentication(apiKey =>
+                    .WithPreferredScheme("OAuth2")
+                    .WithOAuth2Authentication(oauth2 =>
                     {
-                        apiKey.Token = appSettings.AzureAdB2C.ClientSecret;
+                        oauth2.TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token";
+                        oauth2.ClientId = appSettings.AzureAdB2C.ClientId;
+                        oauth2.ClientSecret = appSettings.AzureAdB2C.ClientSecret;
+                        oauth2.Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" };
                     });
 
                 options.Authentication = new ScalarAuthenticationOptions
                 {
-                    PreferredSecurityScheme = "ApiKey",
-                    ApiKey = new ApiKeyOptions
+                    PreferredSecurityScheme = "OAuth2",
+                    OAuth2 = new OAuth2Options
                     {
-                        Token = appSettings.AzureAdB2C.ClientSecret
+                        TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token",
+                        ClientId = appSettings.AzureAdB2C.ClientId,
+                        ClientSecret = appSettings.AzureAdB2C.ClientSecret,
+                        Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" }
                     }
                 };
             });

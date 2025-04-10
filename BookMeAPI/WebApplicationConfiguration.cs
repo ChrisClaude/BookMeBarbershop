@@ -44,10 +44,29 @@ internal static class WebApplicationConfiguration
     #region ConfigureRequestPipeline
     public static WebApplication ConfigureRequestPipeline(this WebApplication app)
     {
+        var appSettings = app.Configuration.GetSection("AppSettings").Get<AppSettings>();
+
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
-            app.MapScalarApiReference();
+            app.MapScalarApiReference(options =>
+            {
+                options
+                    .WithPreferredScheme("ApiKey")
+                    .WithApiKeyAuthentication(apiKey =>
+                    {
+                        apiKey.Token = appSettings.AzureAdB2C.ClientSecret;
+                    });
+
+                options.Authentication = new ScalarAuthenticationOptions
+                {
+                    PreferredSecurityScheme = "ApiKey",
+                    ApiKey = new ApiKeyOptions
+                    {
+                        Token = appSettings.AzureAdB2C.ClientSecret
+                    }
+                };
+            });
         }
 
         app.UseCors(_corsPolicyName);

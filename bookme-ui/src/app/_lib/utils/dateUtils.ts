@@ -1,71 +1,66 @@
 import { logError } from "./logging.utils";
 
+const DATE_FORMATS = {
+  API: "yyyy-MM-dd",
+  DISPLAY: "dd-MM-yyyy",
+  DATEPICKER: "dd/MM/yyyy",
+  SHORT_MONTH: "dd-MMM-yyyy",
+} as const;
+
 /* Parses a string as a date.  Date format can either by yyyy-MM-dd which is the convention when communicating with the API or dd/MM/yyyy which is the convention
        used within DatePicker.  The function also handles inputs that are type date such that it will return the date itself.
        Thus a call to parseDate(parseDate("19/04/2029")) returns the correct date.
     */
 const parseDate = (
-  dateString: string | number |Date | null | undefined
+  dateString: string | number | Date | null | undefined
 ): Date | null => {
   if (dateString == null || dateString === "Choose Date") {
     return null;
   }
 
   if (dateString instanceof Date) {
-    return dateString as Date;
+    return isValidDate(dateString) ? dateString : null;
   }
 
-  if (typeof dateString === "string") {
-    if (dateString.length === 0) {
-      return null;
-    }
-
-    let date: Date | null = null;
-
-    // Try parsing 'dd/MM/yyyy' format
-    const dmyMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (dmyMatch) {
-      const day = parseInt(dmyMatch[1], 10);
-      const month = parseInt(dmyMatch[2], 10) - 1; // Months are zero-indexed
-      const year = parseInt(dmyMatch[3], 10);
-      date = new Date(Date.UTC(year, month, day));
-      if (date !== null && !isNaN(date.getTime())) {
-        return date;
-      }
-    }
-
-    // Try parsing 'yyyy-MM-dd' format (ignoring time components after 'dd')
-    const ymdMatch = dateString.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (ymdMatch) {
-      const year = parseInt(ymdMatch[1], 10);
-      const month = parseInt(ymdMatch[2], 10) - 1;
-      const day = parseInt(ymdMatch[3], 10);
-      date = new Date(Date.UTC(year, month, day));
-      if (date !== null && !isNaN(date.getTime())) {
-        return date;
-      }
-    }
-
-    // Try parsing 'dd-MM-yyyy' format (ignoring time components after 'dd')
-    const dmyMatchVariant = dateString.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
-    if (dmyMatchVariant) {
-      const year = parseInt(dmyMatchVariant[3], 10);
-      const month = parseInt(dmyMatchVariant[2], 10) - 1;
-      const day = parseInt(dmyMatchVariant[1], 10);
-      date = new Date(Date.UTC(year, month, day));
-      if (date !== null && !isNaN(date.getTime())) {
-        return date;
-      }
-    }
-
-    // If the input string doesn't match expected formats, throw an exception
-    logError(`Invalid date format: ${dateString}`, "InvalidDateError");
-    throw new Error(`Invalid date format: ${dateString}`);
+  if (typeof dateString !== "string") {
+    throw new Error(`Invalid date input type: ${typeof dateString}`);
   }
 
-  // If input is neither a string nor a Date, throw an exception
-  logError(`Invalid date input type: ${typeof dateString}`, "InvalidDateError");
-  throw new Error(`Invalid date input type: ${typeof dateString}`);
+  if (dateString.length === 0) {
+    return null;
+  }
+
+  const formats = [
+    {
+      regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/,
+      groups: [1, 2, 3],
+      monthIndex: 1,
+    },
+    { regex: /^(\d{4})-(\d{1,2})-(\d{1,2})/, groups: [3, 2, 1], monthIndex: 1 },
+    {
+      regex: /^(\d{1,2})-(\d{1,2})-(\d{4})$/,
+      groups: [1, 2, 3],
+      monthIndex: 1,
+    },
+  ];
+
+  for (const format of formats) {
+    const match = dateString.match(format.regex);
+    if (match) {
+      const [day, month, year] = format.groups.map((g) =>
+        parseInt(match[g], 10)
+      );
+      if (month < 1 || month > 12 || day < 1 || day > 31) {
+        continue;
+      }
+      const date = new Date(Date.UTC(year, month - 1, day));
+      if (isValidDate(date)) {
+        return date;
+      }
+    }
+  }
+
+  throw new Error(`Invalid date format: ${dateString}`);
 };
 
 const fromDatePickerDate = (date: Date): Date | null => {
@@ -161,7 +156,9 @@ const convertDateToUTC = (date: Date): Date => {
 };
 
 // Formats a date to 'dd-MMM-yyyy' (e.g., 3rd February 2025 => '03-Feb-2025') to be used for displaying dates to users.
-const toShortMonthDisplayDate = (date: string | Date | null | undefined): string => {
+const toShortMonthDisplayDate = (
+  date: string | Date | null | undefined
+): string => {
   if (date === null || date === undefined) {
     return "";
   }
@@ -184,7 +181,6 @@ const toShortMonthDisplayDate = (date: string | Date | null | undefined): string
   return `${day}-${month}-${year}`;
 };
 
-
 /**
  * Converts a DateOnly-like object (with year, month, day properties) to a Date.
  * If any of the properties are missing or invalid, returns null.
@@ -195,19 +191,30 @@ const toShortMonthDisplayDate = (date: string | Date | null | undefined): string
 const fromDateOnly = (
   dateOnly: { year?: number; month?: number; day?: number } | null | undefined
 ): Date | undefined => {
-  if (
-    !dateOnly ||
-    dateOnly.year === undefined ||
-    dateOnly.month === undefined ||
-    dateOnly.day === undefined
-  ) {
+  if (!dateOnly) {
+    return undefined;
+  }
+
+  const { year, month, day } = dateOnly;
+
+  if (year === undefined || month === undefined || day === undefined) {
     logError(
-      `Invalid DateOnly object provided: ${JSON.stringify(dateOnly)}`,
+      `Missing required date components: ${JSON.stringify(dateOnly)}`,
       "InvalidDateOnlyError"
     );
     return undefined;
   }
-  return new Date(dateOnly.year, dateOnly.month - 1, dateOnly.day);
+
+  if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1900) {
+    logError(
+      `Invalid date components: year=${year}, month=${month}, day=${day}`,
+      "InvalidDateOnlyError"
+    );
+    return undefined;
+  }
+
+  const date = new Date(year, month - 1, day);
+  return isValidDate(date) ? date : undefined;
 };
 
 /**
@@ -217,6 +224,9 @@ const fromDateOnly = (
  * @returns A Date object representing the date years ago.
  */
 const getDateYearsAgo = (years: number): Date => {
+  if (years < 0) {
+    throw new Error("Years must be a positive number");
+  }
   const today = new Date();
   return new Date(
     today.getFullYear() - years,
@@ -312,6 +322,15 @@ const getDateMonthsFromNow = (months: number): Date => {
   return date;
 };
 
+const compareDates = (date1: Date, date2: Date): -1 | 0 | 1 => {
+  const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+
+  if (d1 < d2) return -1;
+  if (d1 > d2) return 1;
+  return 0;
+};
+
 export {
   parseDate,
   fromDatePickerDate,
@@ -325,4 +344,5 @@ export {
   isNotWithinDays,
   getDateMonthsFromNow,
   convertDateToUTC,
+  compareDates,
 };

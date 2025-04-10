@@ -1,9 +1,9 @@
-import { BookMeAPIApi } from "../codegen";
 import { Result } from "../types/common.types";
 import { logError } from "../utils/logging.utils";
+import { ApiService } from "./api.service";
 
 export class UserService {
-  protected static bookMeApi = new BookMeAPIApi();
+  protected static bookMeApi = new ApiService();
 
   private static buildHeaders({
     token,

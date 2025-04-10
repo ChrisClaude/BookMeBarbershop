@@ -1,3 +1,5 @@
+import { Session } from "next-auth";
+
 export type Result<T = any> = {
   success: boolean;
   message?: string | any;
@@ -8,4 +10,9 @@ export type Result<T = any> = {
 export type ApiError = {
   description: string;
   code: string;
+};
+
+export type UserSession = Session & {
+  accessToken: string;
+  externalProvider?: string;
 };

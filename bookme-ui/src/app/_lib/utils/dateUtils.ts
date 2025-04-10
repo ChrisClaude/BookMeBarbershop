@@ -227,12 +227,13 @@ const getDateYearsAgo = (years: number): Date => {
   if (years < 0) {
     throw new Error("Years must be a positive number");
   }
-  const today = new Date();
-  return new Date(
-    today.getFullYear() - years,
-    today.getMonth(),
-    today.getDate()
-  );
+  // Create a new date based on the current UTC time
+  const now = new Date();
+  return new Date(Date.UTC(
+    now.getUTCFullYear() - years,
+    now.getUTCMonth(),
+    now.getUTCDate()
+  ));
 };
 
 /**
@@ -248,7 +249,7 @@ const getDaysDifference = (
 ): number => {
   // Handle null/invalid inputs
   if (!date1 || !date2) {
-    return 0;
+    return Number.MAX_SAFE_INTEGER; // Return max value instead of 0 to handle null cases
   }
 
   // Parse dates if they're strings
@@ -256,7 +257,7 @@ const getDaysDifference = (
   const parsedDate2 = typeof date2 === "string" ? parseDate(date2) : date2;
 
   if (!parsedDate1 || !parsedDate2) {
-    return 0;
+    return Number.MAX_SAFE_INTEGER;
   }
 
   // Calculate difference in days
@@ -277,7 +278,10 @@ const isWithinDays = (
   days: number,
   fromDate: Date | string | null = today()
 ): boolean => {
-  return getDaysDifference(date, fromDate) < days;
+  if (!date || !fromDate) {
+    return false;
+  }
+  return getDaysDifference(date, fromDate) <= days;
 };
 
 /**

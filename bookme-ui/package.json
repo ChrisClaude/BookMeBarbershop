@@ -10,7 +10,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "generate-api-client": "openapi-generator-cli generate -i http://localhost:6003/openapi/v1.json -g typescript-fetch -o src/app/lib/codegen"
+    "generate-api-client": "openapi-generator-cli generate -i http://localhost:6003/openapi/v1.json -g typescript-fetch -o src/app/_lib/codegen"
   },
   "dependencies": {
     "@heroui/react": "^2.7.5",

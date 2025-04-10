@@ -17,6 +17,7 @@
     "@openapitools/openapi-generator-cli": "^2.18.4",
     "@reduxjs/toolkit": "^2.6.1",
     "@types/jsonwebtoken": "^9.0.9",
+    "date-fns": "^4.1.0",
     "flag-icons": "^7.3.2",
     "framer-motion": "^12.5.0",
     "jsonwebtoken": "^9.0.2",

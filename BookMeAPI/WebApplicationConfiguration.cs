@@ -54,14 +54,17 @@ internal static class WebApplicationConfiguration
                         {
                             AuthorizationCode = new OpenApiOAuthFlow
                             {
-                                AuthorizationUrl = new Uri($"https://{appSettings.AzureAdB2C.TenantId}.b2clogin.com/{appSettings.AzureAdB2C.Domain}/oauth2/v2.0/authorize?p={appSettings.AzureAdB2C.SignUpSignInPolicyId}"),
+                                // AuthorizationUrl = new Uri($"https://{appSettings.AzureAdB2C.TenantId}.b2clogin.com/{appSettings.AzureAdB2C.Domain}/oauth2/v2.0/authorize?p={appSettings.AzureAdB2C.SignUpSignInPolicyId}"),
 
-                                TokenUrl = new Uri($"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token"),
+                                AuthorizationUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/authorize"),
+
+                                // TokenUrl = new Uri($"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token?p={appSettings.AzureAdB2C.SignUpSignInPolicyId}"),
+                                TokenUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/token"),
 
                                 Scopes = new Dictionary<string, string>
                                 {
-                                    { $"https://{appSettings.AzureAdB2C.TenantId}.onmicrosoft.com/resume-builder-api/Read", "Read access to the API" },
-                                    { $"https://{appSettings.AzureAdB2C.TenantId}.onmicrosoft.com/resume-builder-api/Write", "Write access to the API" },
+                                    { $"https://{appSettings.AzureAdB2C.TenantId}.onmicrosoft.com/resume-builder-api/Read", "API Read permission" },
+                                    { $"https://{appSettings.AzureAdB2C.TenantId}.onmicrosoft.com/resume-builder-api/Write", "API Write permission" },
                                 },
                                 // To allow Scalar to select PKCE by Default
                                 // valid options are 'SHA-256' | 'plain' | 'no'
@@ -108,9 +111,7 @@ internal static class WebApplicationConfiguration
                     .WithPreferredScheme("OAuth2")
                     .WithOAuth2Authentication(oauth2 =>
                     {
-                        // oauth2.TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token";
                         oauth2.ClientId = appSettings.AzureAdB2C.ClientId;
-                        // oauth2.ClientSecret = appSettings.AzureAdB2C.ClientSecret;
                         oauth2.Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" };
                     });
 

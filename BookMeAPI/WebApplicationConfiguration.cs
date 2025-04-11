@@ -54,12 +54,12 @@ internal static class WebApplicationConfiguration
                         {
                             AuthorizationCode = new OpenApiOAuthFlow
                             {
-                                // AuthorizationUrl = new Uri($"https://{appSettings.AzureAdB2C.TenantId}.b2clogin.com/{appSettings.AzureAdB2C.Domain}/oauth2/v2.0/authorize?p={appSettings.AzureAdB2C.SignUpSignInPolicyId}"),
+                                AuthorizationUrl = new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/authorize"),
 
-                                AuthorizationUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/authorize"),
+                                // AuthorizationUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/authorize"),
 
-                                // TokenUrl = new Uri($"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token?p={appSettings.AzureAdB2C.SignUpSignInPolicyId}"),
-                                TokenUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/token"),
+                                TokenUrl = new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/token"),
+                                // TokenUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/token"),
 
                                 Scopes = new Dictionary<string, string>
                                 {
@@ -120,9 +120,7 @@ internal static class WebApplicationConfiguration
                     PreferredSecurityScheme = "OAuth2",
                     OAuth2 = new OAuth2Options
                     {
-                        // TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token",
                         ClientId = appSettings.AzureAdB2C.ClientId,
-                        // ClientSecret = appSettings.AzureAdB2C.ClientSecret,
                         Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" },
                     }
                 };

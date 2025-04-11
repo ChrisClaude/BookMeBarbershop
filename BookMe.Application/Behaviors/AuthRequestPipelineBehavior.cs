@@ -8,12 +8,19 @@ using Microsoft.AspNetCore.Http;
 
 namespace BookMe.Application.Behaviors;
 
-internal sealed class AuthRequestPipelineBehavior<TRequest, TResponse>(IHttpContextAccessor httpContextAccessor) : IPipelineBehavior<TRequest, TResponse>
+internal sealed class AuthRequestPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	where TRequest : AuthenticatedRequest<TResponse>
 {
+	private readonly IHttpContextAccessor _httpContextAccessor;
+
+	public AuthRequestPipelineBehavior(IHttpContextAccessor httpContextAccessor)
+	{
+		_httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+	}
+
 	public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
 	{
-		if (httpContextAccessor.HttpContext.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY] is UserDto userDto)
+		if (_httpContextAccessor.HttpContext.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY] is UserDto userDto)
 		{
 			request.UserDTo = userDto;
 		}

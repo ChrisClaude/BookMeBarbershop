@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace BookMe.Application.Behaviors;
 
-internal sealed class AuthRequestPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+internal sealed class AuthRequestBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
 	where TRequest : AuthenticatedRequest<TResponse>
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public AuthRequestPipelineBehavior(IHttpContextAccessor httpContextAccessor)
+	public AuthRequestBehavior(IHttpContextAccessor httpContextAccessor)
 	{
 		_httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 	}

@@ -1,12 +1,13 @@
 using System;
+using BookMe.Application.Commands.Users;
 using BookMe.Application.Entities;
 using FluentValidation;
 
 namespace BookMe.Application.Validators;
 
-public class UserValidator : AbstractValidator<User>
+public class CreateOrUpdateUserCommandValidator : AbstractValidator<CreateOrUpdateUserCommand>
 {
-    public UserValidator()
+    public CreateOrUpdateUserCommandValidator()
     {
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.Surname).NotEmpty();

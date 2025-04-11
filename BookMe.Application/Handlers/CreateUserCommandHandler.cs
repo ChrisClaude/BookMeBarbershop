@@ -24,15 +24,6 @@ public class CreateUserCommandHandler(IRepository<User> repository, IMapper mapp
             PhoneNumber = request.PhoneNumber
         };
 
-        var validator = new UserValidator();
-        var validationResult = validator.Validate(user);
-
-        if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors.Select(x => new Error(x.ErrorCode, x.ErrorMessage));
-            return Result<UserDto>.Failure(errors, ErrorType.BadRequest);
-        }
-
         await repository.InsertAsync(user);
         var createdUser = mapper.Map<UserDto>(user);
 

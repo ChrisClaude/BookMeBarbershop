@@ -7,7 +7,6 @@ namespace BookMeAPI.Apis;
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
-[Authorize]
 public class UserController : ControllerBase
 {
 

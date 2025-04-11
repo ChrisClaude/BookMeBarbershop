@@ -5,6 +5,8 @@ using BookMe.Infrastructure;
 using BookMeAPI.Configurations;
 using BookMeAPI.MiddleWare;
 using Elastic.Transport;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Azure;
 using Scalar.AspNetCore;
 using Serilog;
@@ -24,7 +26,13 @@ internal static class WebApplicationConfiguration
             configuration.GetSection("AppSettings"));
 
         services
-            .AddControllers()
+            .AddControllers(options =>
+            {
+              var policy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+              options.Filters.Add(new AuthorizeFilter(policy));
+            })
             .AddNewtonsoftJson();
 
         services.AddEndpointsApiExplorer();

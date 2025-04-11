@@ -56,10 +56,7 @@ internal static class WebApplicationConfiguration
                             {
                                 AuthorizationUrl = new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/authorize"),
 
-                                // AuthorizationUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/authorize"),
-
                                 TokenUrl = new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/token"),
-                                // TokenUrl = new Uri($"https://techvisesandbox.b2clogin.com/techvisesandbox.onmicrosoft.com/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/oauth2/v2.0/token"),
 
                                 Scopes = new Dictionary<string, string>
                                 {

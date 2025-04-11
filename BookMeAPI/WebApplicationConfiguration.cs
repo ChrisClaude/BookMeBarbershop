@@ -8,6 +8,9 @@ using Elastic.Transport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Azure;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Interfaces;
+using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -28,17 +31,52 @@ internal static class WebApplicationConfiguration
         services
             .AddControllers(options =>
             {
-              var policy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-              options.Filters.Add(new AuthorizeFilter(policy));
+                var policy = new AuthorizationPolicyBuilder()
+                  .RequireAuthenticatedUser()
+                  .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
             })
             .AddNewtonsoftJson();
 
         services.AddEndpointsApiExplorer();
 
         services
-            .AddOpenApi()
+            .AddOpenApi((o =>
+            {
+                o.AddDocumentTransformer((document, _, _) =>
+                {
+                    document.Components ??= new OpenApiComponents();
+
+                    document.Components.SecuritySchemes.Add("oauth", new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.OAuth2,
+                        Flows = new OpenApiOAuthFlows
+                        {
+                            AuthorizationCode = new OpenApiOAuthFlow
+                            {
+                                AuthorizationUrl = new Uri($"https://{appSettings.AzureAdB2C.TenantId}.b2clogin.com/{appSettings.AzureAdB2C.Domain}/oauth2/v2.0/authorize?p={appSettings.AzureAdB2C.SignUpSignInPolicyId}"),
+
+                                TokenUrl = new Uri($"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token"),
+
+                                Scopes = new Dictionary<string, string>
+                                {
+                                    { $"https://{appSettings.AzureAdB2C.TenantId}.onmicrosoft.com/resume-builder-api/Read", "Read access to the API" },
+                                    { $"https://{appSettings.AzureAdB2C.TenantId}.onmicrosoft.com/resume-builder-api/Write", "Write access to the API" },
+                                },
+                                // To allow Scalar to select PKCE by Default
+                                // valid options are 'SHA-256' | 'plain' | 'no'
+                                Extensions = new Dictionary<string, IOpenApiExtension>()
+                                {
+                                    ["x-usePkce"] = new OpenApiString("SHA-256")
+                                },
+
+                            }
+                        }
+                    });
+
+                    return Task.CompletedTask;
+                });
+            }))
             .AddApplication()
             .AddInfrastructure(configuration)
             .ConfigureAuthentication(configuration)
@@ -84,7 +122,7 @@ internal static class WebApplicationConfiguration
                         // TokenUrl = $"https://{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.TenantId}/oauth2/v2.0/token",
                         ClientId = appSettings.AzureAdB2C.ClientId,
                         // ClientSecret = appSettings.AzureAdB2C.ClientSecret,
-                        Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" }
+                        Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" },
                     }
                 };
             });
@@ -99,7 +137,7 @@ internal static class WebApplicationConfiguration
 
         app.UseAuthentication();
         app.UseAuthorization();
-		app.MapControllers();
+        app.MapControllers();
 
         return app;
     }

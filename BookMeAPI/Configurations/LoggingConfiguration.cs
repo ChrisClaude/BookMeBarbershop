@@ -68,6 +68,7 @@ public static class LoggingConfiguration
                     rollingInterval: RollingInterval.Day)))
             .CreateLogger();
 
+        services.AddSerilog();
         return services;
     }
 }

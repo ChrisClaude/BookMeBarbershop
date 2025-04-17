@@ -16,9 +16,12 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+            // Order matters
+            config.AddBehavior(typeof(LoggingBehavior<,>));
             config.AddBehavior(typeof(AuthRequestBehavior<,>));
             config.AddBehavior(typeof(ValidatorBehavior<,>));
-            config.AddBehavior(typeof(LoggingBehavior<,>));
+            config.AddBehavior(typeof(TransactionBehavior<,>));
         });
 
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

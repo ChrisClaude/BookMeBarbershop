@@ -1,5 +1,4 @@
 using System;
-using AutoMapper;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Entities;
 

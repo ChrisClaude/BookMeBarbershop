@@ -38,7 +38,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         catch (Exception ex)
         {
             await _transactionManager.RollbackTransactionAsync(cancellationToken);
-            Log.Error(ex, "Transaction rolled back for {CommandType} with ID: {TransactionId}", typeName, transactionId);
+            Log.Error(ex, "Transaction rolled back for command {@Command} with ID: {TransactionId}", request, transactionId);
             throw;
         }
     }

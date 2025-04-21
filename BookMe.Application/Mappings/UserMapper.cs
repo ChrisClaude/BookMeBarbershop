@@ -17,4 +17,16 @@ public static class UserMapper
             PhoneNumber = user.PhoneNumber
         };
     }
+
+    public static User MapToEntity(this UserDto userDto)
+    {
+        return new User
+        {
+            Id = userDto.Id,
+            Name = userDto.Name,
+            Surname = userDto.Surname,
+            Email = userDto.Email,
+            PhoneNumber = userDto.PhoneNumber
+        };
+    }
 }

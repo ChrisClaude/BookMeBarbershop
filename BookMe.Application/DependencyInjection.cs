@@ -24,8 +24,6 @@ public static class DependencyInjection
             config.AddBehavior(typeof(TransactionBehavior<,>));
         });
 
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
         // Register the command validators for the validator behavior (validators based on FluentValidation library)
         services.AddSingleton<IValidator<CreateOrUpdateUserCommand>, CreateOrUpdateUserCommandValidator>();
 

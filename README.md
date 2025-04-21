@@ -38,3 +38,11 @@ Setting up elasticsearch:
 
 Elasticsearch: `http://localhost:9200`
 Kibana: `http://localhost:5601`
+
+## Generate migrations and update database
+
+```
+dotnet ef migrations add <migration_name> --context BookMeContext -o ./Data/Migrations --project BookMe.Infrastructure --startup-project BookMeAPI
+
+dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI
+```

@@ -1,5 +1,3 @@
-using BookMeAPI.Apis;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add secrets configuration in development

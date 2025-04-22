@@ -1,5 +1,7 @@
 using BookMe.Application.Behaviors;
+using BookMe.Application.Commands;
 using BookMe.Application.Commands.Users;
+using BookMe.Application.Extensions;
 using BookMe.Application.Interfaces.Queries;
 using BookMe.Application.Queries;
 using BookMe.Application.Validators;
@@ -24,8 +26,7 @@ public static class DependencyInjection
             config.AddOpenBehavior(typeof(TransactionBehavior<,>));
         });
 
-        // Register the command validators for the validator behavior (validators based on FluentValidation library)
-        services.AddSingleton<IValidator<CreateOrUpdateUserCommand>, CreateOrUpdateUserCommandValidator>();
+        services.AddValidationService();
 
         // Register queries
         services.AddScoped<IUserQueries, UserQueries>();

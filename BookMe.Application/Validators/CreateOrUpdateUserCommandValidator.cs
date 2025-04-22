@@ -12,5 +12,6 @@ public class CreateOrUpdateUserCommandValidator : AbstractValidator<CreateOrUpda
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.Surname).NotEmpty();
         RuleFor(x => x.Email).NotEmpty();
+        RuleFor(x => x.Email).EmailAddress();
     }
 }

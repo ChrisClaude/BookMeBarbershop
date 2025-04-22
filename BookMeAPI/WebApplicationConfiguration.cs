@@ -24,6 +24,9 @@ internal static class WebApplicationConfiguration
         services.Configure<AppSettings>(
             configuration.GetSection("AppSettings"));
 
+        // Add memory cache first
+        services.AddMemoryCache();
+
         services
             .AddControllers(options =>
             {
@@ -46,7 +49,6 @@ internal static class WebApplicationConfiguration
 
         builder.Host.UseSerilog();
 
-        // Add exception handler and problem details
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 

@@ -4,8 +4,8 @@ using BookMe.Application.Interfaces.Queries;
 using BookMe.Application.Queries;
 using BookMe.Application.Validators;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace BookMe.Application;
 
@@ -29,6 +29,7 @@ public static class DependencyInjection
 
         // Register queries
         services.AddScoped<IUserQueries, UserQueries>();
+
 
         return services;
     }

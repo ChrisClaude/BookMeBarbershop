@@ -18,10 +18,10 @@ public static class DependencyInjection
             config.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
             // Order matters
-            config.AddBehavior(typeof(LoggingBehavior<,>));
-            config.AddBehavior(typeof(AuthRequestBehavior<,>));
-            config.AddBehavior(typeof(ValidatorBehavior<,>));
-            config.AddBehavior(typeof(TransactionBehavior<,>));
+            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            config.AddOpenBehavior(typeof(AuthRequestBehavior<,>));
+            config.AddOpenBehavior(typeof(ValidatorBehavior<,>));
+            config.AddOpenBehavior(typeof(TransactionBehavior<,>));
         });
 
         // Register the command validators for the validator behavior (validators based on FluentValidation library)

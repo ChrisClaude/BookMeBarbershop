@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookMe.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BookMeContext))]
-    [Migration("20250423123303_InitialMigration")]
+    [Migration("20250423134314_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -55,11 +55,26 @@ namespace BookMe.Infrastructure.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6b29fc40-ca47-1067-b31d-00dd010662fd"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("6b29fc40-ca47-1067-b31d-00dd010662fc"),
+                            Name = "Customer"
+                        });
                 });
 
             modelBuilder.Entity("BookMe.Application.Entities.TimeSlot", b =>
@@ -109,10 +124,12 @@ namespace BookMe.Infrastructure.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles", (string)null);
                 });
@@ -141,16 +158,31 @@ namespace BookMe.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("BookMe.Application.Entities.UserRole", b =>
                 {
-                    b.HasOne("BookMe.Application.Entities.User", null)
+                    b.HasOne("BookMe.Application.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BookMe.Application.Entities.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookMe.Application.Entities.Booking", b =>
                 {
                     b.Navigation("TimeSlot");
+                });
+
+            modelBuilder.Entity("BookMe.Application.Entities.Role", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("BookMe.Application.Entities.User", b =>

@@ -10,6 +10,7 @@ public class Result
     public IEnumerable<Error> Errors { get; }
     [JsonIgnore]
     public ErrorType ErrorType { get; }
+    public ResultSuccessType SuccessType { get; }
 
     public Result()
     {
@@ -27,7 +28,7 @@ public class Result
         ErrorType = errorType;
     }
 
-    public static Result Success()
+    public static Result Success(ResultSuccessType successType = ResultSuccessType.Retrieved)
     {
         return new Result(true, new List<Error>(), ErrorType.None);
     }

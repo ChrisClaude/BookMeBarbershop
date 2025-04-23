@@ -4,7 +4,12 @@ public sealed record Error(string Code, string Description)
 {
 	public static readonly Error None = new(string.Empty, string.Empty);
 
-	public static Error InternalServerError(string exceptionMessage = null)
+    public override string ToString()
+    {
+        return $"{Code} - {Description}";
+    }
+
+    public static Error InternalServerError(string exceptionMessage = null)
 	{
 		if (string.IsNullOrEmpty(exceptionMessage))
 		{

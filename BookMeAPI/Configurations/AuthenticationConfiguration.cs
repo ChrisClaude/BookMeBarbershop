@@ -2,6 +2,7 @@ using BookMe.Application.Commands;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
 using BookMe.Application.Exceptions;
+using BookMe.Application.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -9,6 +10,9 @@ using Serilog;
 
 namespace BookMeAPI.Configurations;
 
+/// <summary>
+/// Provides configuration for Azure AD B2C authentication in the application.
+/// </summary>
 public static class AuthenticationConfiguration
 {
     public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, ConfigurationManager configuration)
@@ -30,7 +34,6 @@ public static class AuthenticationConfiguration
 
     private static async Task HandleOnTokenValidatedAsync(TokenValidatedContext context)
     {
-
         try
         {
             var mediator = context.HttpContext.RequestServices.GetRequiredService<IMediator>() ?? throw new Exception("Could not get service to retrieve user.");
@@ -81,16 +84,12 @@ public static class AuthenticationConfiguration
 
     private static async Task<(string key, UserDto user)> GetAuthenticateUserWithKeyAsync(IMediator mediator, string userEmail)
     {
-        if (string.IsNullOrWhiteSpace(userEmail))
-        {
-            throw new ArgumentNullException(nameof(userEmail), "user email is null or empty");
-        }
-
+        // The email is validated as part of the command validation
         var result = await mediator.Send(new GetOrCreateUserCommand(userEmail));
 
         if (result.IsFailure)
         {
-            throw new HttpContextUserLoadingProcessFailureException($"Something went wrong during the retrieval of user {userEmail}");
+            throw new HttpContextUserLoadingProcessFailureException(result.Errors.ToAggregateString());
         }
 
         return (Constant.HTTP_CONTEXT_USER_ITEM_KEY, result.Value);

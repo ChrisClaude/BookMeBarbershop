@@ -20,9 +20,11 @@ public static class SeedDataProvider
 
         var roles = new List<Role>
         {
-            new() { Id = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662FD"), Name = RoleName.Admin },
-            new() { Id = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662FC"), Name = RoleName.Customer }
+            new() { Id = DefaultRoles.AdminId, Name = RoleName.Admin },
+            new() { Id = DefaultRoles.CustomerId, Name = RoleName.Customer }
         };
         modelBuilder.Entity<Role>().HasData(roles);
     }
+
+
 }

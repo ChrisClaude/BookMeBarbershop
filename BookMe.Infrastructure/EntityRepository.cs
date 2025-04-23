@@ -322,7 +322,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
     /// <summary>
     /// Gets a table
     /// </summary>
-    public virtual IQueryable<TEntity> Table => _context.Set<TEntity>();
+    private IQueryable<TEntity> Table => _context.Set<TEntity>();
 
     #endregion
 }

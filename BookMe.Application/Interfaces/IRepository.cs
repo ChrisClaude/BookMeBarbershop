@@ -41,13 +41,4 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     Task DeleteAsync(IList<TEntity> entities, bool publishEvent = true);
 
     #endregion
-
-    #region Properties
-
-    /// <summary>
-    /// Gets a table
-    /// </summary>
-    IQueryable<TEntity> Table { get; }
-
-    #endregion
 }

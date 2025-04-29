@@ -9,6 +9,9 @@ using MediatR;
 
 namespace BookMe.Application.Handlers;
 
+/// <summary>
+/// Handle the creation of a new user. The user is created with a default role of a customer.
+/// </summary>
 public class CreateUserCommandHandler(IRepository<User> repository) : IRequestHandler<CreateOrUpdateUserCommand, Result<UserDto>>
 {
 

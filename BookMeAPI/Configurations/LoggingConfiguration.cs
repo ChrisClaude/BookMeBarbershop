@@ -5,6 +5,7 @@ using Elastic.Serilog.Sinks;
 using Elastic.Transport;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.OpenTelemetry;
 
 namespace BookMeAPI.Configurations;
 
@@ -66,6 +67,11 @@ public static class LoggingConfiguration
                 sinkConfig => sinkConfig.File(
                     path: "logs/errors-.txt",
                     rollingInterval: RollingInterval.Day)))
+            .WriteTo.OpenTelemetry(options =>
+            {
+                options.Endpoint = appSettings.OpenTelemetry.Endpoint;
+                options.Protocol = OtlpProtocol.HttpProtobuf;
+            })
             .CreateLogger();
 
         services.AddSerilog();

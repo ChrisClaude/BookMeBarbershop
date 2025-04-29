@@ -24,7 +24,6 @@ internal static class WebApplicationConfiguration
         services.Configure<AppSettings>(
             configuration.GetSection("AppSettings"));
 
-        // Add memory cache first
         services.AddMemoryCache();
 
         services

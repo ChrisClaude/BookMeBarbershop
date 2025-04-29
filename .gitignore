@@ -3,7 +3,9 @@
 obj/
 bin/
 .DS_Store
-*.json
 env-setup/
 appsettings.secrets.json
 logs/
+.vscode/settings.json
+bookme-ui/openapitools.json
+bookme-ui/package-lock.json

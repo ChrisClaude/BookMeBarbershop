@@ -5,17 +5,16 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace BookMe.Infrastructure.Events;
 
 public class KafkaProducer : IEventPublisher
 {
     private readonly EventConfig _eventConfig;
-    private readonly ILogger<KafkaProducer> _logger;
-    public KafkaProducer(IOptionsSnapshot<AppSettings> appSettings, ILogger<KafkaProducer> logger)
+    public KafkaProducer(IOptionsSnapshot<AppSettings> appSettings)
     {
         _eventConfig = appSettings.Value.EventConfig;
-        _logger = logger;
     }
     public async Task PublishAsync<TEvent>(TEvent @event)
     {
@@ -34,11 +33,11 @@ public class KafkaProducer : IEventPublisher
                 Value = JsonConvert.SerializeObject(@event)
             });
 
-            _logger.LogInformation("Message sent to {@deliveryResult}", deliveryResult.TopicPartitionOffset);
+            Log.Information("Message sent to {@deliveryResult}", deliveryResult.TopicPartitionOffset);
         }
         catch (ProduceException<string, string> e)
         {
-            _logger.LogError("Error sending message: {@error}", e.Error.Reason);
+            Log.Error("Error sending message: {@error}", e.Error.Reason);
         }
     }
 }

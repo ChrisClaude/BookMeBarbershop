@@ -39,10 +39,11 @@ public static class HealthChecksConfiguration
                 configuration.GetConnectionString("BookMeDb"),
                 name: "sql-server",
                 tags: new[] { "database" })
-            .AddElasticsearch(
-                appSettings.Elasticsearch.Uri,
-                name: "elasticsearch",
-                tags: new[] { "logging" })
+            // TODO: Uncomment when this issue is resolved https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/issues/2355
+            // .AddElasticsearch(
+            //     appSettings.Elasticsearch.Uri,
+            //     name: "elasticsearch",
+            //     tags: new[] { "logging" })
             .AddCheck<CustomHealthCheck>("custom-check")
             .AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"),
                 name: "azure-b2c",

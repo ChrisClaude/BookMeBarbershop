@@ -17,7 +17,7 @@ Update language flags with svg files| 🟡 Not Started |
 Store Language preference in local storage (ENG and PL)| ❌ Not Started |
 Create an application wide loader| ✅ Completed |
 | Add cookiebot| ✅ Completed |
-| Implement alive and health checks endpoints [docs](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-9.0)| ❌ Not Started |
+| Implement alive and health checks endpoints [docs](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-9.0)| ✅ Completed |
 
 Legend:
 - ✅ Completed

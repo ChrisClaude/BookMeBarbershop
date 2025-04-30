@@ -18,16 +18,16 @@ public class MemoryCacheManager : ICacheManager
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
     }
 
-    public Task AddAsync<T>(string key, T value)
+    public Task AddAsync<T>(CacheKey cacheKey, T value)
     {
-        ArgumentException.ThrowIfNullOrEmpty(key);
+        ArgumentNullException.ThrowIfNull(cacheKey);
 
-        var cacheTime = _appSettings.Value.CacheConfig.CacheTime;
+        var cacheTime = cacheKey.CacheTime;
         var options = new MemoryCacheEntryOptions()
             .SetAbsoluteExpiration(TimeSpan.FromMinutes(cacheTime))
             .SetSlidingExpiration(TimeSpan.FromMinutes(cacheTime / 2));
 
-        _memoryCache.Set(key, value, options);
+        _memoryCache.Set(cacheKey.Key, value, options);
 
         return Task.CompletedTask;
     }
@@ -37,7 +37,7 @@ public class MemoryCacheManager : ICacheManager
         ArgumentNullException.ThrowIfNull(cacheKey);
         ArgumentException.ThrowIfNullOrEmpty(cacheKey.Key);
 
-        var success = _memoryCache.TryGetValue(cacheKey.Key, out T? value);
+        var success = _memoryCache.TryGetValue(cacheKey.Key, out T value);
         result = value!;
 
         return Task.FromResult(success);

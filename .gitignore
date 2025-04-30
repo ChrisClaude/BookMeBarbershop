@@ -3,7 +3,7 @@
 obj/
 bin/
 .DS_Store
-env-setup/
+env_setup/
 appsettings.secrets.json
 logs/
 .vscode/settings.json

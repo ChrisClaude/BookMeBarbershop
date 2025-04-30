@@ -69,8 +69,12 @@ public static class LoggingConfiguration
                     rollingInterval: RollingInterval.Day)))
             .WriteTo.OpenTelemetry(options =>
             {
-                options.Endpoint = appSettings.OpenTelemetry.Endpoint;
+                options.Endpoint = appSettings.OpenTelemetry.Seq.Uri;
                 options.Protocol = OtlpProtocol.HttpProtobuf;
+                options.Headers = new Dictionary<string, string>
+                {
+                    { "X-Seq-ApiKey", appSettings.OpenTelemetry.Seq.ApiKey }
+                };
             })
             .CreateLogger();
 

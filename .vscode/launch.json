@@ -6,6 +6,11 @@
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/BookMeAPI/BookMeAPI.csproj",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "https://localhost:6002/scalar/v1"
+      }
     },
     {
       "name": "Launch Next.js",

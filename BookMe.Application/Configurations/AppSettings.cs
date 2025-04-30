@@ -30,7 +30,13 @@ public class SerilogConfig
 
 public class OpenTelemetryConfig
 {
-    public string Endpoint { get; set; }
+    public SeqConfig Seq { get; set; }
+
+    public class SeqConfig
+    {
+        public string Uri { get; set; }
+        public string ApiKey { get; set; }
+    }
 }
 
 #endregion

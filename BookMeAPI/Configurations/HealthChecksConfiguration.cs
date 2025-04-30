@@ -8,7 +8,7 @@ namespace BookMeAPI.Configurations;
 
 public static class HealthChecksConfiguration
 {
-    public static HealthCheckOptions HealthCheckOptions = new()
+    public static readonly HealthCheckOptions HealthCheckOptions = new()
     {
         ResponseWriter = async (context, report) =>
         {
@@ -44,7 +44,7 @@ public static class HealthChecksConfiguration
                 name: "elasticsearch",
                 tags: new[] { "logging" })
             .AddCheck<CustomHealthCheck>("custom-check")
-            .AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/.well-known/openid-configuration"),
+            .AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"),
                 name: "azure-b2c",
                 tags: new[] { "auth" });
         return services;

@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BookMeAPI.HealthChecks;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Exporter;
 
 internal static class WebApplicationConfiguration
 {
@@ -47,6 +50,7 @@ internal static class WebApplicationConfiguration
             .AddInfrastructure(configuration)
             .ConfigureAuthentication(configuration)
             .ConfigureSerilog(appSettings)
+            .ConfigureOpenTelemetryTracing(appSettings)
             .ConfigureCors(appSettings, _corsPolicyName)
             .ConfigureOpenApi(appSettings);
 
@@ -55,7 +59,6 @@ internal static class WebApplicationConfiguration
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
         services.ConfigureHealthChecks(appSettings, configuration);
-
 
         return builder.Build();
     }

@@ -34,7 +34,8 @@ public class OpenTelemetryConfig
 
     public class SeqConfig
     {
-        public string Uri { get; set; }
+        public string LogsUri { get; set; }
+        public string TracesUri { get; set; }
         public string ApiKey { get; set; }
     }
 }

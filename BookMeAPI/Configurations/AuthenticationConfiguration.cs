@@ -42,7 +42,7 @@ public static class AuthenticationConfiguration
 
             var (key, user) = await GetAuthenticateUserWithKeyAsync(mediator, userEmail);
 
-            context?.HttpContext.Items.Add(new KeyValuePair<object, object?>(key, user));
+            context?.HttpContext.Items.Add(new KeyValuePair<object, object>(key, user));
         }
         catch (HttpContextUserLoadingProcessFailureException ex)
         {

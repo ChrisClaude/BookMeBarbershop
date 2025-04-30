@@ -54,19 +54,8 @@ internal static class WebApplicationConfiguration
 
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-        services.AddHealthChecks()
-            .AddSqlServer(
-                configuration.GetConnectionString("BookMeDb"),
-                name: "sql-server",
-                tags: new[] { "database" })
-            .AddElasticsearch(
-                appSettings.Elasticsearch.Uri,
-                name: "elasticsearch",
-                tags: new[] { "logging" })
-            .AddCheck<CustomHealthCheck>("custom-check")
-            .AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/.well-known/openid-configuration"),
-                name: "azure-b2c",
-                tags: new[] { "auth" });
+        services.ConfigureHealthChecks(appSettings, configuration);
+
 
         return builder.Build();
     }
@@ -84,30 +73,7 @@ internal static class WebApplicationConfiguration
             app.MigrateDatabase();
         }
 
-        app.MapHealthChecks("/healthz", new HealthCheckOptions
-        {
-            ResponseWriter = async (context, report) =>
-            {
-                context.Response.ContentType = "application/json";
-
-                var response = new
-                {
-                    Status = report.Status.ToString(),
-                    Duration = report.TotalDuration,
-                    Checks = report.Entries.Select(entry => new
-                    {
-                        Name = entry.Key,
-                        Status = entry.Value.Status.ToString(),
-                        Duration = entry.Value.Duration,
-                        Description = entry.Value.Description,
-                        Exception = entry.Value.Exception?.Message
-                    }),
-                    Timestamp = DateTime.UtcNow,
-                };
-
-                await JsonSerializer.SerializeAsync(context.Response.Body, response);
-            }
-        });
+        app.MapHealthChecks("/healthz", HealthChecksConfiguration.HealthCheckOptions);
         app.UseCors(_corsPolicyName);
         app.UseSerilogRequestLogging();
 

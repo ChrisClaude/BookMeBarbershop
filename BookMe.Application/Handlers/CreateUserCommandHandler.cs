@@ -28,7 +28,6 @@ public class CreateUserCommandHandler(IRepository<User> repository) : IRequestHa
 
         await repository.InsertAsync(user);
 
-
         return Result<UserDto>.Success(user.MapToDto());
     }
 }

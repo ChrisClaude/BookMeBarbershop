@@ -11,4 +11,6 @@ public class User : BaseEntity
     public string PhoneNumber { get; set; }
     public List<UserRole> UserRoles { get; set; }
     public List<Booking> Bookings { get; set; }
+    public List<TimeSlot> CreatedTimeSlots { get; set; }
+    public List<TimeSlot> UpdatedTimeSlots { get; set; }
 }

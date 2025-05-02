@@ -13,5 +13,12 @@ public class TimeSlotEntityTypeConfiguration : IEntityTypeConfiguration<TimeSlot
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Start).IsRequired();
         builder.Property(x => x.End).IsRequired();
+        builder.HasOne(x => x.CreatedByUser)
+            .WithMany(x => x.CreatedTimeSlots)
+            .HasForeignKey(x => x.CreatedBy);
+
+        builder.HasOne(x => x.UpdatedByUser)
+            .WithMany(x => x.UpdatedTimeSlots)
+            .HasForeignKey(x => x.UpdatedBy);
     }
 }

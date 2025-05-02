@@ -6,7 +6,6 @@ using BookMe.Application.Extensions;
 using BookMe.Application.Interfaces;
 using BookMe.Application.Mappings;
 using MediatR;
-using Serilog;
 
 namespace BookMe.Application.Handlers;
 

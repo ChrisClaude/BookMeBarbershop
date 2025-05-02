@@ -14,7 +14,8 @@ public static class UserMapper
             Name = user.Name,
             Surname = user.Surname,
             Email = user.Email,
-            PhoneNumber = user.PhoneNumber
+            PhoneNumber = user.PhoneNumber,
+            Roles = user.UserRoles.Select(x => x.Role.Name)
         };
     }
 

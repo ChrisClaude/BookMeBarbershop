@@ -30,6 +30,7 @@ public static class DependencyInjection
 
         // Register queries
         services.AddScoped<IUserQueries, UserQueries>();
+        services.AddScoped<ITimeSlotQueries, TimeSlotQueries>();
 
 
         return services;

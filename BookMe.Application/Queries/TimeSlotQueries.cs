@@ -12,7 +12,7 @@ public class TimeSlotQueries(IRepository<TimeSlot> repository) : ITimeSlotQuerie
 {
     public async Task<Result<IEnumerable<TimeSlotDto>>> GetAvailableTimeSlotsAsync(DateTimeOffset start, DateTimeOffset end)
     {
-        var timeSlots = await repository.GetAllAsync(query => query.Where(x => x.Start >= start && x.End <= end && x.Booking == null));
+        var timeSlots = await repository.GetAllAsync(query => query.Where(x => x.Start >= start && x.End <= end));
         return Result<IEnumerable<TimeSlotDto>>.Success(timeSlots.Select(x => x.MapToDto()));
     }
 }

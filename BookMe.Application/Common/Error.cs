@@ -26,4 +26,22 @@ public sealed record Error(string Code, string Description)
 		}
 		return new("not-found", exceptionMessage);
 	}
+
+	public static Error NotAuthorized(string exceptionMessage = null)
+	{
+		if (string.IsNullOrEmpty(exceptionMessage))
+		{
+			exceptionMessage = "Not Authorized";
+		}
+		return new("not-authorized", exceptionMessage);
+	}
+
+	public static Error InvalidArgument(string exceptionMessage = null)
+	{
+		if (string.IsNullOrEmpty(exceptionMessage))
+		{
+			exceptionMessage = "Invalid Argument";
+		}
+		return new("invalid-argument", exceptionMessage);
+	}
 }

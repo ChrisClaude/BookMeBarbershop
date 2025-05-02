@@ -24,12 +24,6 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
             errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDTo.Id}"));
         }
 
-        if (!request.UserDTo.IsCustomer)
-        {
-            Log.Warning("User {UserId} is not a customer", request.UserDTo.Id);
-            errors.Add(Error.NotFound($"User {request.UserDTo.Id} is not a customer"));
-        }
-
         if (errors.Any())
         {
             return Result<BookingDto>.Failure(errors, ErrorType.BadRequest);

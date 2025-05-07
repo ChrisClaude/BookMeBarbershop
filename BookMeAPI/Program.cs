@@ -7,3 +7,5 @@ var app = builder.ConfigureServices();
 app.ConfigureRequestPipeline();
 
 app.Run();
+
+public partial class Program { }

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMe.UnitTests", "tests\BookMe.Unitests\BookMe.UnitTests.csproj", "{9EA448BC-D193-4593-BBDA-BEBDA06C915C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMe.IntegrationTests", "tests\BookMe.IntegrationTests\BookMe.IntegrationTests.csproj", "{7668AA9D-D4A0-4911-929A-28CF182CDE5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,12 +37,17 @@ Global
 		{9EA448BC-D193-4593-BBDA-BEBDA06C915C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EA448BC-D193-4593-BBDA-BEBDA06C915C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EA448BC-D193-4593-BBDA-BEBDA06C915C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7668AA9D-D4A0-4911-929A-28CF182CDE5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7668AA9D-D4A0-4911-929A-28CF182CDE5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7668AA9D-D4A0-4911-929A-28CF182CDE5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7668AA9D-D4A0-4911-929A-28CF182CDE5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9EA448BC-D193-4593-BBDA-BEBDA06C915C} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{7668AA9D-D4A0-4911-929A-28CF182CDE5E} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B2B1ED3E-01EE-4EED-A2B9-6D59DB9FDBC5}

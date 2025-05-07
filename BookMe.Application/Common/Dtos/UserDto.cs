@@ -12,7 +12,7 @@ public record UserDto
     public string PhoneNumber { get; set; }
     public IEnumerable<string> Roles { get; set; }
 
-    public bool IsAdmin => Roles.Contains(RoleName.Admin);
+    public bool IsAdmin => Roles.Contains(RoleName.ADMIN);
 
-    public bool IsCustomer => Roles.Contains(RoleName.Customer);
+    public bool IsCustomer => Roles.Contains(RoleName.CUSTOMER);
 }

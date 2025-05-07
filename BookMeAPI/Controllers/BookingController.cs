@@ -5,6 +5,7 @@ using BookMe.Application.Common.Dtos;
 using BookMe.Application.Common.Dtos.Bookings;
 using BookMe.Application.Entities;
 using BookMe.Application.Interfaces.Queries;
+using BookMeAPI.Authorization;
 using BookMeAPI.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     }
 
     [HttpPost("timeslots")]
+    [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType<TimeSlot>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

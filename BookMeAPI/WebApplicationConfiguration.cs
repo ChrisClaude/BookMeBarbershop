@@ -49,6 +49,7 @@ internal static class WebApplicationConfiguration
             .AddApplication()
             .AddInfrastructure(configuration)
             .ConfigureAuthentication(configuration)
+            .ConfigureAuthorization()
             .ConfigureSerilog(appSettings)
             .ConfigureOpenTelemetryTracing(appSettings)
             .ConfigureCors(appSettings, _corsPolicyName)

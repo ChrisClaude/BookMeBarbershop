@@ -9,8 +9,8 @@ public static class Constant
 
 public static class RoleName
 {
-    public const string Admin = "Admin";
-    public const string Customer = "Customer";
+    public const string ADMIN = "Admin";
+    public const string CUSTOMER = "Customer";
 }
 
 public static class DefaultRoles

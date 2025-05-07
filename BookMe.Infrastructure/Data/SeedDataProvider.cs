@@ -20,8 +20,8 @@ public static class SeedDataProvider
 
         var roles = new List<Role>
         {
-            new() { Id = DefaultRoles.AdminId, Name = RoleName.Admin },
-            new() { Id = DefaultRoles.CustomerId, Name = RoleName.Customer }
+            new() { Id = DefaultRoles.AdminId, Name = RoleName.ADMIN },
+            new() { Id = DefaultRoles.CustomerId, Name = RoleName.CUSTOMER }
         };
         modelBuilder.Entity<Role>().HasData(roles);
     }

@@ -29,6 +29,12 @@ public class CreateUserCommandHandlerTest
         // Arrange
         var createUserCommand = new CreateOrUpdateUserCommand("John", "Doe", "john.doe@example.com", "1000000000");
 
+        // Setup the repository to populate Role when InsertAsync is called
+        _repository.Setup(r => r.InsertAsync(It.IsAny<User>(), true))
+            .Callback<User, bool>((user, _) => {
+                user.UserRoles[0].Role = new Role { Id = DefaultRoles.CustomerId, Name = RoleName.CUSTOMER };
+            });
+
         // Act
         var result = await _handler.Handle(createUserCommand, CancellationToken.None);
 
@@ -43,6 +49,7 @@ public class CreateUserCommandHandlerTest
         )), true), Times.Once);
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeOfType(typeof(UserDto));
-        result.Value.Roles.Should().Contain(RoleName.CUSTOMER);
+        result.Value.Roles.Count().Should().Be(1);
+        result.Value.Roles.First().Role.Name.Should().Be(RoleName.CUSTOMER);
     }
 }

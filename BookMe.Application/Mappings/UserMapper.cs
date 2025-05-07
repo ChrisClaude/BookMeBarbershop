@@ -1,5 +1,6 @@
 using System;
 using BookMe.Application.Common.Dtos;
+using BookMe.Application.Common.Dtos.Users;
 using BookMe.Application.Entities;
 
 namespace BookMe.Application.Mappings;
@@ -15,7 +16,7 @@ public static class UserMapper
             Surname = user.Surname,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
-            Roles = user.UserRoles.Select(x => x.Role.Name)
+            Roles = user.UserRoles?.Select(x => x.MapToDto())
         };
     }
 
@@ -28,6 +29,22 @@ public static class UserMapper
             Surname = userDto.Surname,
             Email = userDto.Email,
             PhoneNumber = userDto.PhoneNumber
+        };
+    }
+
+    public static RoleDto MapToDto(this Role role)
+    {
+        return new RoleDto
+        {
+            Name = role.Name
+        };
+    }
+
+    public static UserRoleDto MapToDto(this UserRole userRole)
+    {
+        return new UserRoleDto
+        {
+            Role = userRole.Role.MapToDto()
         };
     }
 }

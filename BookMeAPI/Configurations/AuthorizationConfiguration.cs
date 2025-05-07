@@ -12,7 +12,11 @@ public static class AuthorizationConfiguration
         services.AddAuthorizationBuilder()
             .AddPolicy(Policy.ADMIN, policy => policy.Requirements.Add(new AdminRequirement(true)));
 
+        services.AddAuthorizationBuilder()
+            .AddPolicy(Policy.CUSTOMER, policy => policy.Requirements.Add(new CustomerRequirement()));
+
         services.AddSingleton<IAuthorizationHandler, AdminAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationHandler, CustomerAuthorizationHandler>();
 
         return services;
     }

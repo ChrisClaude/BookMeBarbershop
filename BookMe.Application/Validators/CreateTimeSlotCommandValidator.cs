@@ -1,3 +1,4 @@
+using System.Data;
 using BookMe.Application.Commands.Bookings;
 using FluentValidation;
 
@@ -11,6 +12,13 @@ public class CreateTimeSlotCommandValidator : AbstractValidator<CreateTimeSlotCo
         RuleFor(x => x.EndDateTime).NotEmpty();
         RuleFor(x => x).Must(x => x.StartDateTime < x.EndDateTime)
             .WithMessage(x => $"Start time {x.StartDateTime} must be before end time {x.EndDateTime}");
+
+        RuleFor(x => x).Must(x => x.EndDateTime - x.StartDateTime <= TimeSpan.FromHours(1))
+            .WithMessage(x => $"Time slot must not be apart by more than 1 hour");
+
+        RuleFor(x => x).Must(x => x.StartDateTime > DateTime.UtcNow)
+            .WithMessage(x => $"Start time {x.StartDateTime} must be in the future");
+
         RuleFor(x => x.UserDTo).Must(x => x.IsAdmin)
             .WithMessage(x => $"User {x.UserDTo.Id} is not an admin");
     }

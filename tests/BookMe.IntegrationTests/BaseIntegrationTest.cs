@@ -7,7 +7,7 @@ namespace BookMe.IntegrationTests;
 public class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>, IDisposable
 {
 
-    private readonly IServiceScope _scope;
+    protected readonly IServiceScope _scope;
     protected readonly BookMeContext _bookMeContext;
 
     protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)

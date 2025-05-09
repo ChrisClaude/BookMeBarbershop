@@ -1,5 +1,6 @@
 using System;
 using BookMe.Infrastructure.Data;
+using BookMe.IntegrationTests.Extensions;
 using BookMe.IntegrationTests.Mocks;
 using BookMe.IntegrationTests.TestData;
 using BookMeAPI;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Testcontainers.MsSql;
 
 namespace BookMe.IntegrationTests;
@@ -39,18 +41,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
                 options.UseSqlServer(_sqlContainer.GetConnectionString());
             });
 
-            MockHttpContextAccessor(services);
+            services.ReplaceHealthChecksService();
+            services.MockHttpContextAccessor(MockHttpContext);
         });
-    }
-
-    private void MockHttpContextAccessor(IServiceCollection services)
-    {
-        var httpContextDescriptor = services.SingleOrDefault(
-            s => s.ServiceType == typeof(IHttpContextAccessor));
-        if (httpContextDescriptor != null)
-            services.Remove(httpContextDescriptor);
-
-        services.AddSingleton<IHttpContextAccessor>(MockHttpContext);
     }
 
     public async Task InitializeAsync()

@@ -53,14 +53,15 @@ namespace BookMe.Infrastructure.Data.Migrations
                 column: "CreatedBy",
                 principalTable: "Users",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_TimeSlots_Users_UpdatedBy",
                 table: "TimeSlots",
                 column: "UpdatedBy",
                 principalTable: "Users",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />

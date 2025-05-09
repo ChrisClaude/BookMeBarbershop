@@ -58,3 +58,8 @@ dotnet ef migrations add <migration_name> --context BookMeContext -o ./Data/Migr
 
 dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI
 ```
+
+### Remove migrations
+```
+dotnet ef migrations remove --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI
+```

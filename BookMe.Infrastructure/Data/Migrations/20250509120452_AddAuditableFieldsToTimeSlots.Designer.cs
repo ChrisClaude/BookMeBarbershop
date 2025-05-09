@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookMe.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BookMeContext))]
-    [Migration("20250509115501_UpdateTimeSlotConfiguration")]
-    partial class UpdateTimeSlotConfiguration
+    [Migration("20250509120452_AddAuditableFieldsToTimeSlots")]
+    partial class AddAuditableFieldsToTimeSlots
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

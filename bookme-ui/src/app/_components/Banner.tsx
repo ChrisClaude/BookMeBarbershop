@@ -13,6 +13,8 @@ const Banner = ({ language }: { language: Language }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const navigateToCustomerPortal = useCallback(() => {
+    console.log("navigateToCustomerPortal", BOOKING_FEATURE_ENABLED);
+
     if (!BOOKING_FEATURE_ENABLED) {
       onOpen();
       return;

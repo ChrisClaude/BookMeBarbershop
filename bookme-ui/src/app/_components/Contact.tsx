@@ -66,8 +66,8 @@ const Contact = ({ language }: { language: Language }) => {
               <ContactInfo
                 icon={<FaEnvelope size={22} />}
                 title={CONTENT[language].home.contactSection.email}
-                content="christ.tchambila@gmail.com"
-                link="mailto:christ.tchambila@gmail.com"
+                content="kayrobert11@yahoo.com"
+                link="mailto:kayrobert11@yahoo.com"
               />
               <ContactInfo
                 icon={<FaLocationDot size={22} />}

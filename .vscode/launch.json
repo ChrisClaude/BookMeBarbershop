@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch BookMeAPI",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/BookMeAPI/BookMeAPI.csproj",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "https://localhost:6002/scalar/v1"
+      }
+    },
+    {
+      "name": "Launch Next.js",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/bookme-ui",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack",
+      "configurations": ["Launch BookMeAPI", "Launch Next.js"]
+    }
+  ]
+}

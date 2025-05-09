@@ -51,7 +51,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         if (!id.HasValue)
             return null;
 
-        async Task<TEntity> GetEntityAsync()
+        async Task<TEntity> getEntityAsync()
         {
             var query = Table;
             if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
@@ -62,13 +62,13 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
 
         if (cacheKey == null)
-            return await GetEntityAsync();
+            return await getEntityAsync();
 
         if (await _cacheManager.GetAsync(cacheKey, out TEntity entity))
             return entity;
 
 
-        return await GetEntityAsync();
+        return await getEntityAsync();
     }
 
     public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, CacheKey cacheKey = null, bool includeDeleted = true)
@@ -76,7 +76,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         if (ids == null || !ids.Any())
             return new List<TEntity>();
 
-        async Task<IList<TEntity>> GetEntitiesAsync()
+        async Task<IList<TEntity>> getEntitiesAsync()
         {
             var query = Table;
             if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
@@ -87,12 +87,12 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
 
         if (cacheKey == null)
-            return await GetEntitiesAsync();
+            return await getEntitiesAsync();
 
         if (await _cacheManager.GetAsync(cacheKey, out IList<TEntity> entities))
             return entities;
 
-        return await GetEntitiesAsync();
+        return await getEntitiesAsync();
     }
 
     public virtual async Task<IList<TEntity>> GetAllAsync(
@@ -100,7 +100,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         CacheKey cacheKey = null,
         bool includeDeleted = true)
     {
-        async Task<IList<TEntity>> GetEntitiesAsync()
+        async Task<IList<TEntity>> getEntitiesAsync()
         {
             var query = Table;
             if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
@@ -114,12 +114,12 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
 
         if (cacheKey == null)
-            return await GetEntitiesAsync();
+            return await getEntitiesAsync();
 
         if (await _cacheManager.GetAsync(cacheKey, out IList<TEntity> entities))
             return entities;
 
-        return await GetEntitiesAsync();
+        return await getEntitiesAsync();
     }
 
     public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(
@@ -322,7 +322,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
     /// <summary>
     /// Gets a table
     /// </summary>
-    public virtual IQueryable<TEntity> Table => _context.Set<TEntity>();
+    private IQueryable<TEntity> Table => _context.Set<TEntity>();
 
     #endregion
 }

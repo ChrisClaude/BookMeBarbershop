@@ -12,10 +12,10 @@ public class CacheKey
   /// Initialize a new instance with key and prefixes
   /// </summary>
   /// <param name="key">Key</param>
-  public CacheKey(string key, IOptionsSnapshot<AppSettings> appSettings)
+  public CacheKey(string key, AppSettings appSettings)
   {
     Key = key;
-    CacheTime = appSettings.Value.CacheConfig.CacheType switch
+    CacheTime = appSettings.CacheConfig.CacheType switch
     {
       CacheType.Memory => 10,
       CacheType.SqlServer => 10,

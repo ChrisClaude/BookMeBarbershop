@@ -1,0 +1,12 @@
+version: "1.0"
+services:
+  bookme-seq:
+    image: datalust/seq:latest
+    container_name: bookme-seq
+    volumes:
+      - ./.containers/seq:/data
+    ports:
+      - 5341:5341
+      - 8081:80
+    environment:
+      - ACCEPT_EULA=Y

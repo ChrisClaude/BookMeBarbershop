@@ -5,7 +5,7 @@ namespace BookMe.Application.Caching;
 
 public interface ICacheManager
 {
-    Task AddAsync<T>(string key, T value);
+    Task AddAsync<T>(CacheKey key, T value);
 
     Task RemoveAsync(string cacheKey);
 

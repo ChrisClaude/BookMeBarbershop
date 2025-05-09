@@ -24,5 +24,6 @@ public class BookMeContext : DbContext
         modelBuilder.ApplyConfiguration(new UserRoleEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BookingEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new TimeSlotEntityTypeConfiguration());
+        modelBuilder.SeedData();
     }
 }

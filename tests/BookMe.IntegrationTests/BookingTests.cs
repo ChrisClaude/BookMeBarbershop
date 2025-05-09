@@ -21,14 +21,14 @@ public class BookingTests : BaseIntegrationTest
 
     }
 
-    [Fact(Skip = "Temporarily disable to test the test pipeline")]
+    [Fact]
     public async Task CreateTimeSlotsShouldSucceedAsync()
     {
         // Arrange
         var adminUser = await _bookMeContext.Users
-        .Include(x => x.UserRoles)
-        .ThenInclude(x => x.Role)
-        .FirstAsync(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId));
+            .Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role)
+            .FirstAsync(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId));
 
         _mockHttpContext.SetUser(adminUser.MapToDto());
         var mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();

@@ -20,6 +20,7 @@ public class BookingTests : BaseIntegrationTest
     public async Task CreateTimeSlotsShouldSucceed()
     {
         // Arrange
+        _mockHttpContext.SetCustomerUser();
         var mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         var timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
         var bookingController = new BookingController(mediator, timeSlotQueries);
@@ -36,7 +37,6 @@ public class BookingTests : BaseIntegrationTest
         // Assert
         result.ValidateCreatedResult();
 
-        // Verify time slots were created in the database
         var timeSlots = await _bookMeContext.TimeSlots
             .ToListAsync();
 

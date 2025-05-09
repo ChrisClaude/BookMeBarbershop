@@ -1,8 +1,8 @@
 import { Session } from "next-auth";
 
-export type Result<T = any> = {
+export type Result<T> = {
   success: boolean;
-  message?: string | any;
+  message?: string | unknown;
   errors?: string[];
   data?: T;
 };

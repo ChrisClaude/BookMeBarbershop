@@ -22,7 +22,8 @@ export class UserService {
 
   public static async getUserProfile({
     token,
-  }: any): Promise<Result<string | undefined>> {
+  }: {token: string;
+  }): Promise<Result<string | undefined>> {
     try {
       const headers = this.buildHeaders({ token });
       const response = await this.bookMeApi.apiUsersMeGetRaw({ headers });

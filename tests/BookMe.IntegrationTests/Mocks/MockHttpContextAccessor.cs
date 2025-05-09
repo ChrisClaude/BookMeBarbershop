@@ -21,36 +21,4 @@ public class MockHttpContextAccessor : IHttpContextAccessor
             HttpContext.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY] = user;
         }
     }
-
-    public void SetCustomerUser()
-    {
-        SetUser(CreateTestUser(RoleName.CUSTOMER, DefaultRoles.CustomerId));
-    }
-
-    public void SetAdminUser()
-    {
-        SetUser(CreateTestUser(RoleName.ADMIN, DefaultRoles.AdminId));
-    }
-
-    private UserDto CreateTestUser(string roleName, Guid roleId)
-    {
-        return new UserDto
-        {
-            Id = Guid.NewGuid(),
-            Email = $"john.{roleName.ToLower()}@test.com",
-            Name = "John",
-            Surname = roleName,
-            PhoneNumber = "1234567890",
-            Roles = new List<UserRoleDto>
-            {
-                new UserRoleDto
-                {
-                    Role = new RoleDto
-                    {
-                        Name = roleName
-                    }
-                }
-            }
-        };
-    }
 }

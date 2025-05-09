@@ -1,6 +1,7 @@
 using System;
 using BookMe.Infrastructure.Data;
 using BookMe.IntegrationTests.Mocks;
+using BookMe.IntegrationTests.TestData;
 using BookMeAPI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -52,9 +53,18 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         services.AddSingleton<IHttpContextAccessor>(MockHttpContext);
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        return _sqlContainer.StartAsync();
+        await _sqlContainer.StartAsync();
+
+        using (var scope = Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<BookMeContext>();
+
+            dbContext.Database.EnsureCreated();
+
+            SeedData.SeedUsers(dbContext);
+        }
     }
 
     public new Task DisposeAsync()

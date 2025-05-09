@@ -21,7 +21,7 @@ public class CreateTimeCommandHandler(IRepository<TimeSlot> timeSlotRepository) 
 
         timeSlot.SetAuditableProperties(request.UserDTo.Id, AuditEventType.Created);
 
-        await timeSlotRepository.InsertAsync(timeSlot);
+        await timeSlotRepository.InsertAsync(timeSlot, false);
 
         return Result<TimeSlotDto>.Success(timeSlot.MapToDto());
     }

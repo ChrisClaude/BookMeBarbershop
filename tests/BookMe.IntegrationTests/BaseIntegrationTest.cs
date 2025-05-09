@@ -18,8 +18,6 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
         _scope = _factory.Services.CreateScope();
         _bookMeContext = _scope.ServiceProvider.GetRequiredService<BookMeContext>();
         _mockHttpContext = _factory.MockHttpContext;
-
-        _mockHttpContext.SetCustomerUser();
     }
 
 

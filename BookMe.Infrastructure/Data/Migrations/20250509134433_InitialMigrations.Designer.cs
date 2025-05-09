@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookMe.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BookMeContext))]
-    [Migration("20250509120452_AddAuditableFieldsToTimeSlots")]
-    partial class AddAuditableFieldsToTimeSlots
+    [Migration("20250509134433_InitialMigrations")]
+    partial class InitialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,9 @@ namespace BookMe.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TimeSlotId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -80,6 +83,7 @@ namespace BookMe.Infrastructure.Data.Migrations
             modelBuilder.Entity("BookMe.Application.Entities.TimeSlot", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedAt")
@@ -152,11 +156,19 @@ namespace BookMe.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("BookMe.Application.Entities.Booking", b =>
                 {
+                    b.HasOne("BookMe.Application.Entities.TimeSlot", "TimeSlot")
+                        .WithOne("Booking")
+                        .HasForeignKey("BookMe.Application.Entities.Booking", "TimeSlotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BookMe.Application.Entities.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("TimeSlot");
 
                     b.Navigation("User");
                 });
@@ -169,18 +181,10 @@ namespace BookMe.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookMe.Application.Entities.Booking", "Booking")
-                        .WithOne("TimeSlot")
-                        .HasForeignKey("BookMe.Application.Entities.TimeSlot", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BookMe.Application.Entities.User", "UpdatedByUser")
                         .WithMany("UpdatedTimeSlots")
                         .HasForeignKey("UpdatedBy")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Booking");
 
                     b.Navigation("CreatedByUser");
 
@@ -206,14 +210,14 @@ namespace BookMe.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BookMe.Application.Entities.Booking", b =>
-                {
-                    b.Navigation("TimeSlot");
-                });
-
             modelBuilder.Entity("BookMe.Application.Entities.Role", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("BookMe.Application.Entities.TimeSlot", b =>
+                {
+                    b.Navigation("Booking");
                 });
 
             modelBuilder.Entity("BookMe.Application.Entities.User", b =>

@@ -13,7 +13,7 @@ public class CreateTimeSlotCommandValidator : AbstractValidator<CreateTimeSlotCo
         RuleFor(x => x).Must(x => x.StartDateTime < x.EndDateTime)
             .WithMessage(x => $"Start time {x.StartDateTime} must be before end time {x.EndDateTime}");
 
-        RuleFor(x => x).Must(x => x.EndDateTime - x.StartDateTime <= TimeSpan.FromHours(1))
+        RuleFor(x => x).Must(x => x.EndDateTime - x.StartDateTime <= TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(1)))
             .WithMessage(x => $"Time slot must not be apart by more than 1 hour");
 
         RuleFor(x => x).Must(x => x.StartDateTime > DateTime.UtcNow)

@@ -21,7 +21,7 @@ public class BookingTests : BaseIntegrationTest
 
     }
 
-    [Fact]
+    [Fact(Skip = "Temporarily disable to test the test pipeline")]
     public async Task CreateTimeSlotsShouldSucceedAsync()
     {
         // Arrange

@@ -1,16 +1,13 @@
-using System;
 using BookMe.Infrastructure.Data;
 using BookMe.IntegrationTests.Extensions;
 using BookMe.IntegrationTests.Mocks;
 using BookMe.IntegrationTests.TestData;
-using BookMeAPI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Testcontainers.MsSql;
 
 namespace BookMe.IntegrationTests;
@@ -27,6 +24,11 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((context, config) =>
+        {
+            config.AddJsonFile("appsettings.test.json", optional: false);
+        });
+
         builder.ConfigureTestServices(services =>
         {
             var descriptorType = typeof(DbContextOptions<BookMeContext>);
@@ -43,6 +45,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
             services.ReplaceHealthChecksService();
             services.MockHttpContextAccessor(MockHttpContext);
+            services.AddTestConfiguration();
         });
     }
 

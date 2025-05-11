@@ -20,7 +20,12 @@ public static class TestConfig
                 {"AppSettings:AzureAdB2C:ClientId", "test-client-id"},
                 {"AppSettings:AzureAdB2C:SignUpSignInPolicyId", "B2C_1_test_policy"},
                 {"AppSettings:OpenTelemetry:Seq:LogsUri", "http://localhost:5341/ingest/otlp/v1/logs"},
-                {"AppSettings:OpenTelemetry:Seq:TracesUri", "http://localhost:5341/ingest/otlp/v1/traces"}
+                {"AppSettings:OpenTelemetry:Seq:TracesUri", "http://localhost:5341/ingest/otlp/v1/traces"},
+                // Additional health check related configurations
+                {"AppSettings:Elasticsearch:ApiKey", "test-api-key"},
+                {"AppSettings:Elasticsearch:Username", "test-username"},
+                {"AppSettings:Elasticsearch:Password", "test-password"},
+                {"AppSettings:OpenTelemetry:Seq:ApiKey", "test-seq-api-key"}
             };
     }
 }

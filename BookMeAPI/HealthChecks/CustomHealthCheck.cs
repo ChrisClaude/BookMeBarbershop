@@ -32,7 +32,6 @@ public class CustomHealthCheck : IHealthCheck
 
         try
         {
-            // Check cache availability
             var cacheKey = new CacheKey($"health_check_{DateTime.UtcNow.Ticks}", _appSettings);
 
             await _cacheManager.AddAsync(cacheKey, "test");

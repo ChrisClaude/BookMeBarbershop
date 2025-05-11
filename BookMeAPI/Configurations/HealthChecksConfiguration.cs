@@ -33,7 +33,7 @@ public static class HealthChecksConfiguration
     };
     public static IServiceCollection ConfigureHealthChecks(this IServiceCollection services, AppSettings appSettings, IConfiguration configuration)
     {
-        services.AddHealthChecks()
+        var healthChecks = services.AddHealthChecks()
             .AddSqlServer(
                 configuration.GetConnectionString("BookMeDb"),
                 name: "sql-server",
@@ -43,10 +43,18 @@ public static class HealthChecksConfiguration
             //     appSettings.Elasticsearch.Uri,
             //     name: "elasticsearch",
             //     tags: new[] { "logging" })
-            .AddCheck<CustomHealthCheck>("custom-check")
-            .AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"),
+            .AddCheck<CustomHealthCheck>("custom-check");
+
+        if (appSettings != null && appSettings.AzureAdB2C != null
+            && !string.IsNullOrEmpty(appSettings.AzureAdB2C.Instance)
+            && !string.IsNullOrEmpty(appSettings.AzureAdB2C.Domain)
+            && !string.IsNullOrEmpty(appSettings.AzureAdB2C.SignUpSignInPolicyId))
+        {
+            healthChecks.AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"),
                 name: "azure-b2c",
                 tags: new[] { "auth" });
+        }
+
         return services;
     }
 }

@@ -14,20 +14,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
+    # services:
       # Add SQL Server service container for integration tests
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          SA_PASSWORD: TestDb1234_
-          ACCEPT_EULA: Y
-        ports:
-          - 1433:1433
-        options: >-
-          --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P TestDb1234_ -Q 'SELECT 1' || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+      # mssql:
+      #   image: mcr.microsoft.com/mssql/server:2022-latest
+      #   env:
+      #     SA_PASSWORD: TestDb1234_
+      #     ACCEPT_EULA: Y
+      #   ports:
+      #     - 1433:1433
+      #   options: >-
+      #     --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P TestDb1234_ -Q 'SELECT 1' || exit 1"
+      #     --health-interval 10s
+      #     --health-timeout 5s
+      #     --health-retries 5
 
     steps:
     - uses: actions/checkout@v4

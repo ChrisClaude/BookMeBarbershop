@@ -24,9 +24,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        // Add test configuration
         builder.ConfigureAppConfiguration((context, config) =>
         {
-            config.AddJsonFile("appsettings.test.json", optional: false);
+            config.AddInMemoryCollection(TestConfig.GetConfiguration());
         });
 
         builder.ConfigureTestServices(services =>

@@ -24,6 +24,11 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
             errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDTo.Id}"));
         }
 
+        if (timeSlot != null && !timeSlot.IsAvailable)
+        {
+            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} is not available"));
+        }
+
         if (errors.Any())
         {
             return Result<BookingDto>.Failure(errors, ErrorType.BadRequest);

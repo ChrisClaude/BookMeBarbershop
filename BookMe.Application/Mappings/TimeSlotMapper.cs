@@ -13,7 +13,7 @@ public static class TimeSlotMapper
             Id = timeSlot.Id,
             Start = timeSlot.Start,
             End = timeSlot.End,
-            IsAvailable = timeSlot.Booking == null
+            IsAvailable = timeSlot.Bookings == null
         };
     }
 }

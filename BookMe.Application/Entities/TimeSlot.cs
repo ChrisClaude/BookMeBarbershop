@@ -6,7 +6,9 @@ public class TimeSlot : BaseEntity, IAuditable
 {
     public DateTimeOffset Start { get; set; }
     public DateTimeOffset End { get; set; }
-    public Booking Booking { get; set; }
+    // A time slot can have multiple bookings
+    // however only one booking can be pending or confirmed at a time
+    public IEnumerable<Booking> Bookings { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
     public Guid CreatedBy { get; set; }
@@ -14,5 +16,5 @@ public class TimeSlot : BaseEntity, IAuditable
     public User CreatedByUser { get; set; }
     public User UpdatedByUser { get; set; }
 
-    public bool IsAvailable => Booking == null;
+    public bool IsAvailable => Bookings == null || !Bookings.Any(b => b.Status == BookingStatus.Pending || b.Status == BookingStatus.Confirmed);
 }

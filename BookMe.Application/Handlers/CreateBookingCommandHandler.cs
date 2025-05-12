@@ -16,7 +16,7 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
 {
     public async Task<Result<BookingDto>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var timeSlot = await timeSlotRepository.GetByIdAsync(request.TimeSlotId);
+        var timeSlot = await timeSlotRepository.GetByIdAsync(request.TimeSlotId, new string[] { nameof(TimeSlot.Bookings) });
         var errors = new List<Error>();
         if (timeSlot == null)
         {

@@ -12,7 +12,8 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
 {
     #region Methods
 
-    Task<TEntity> GetByIdAsync(Guid? id, CacheKey cacheKey = null, bool includeDeleted = true);
+    Task<TEntity> GetByIdAsync(Guid? id,
+    string[] includes = null, CacheKey cacheKey = null, bool includeDeleted = true);
 
     Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, CacheKey cacheKey = null, bool includeDeleted = true);
 

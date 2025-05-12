@@ -11,6 +11,7 @@ using BookMeAPI.Controllers;
 using FluentAssertions;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -271,4 +272,40 @@ public class BookingTests : BaseIntegrationTest
         bookings.Should().HaveCount(0);
     }
     #endregion
+
+    [Fact]
+    public async Task CancelBookingShouldSucceedAsync()
+    {
+        // Arrange - Create a booking first
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
+        _mockHttpContext.SetUser(_adminUser);
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+        var timeSlotId = creationResult.Value.Id;
+
+        _mockHttpContext.SetUser(_customerUser);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId });
+        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+
+        // Act
+        var cancelResult = await _bookingController.CancelBookingAsync(
+            new CancelBookingDto { BookingId = (Guid)bookingId });
+
+        // Assert
+        cancelResult.ValidateOkResult<BookingDto>(booking =>
+        {
+            booking.Status.Should().Be(BookingStatus.Cancelled);
+        });
+
+        var bookings = await _bookMeContext.Bookings
+            .FirstOrDefaultAsync(b => b.Id == (Guid)bookingId);
+
+        bookings.Status.Should().Be(BookingStatus.Cancelled);
+    }
 }

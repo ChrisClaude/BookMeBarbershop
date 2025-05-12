@@ -8,11 +8,11 @@ using MediatR;
 
 namespace BookMe.Application.Handlers;
 
-public class CancelBookingCommandHandler(IRepository<Booking> repository) : IRequestHandler<CancelBookingCommand, Result>
+public class CancelBookingCommandHandler(IRepository<Booking> bookingRepository, IRepository<TimeSlot> timeSlotRepository) : IRequestHandler<CancelBookingCommand, Result>
 {
     public async Task<Result> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
     {
-        var booking = await repository.GetByIdAsync(request.BookingId, new[] { "TimeSlot", "User" });
+        var booking = await bookingRepository.GetByIdAsync(request.BookingId, new[] { "TimeSlot", "User" });
 
         var errors = new List<Error>();
         if (booking == null)
@@ -32,9 +32,12 @@ public class CancelBookingCommandHandler(IRepository<Booking> repository) : IReq
 
         booking.Status = BookingStatus.Cancelled;
 
-        booking.TimeSlot.Booking = null;
         // TODO: an event should be published here
-        await repository.UpdateAsync(booking, false);
+        await bookingRepository.UpdateAsync(booking, false);
+
+        var timeSlot = await timeSlotRepository.GetByIdAsync(booking.TimeSlotId);
+        timeSlot.Booking = null;
+        await timeSlotRepository.UpdateAsync(timeSlot, false);
 
         return Result.Success(ResultSuccessType.Updated);
     }

@@ -304,5 +304,10 @@ public class BookingTests : BaseIntegrationTest
             .FirstAsync(b => b.Id == (Guid)bookingId);
 
         booking.Status.Should().Be(BookingStatus.Cancelled);
+
+        var timeSlot = await _bookMeContext.TimeSlots
+            .FirstAsync(ts => ts.Id == timeSlotId);
+
+        timeSlot.IsAvailable.Should().BeTrue();
     }
 }

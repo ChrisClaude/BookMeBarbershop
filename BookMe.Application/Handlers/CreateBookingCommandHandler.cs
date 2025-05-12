@@ -37,7 +37,7 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
             Status = BookingStatus.Pending
         };
 
-        await repository.InsertAsync(booking);
+        await repository.InsertAsync(booking, false);
 
         return Result<BookingDto>.Success(booking.MapToDto());
     }

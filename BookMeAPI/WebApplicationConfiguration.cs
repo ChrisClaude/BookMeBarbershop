@@ -41,7 +41,10 @@ internal static class WebApplicationConfiguration
                   .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             })
-            .AddNewtonsoftJson();
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
         services.AddEndpointsApiExplorer();
 

@@ -81,6 +81,7 @@ public class BookingTests : BaseIntegrationTest
     public async Task CreateTimeSlotsWithNonAdminUser_ShouldNotSucceedAsync()
     {
         // Arrange
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         var customerUser = await _bookMeContext.Users
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)

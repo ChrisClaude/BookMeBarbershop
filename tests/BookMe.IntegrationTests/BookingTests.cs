@@ -19,18 +19,18 @@ namespace BookMe.IntegrationTests;
 
 public class BookingTests : BaseIntegrationTest
 {
-    private UserDto adminUser;
-    private UserDto customerUser;
+    private UserDto _adminUser;
+    private UserDto _customerUser;
 
     public BookingTests(IntegrationTestWebAppFactory factory) : base(factory)
     {
-        adminUser = _bookMeContext.Users
+        _adminUser = _bookMeContext.Users
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId))
             .MapToDto();
 
-        customerUser = _bookMeContext.Users
+        _customerUser = _bookMeContext.Users
         .Include(x => x.UserRoles)
         .ThenInclude(x => x.Role)
         .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId))
@@ -42,7 +42,8 @@ public class BookingTests : BaseIntegrationTest
     public async Task CreateTimeSlotsShouldSucceedAsync()
     {
         // Arrange
-        _mockHttpContext.SetUser(adminUser);
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        _mockHttpContext.SetUser(_adminUser);
         var mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         var timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
         var bookingController = new BookingController(mediator, timeSlotQueries);
@@ -108,7 +109,7 @@ public class BookingTests : BaseIntegrationTest
     public async Task BookTimeSlotShouldSucceedAsync()
     {
         // Arrange
-        _mockHttpContext.SetUser(adminUser);
+        _mockHttpContext.SetUser(_adminUser);
         var mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         var timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
         var bookingController = new BookingController(mediator, timeSlotQueries);
@@ -128,7 +129,7 @@ public class BookingTests : BaseIntegrationTest
             TimeSlotId = timeSlotId
         };
 
-        _mockHttpContext.SetUser(customerUser);
+        _mockHttpContext.SetUser(_customerUser);
 
         // Act
         var result = await bookingController.BookTimeSlotsAsync(bookTimeSlotCommand);
@@ -138,7 +139,7 @@ public class BookingTests : BaseIntegrationTest
         {
             booking.Id.Should().NotBeEmpty();
             booking.Status.Should().Be(BookingStatus.Pending);
-            booking.User.Id.Should().Be(customerUser.Id);
+            booking.User.Id.Should().Be(_customerUser.Id);
             booking.TimeSlot.Id.Should().Be(timeSlotId);
         });
 
@@ -152,7 +153,7 @@ public class BookingTests : BaseIntegrationTest
     public async Task BookTimeSlotWithNonCustomerUser_ShouldNotSucceedAsync()
     {
         // Arrange
-        _mockHttpContext.SetUser(adminUser);
+        _mockHttpContext.SetUser(_adminUser);
         var mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         var timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
         var bookingController = new BookingController(mediator, timeSlotQueries);
@@ -176,7 +177,7 @@ public class BookingTests : BaseIntegrationTest
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ValidationException>(() => bookingController.BookTimeSlotsAsync(bookTimeSlotCommand));
 
-        exception.Message.Should().Be($"Validation failed: \n -- UserDTo: User {adminUser.Id} is not a customer");
+        exception.Message.Should().Be($"Validation failed: \n -- UserDTo: User {_adminUser.Id} is not a customer");
 
         var bookings = await _bookMeContext.Bookings
             .ToListAsync();

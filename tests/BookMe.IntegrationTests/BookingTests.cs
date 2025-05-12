@@ -298,14 +298,11 @@ public class BookingTests : BaseIntegrationTest
             new CancelBookingDto { BookingId = (Guid)bookingId });
 
         // Assert
-        cancelResult.ValidateOkResult<BookingDto>(booking =>
-        {
-            booking.Status.Should().Be(BookingStatus.Cancelled);
-        });
+        cancelResult.ValidateNoContentResult();
 
-        var bookings = await _bookMeContext.Bookings
-            .FirstOrDefaultAsync(b => b.Id == (Guid)bookingId);
+        var booking = await _bookMeContext.Bookings
+            .FirstAsync(b => b.Id == (Guid)bookingId);
 
-        bookings.Status.Should().Be(BookingStatus.Cancelled);
+        booking.Status.Should().Be(BookingStatus.Cancelled);
     }
 }

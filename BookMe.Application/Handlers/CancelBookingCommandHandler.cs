@@ -33,8 +33,9 @@ public class CancelBookingCommandHandler(IRepository<Booking> repository) : IReq
         booking.Status = BookingStatus.Cancelled;
 
         booking.TimeSlot.Booking = null;
-        await repository.UpdateAsync(booking);
+        // TODO: an event should be published here
+        await repository.UpdateAsync(booking, false);
 
-        return Result.Success();
+        return Result.Success(ResultSuccessType.Updated);
     }
 }

@@ -32,6 +32,12 @@ public static class AssertionHelper
         createdResult.Value.Should().NotBeNull();
     }
 
+    public static void ValidateNoContentResult(this IActionResult actionResult)
+    {
+        actionResult.Should().NotBeNull();
+        actionResult.Should().BeOfType<NoContentResult>();
+    }
+
     public static void ValidateBadRequestResult<TPayload>(this IActionResult actionResult, Action<TPayload> payloadAssertion) where TPayload : class
     {
         actionResult.Should().NotBeNull();

@@ -134,4 +134,41 @@ public class CancelBookingCommandHandlerTests
 
         _mockBookingRepository.Verify(r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()), Times.Never);
     }
+
+    [Fact]
+    public async Task Handle_WhenBookingIsAlreadyCancelled_ShouldReturnInvalidArgumentErrorAsync()
+    {
+        // Arrange
+        var user = new User { Id = _userId };
+        var booking = new Booking { Id = _bookingId, User = user, Status = BookingStatus.Cancelled };
+
+        _mockBookingRepository.Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
+            .ReturnsAsync(booking);
+
+        var command = new CancelBookingCommand(_bookingId)
+        {
+            UserDTo = new UserDto
+            {
+                Id = _userId,
+                Roles = new[] {
+                    new UserRoleDto()
+                    {
+                        Role = new () { Name = RoleName.CUSTOMER }
+                    }
+                }
+            }
+        };
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Errors.Should().ContainSingle();
+        result.Errors.First().Description.Should().Be($"Booking {_bookingId} is already cancelled");
+        result.ErrorType.Should().Be(ErrorType.BadRequest);
+        booking.Status.Should().Be(BookingStatus.Cancelled);
+
+        _mockBookingRepository.Verify(r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()), Times.Never);
+    }
 }

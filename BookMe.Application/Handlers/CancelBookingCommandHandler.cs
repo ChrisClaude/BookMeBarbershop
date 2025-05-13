@@ -20,9 +20,14 @@ public class CancelBookingCommandHandler(IRepository<Booking> bookingRepository)
             errors.Add(Error.NotFound($"Booking with id {request.BookingId} not found"));
         }
 
-        if (booking != null && booking.User.Id != request.UserDTo.Id)
+        if (booking != null)
         {
-            errors.Add(Error.NotAuthorized($"User {request.UserDTo.Id} is not authorized to cancel booking {request.BookingId}"));
+
+            if (booking.User.Id != request.UserDTo.Id)
+                errors.Add(Error.NotAuthorized($"User {request.UserDTo.Id} is not authorized to cancel booking {request.BookingId}"));
+
+            if (booking.Status == BookingStatus.Cancelled)
+                errors.Add(Error.InvalidArgument($"Booking {request.BookingId} is already cancelled"));
         }
 
         if (errors.Any())

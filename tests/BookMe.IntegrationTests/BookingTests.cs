@@ -214,6 +214,54 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task BookTimeSlotThatIsPartOfCancelledBooking_ShouldSucceedAsync()
+    {
+        // Arrange
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
+        _mockHttpContext.SetUser(_adminUser);
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+        var timeSlotId = creationResult.Value.Id;
+
+        // First booking
+        _mockHttpContext.SetUser(_customerUser);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(new BookTimeSlotsDto { TimeSlotId = timeSlotId });
+        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+
+        // Cancel the booking
+        var cancelResult = await _bookingController.CancelBookingAsync(new CancelBookingDto { BookingId = (Guid)bookingId });
+
+        // Second booking attempt
+        var bookTimeSlotRequest = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
+
+        // Act & Assert
+        var result = await _bookingController.BookTimeSlotsAsync(bookTimeSlotRequest);
+
+        result.ValidateOkResult<BookingDto>(booking =>
+        {
+            booking.Id.Should().NotBeEmpty();
+            booking.Status.Should().Be(BookingStatus.Pending);
+            booking.User.Id.Should().Be(_customerUser.Id);
+            booking.TimeSlot.Id.Should().Be(timeSlotId);
+        });
+
+        var bookings = await _bookMeContext.Bookings
+            .Include(book => book.TimeSlot)
+            .Where(booking => booking.TimeSlotId.Equals(timeSlotId))
+            .ToListAsync();
+
+        bookings.Should().HaveCount(2);
+        bookings.Where(booking => booking.Status == BookingStatus.Cancelled).Should().HaveCount(1);
+        bookings.Where(booking => booking.Status == BookingStatus.Pending).Should().HaveCount(1);
+    }
+
+
+    [Fact]
     public async Task BookAlreadyBookedTimeSlot_ShouldNotSucceedAsync()
     {
         // Arrange
@@ -274,6 +322,7 @@ public class BookingTests : BaseIntegrationTest
     }
     #endregion
 
+    #region Booking cancellation
     [Fact]
     public async Task CancelBookingShouldSucceedAsync()
     {
@@ -311,4 +360,13 @@ public class BookingTests : BaseIntegrationTest
 
         timeSlot.IsAvailable.Should().BeTrue();
     }
+    #endregion
+
+    // Add the following tests:
+    // 1. Book a time slot that was part of a cancelled booking(should succeed)
+    // 2. Book a timeslot that is not available (should fail)
+    // 3. Cancel a booking that is not yours (should fail)
+    // 4. Cancel a booking that does not exist (should fail)
+
+    // Additionally, create a handler to confirm a booking
 }

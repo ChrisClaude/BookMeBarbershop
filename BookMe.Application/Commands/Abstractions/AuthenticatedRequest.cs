@@ -6,5 +6,5 @@ namespace BookMe.Application.Commands.Abstractions;
 
 public abstract class AuthenticatedRequest<T> : IRequest<T>
 {
-	public UserDto UserDTo { get; set; }
+	public UserDto UserDto { get; set; }
 }

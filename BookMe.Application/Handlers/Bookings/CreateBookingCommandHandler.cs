@@ -20,8 +20,8 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
         var errors = new List<Error>();
         if (timeSlot == null)
         {
-            Log.Warning("Time slot with id {TimeSlotId} not found by user {UserId}", request.TimeSlotId, request.UserDTo.Id);
-            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDTo.Id}"));
+            Log.Warning("Time slot with id {TimeSlotId} not found by user {UserId}", request.TimeSlotId, request.UserDto.Id);
+            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDto.Id}"));
         }
 
         if (timeSlot != null && !timeSlot.IsAvailable)
@@ -37,7 +37,7 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
 
         var booking = new Booking
         {
-            UserId = request.UserDTo.Id,
+            UserId = request.UserDto.Id,
             TimeSlotId = request.TimeSlotId,
             Status = BookingStatus.Pending
         };

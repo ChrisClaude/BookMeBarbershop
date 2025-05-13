@@ -22,7 +22,7 @@ public class ConfirmBookingCommandHandler(IRepository<Booking> bookingRepository
             errors.Add(Error.NotFound($"Booking with id {request.BookingId} not found"));
         }
 
-        if (booking.Status != BookingStatus.Pending)
+        if (booking != null && booking.Status != BookingStatus.Pending)
         {
             errors.Add(Error.InvalidArgument($"Booking {request.BookingId} is not pending"));
         }

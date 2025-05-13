@@ -9,7 +9,7 @@ public class CancelBookingCommandValidator : AbstractValidator<CancelBookingComm
     public CancelBookingCommandValidator()
     {
         RuleFor(x => x.BookingId).NotEmpty();
-        RuleFor(x => x).Must(x => x.UserDTo.IsCustomer)
-            .WithMessage(x => $"User {x.UserDTo.Id} is not a customer");
+        RuleFor(x => x).Must(x => x.UserDto.IsCustomer)
+            .WithMessage(x => $"User {x.UserDto.Id} is not a customer");
     }
 }

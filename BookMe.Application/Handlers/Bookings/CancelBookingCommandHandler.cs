@@ -23,8 +23,8 @@ public class CancelBookingCommandHandler(IRepository<Booking> bookingRepository)
         if (booking != null)
         {
 
-            if (booking.User.Id != request.UserDTo.Id)
-                errors.Add(Error.NotAuthorized($"User {request.UserDTo.Id} is not authorized to cancel booking {request.BookingId}"));
+            if (booking.User.Id != request.UserDto.Id)
+                errors.Add(Error.NotAuthorized($"User {request.UserDto.Id} is not authorized to cancel booking {request.BookingId}"));
 
             if (booking.Status == BookingStatus.Cancelled)
                 errors.Add(Error.InvalidArgument($"Booking {request.BookingId} is already cancelled"));

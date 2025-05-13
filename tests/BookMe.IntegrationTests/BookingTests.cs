@@ -1,4 +1,5 @@
-﻿using BookMe.Application.Commands.Bookings;
+﻿using BookMe.Application.Commands.Abstractions;
+using BookMe.Application.Commands.Bookings;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Bookings.Dtos;
 using BookMe.Application.Common.Dtos;
@@ -98,7 +99,7 @@ public class BookingTests : BaseIntegrationTest
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ValidationException>(() => _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest));
 
-        exception.Message.Should().Be($"Validation failed: \n -- UserDTo: User {customerUser.Id} is not an admin");
+        exception.Message.Should().Be($"Validation failed: \n -- UserDto: User {customerUser.Id} is not an admin");
 
         var timeSlots = await _bookMeContext.TimeSlots
             .ToListAsync();
@@ -205,7 +206,7 @@ public class BookingTests : BaseIntegrationTest
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ValidationException>(() => _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand));
 
-        exception.Message.Should().Be($"Validation failed: \n -- UserDTo: User {_adminUser.Id} is not a customer");
+        exception.Message.Should().Be($"Validation failed: \n -- UserDto: User {_adminUser.Id} is not a customer");
 
         var bookings = await _bookMeContext.Bookings
             .ToListAsync();
@@ -359,6 +360,102 @@ public class BookingTests : BaseIntegrationTest
             .FirstAsync(ts => ts.Id == timeSlotId);
 
         timeSlot.IsAvailable.Should().BeTrue();
+    }
+    #endregion
+
+    #region Booking confirmation
+    [Fact]
+    public async Task ConfirmBookingShouldSucceedAsync()
+    {
+        // Arrange - Create a booking first
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
+        // Create time slot as admin
+        _mockHttpContext.SetUser(_adminUser);
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+        var timeSlotId = creationResult.Value.Id;
+
+        // Book as customer
+        _mockHttpContext.SetUser(_customerUser);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId });
+        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+
+        // Act - Confirm as admin
+        _mockHttpContext.SetUser(_adminUser);
+        var confirmResult = await _bookingController.ConfirmBookingAsync(
+            new ConfirmBookingDto { BookingId = (Guid)bookingId });
+
+        // Assert
+        confirmResult.ValidateOkResult<BookingDto>(booking =>
+        {
+            booking.Id.Should().Be((Guid)bookingId);
+            booking.Status.Should().Be(BookingStatus.Confirmed);
+            booking.TimeSlot.Id.Should().Be(timeSlotId);
+        });
+
+        var booking = await _bookMeContext.Bookings
+            .FirstAsync(b => b.Id == (Guid)bookingId);
+
+        booking.Status.Should().Be(BookingStatus.Confirmed);
+    }
+
+    [Fact]
+    public async Task ConfirmBookingWithNonAdminUser_ShouldNotSucceedAsync()
+    {
+        // Arrange - Create a booking first
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
+        // Create time slot as admin
+        _mockHttpContext.SetUser(_adminUser);
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+        var timeSlotId = creationResult.Value.Id;
+
+        // Book as customer
+        _mockHttpContext.SetUser(_customerUser);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId });
+        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+
+        // Act & Assert - Try to confirm as customer
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            _bookingController.ConfirmBookingAsync(new ConfirmBookingDto { BookingId = (Guid)bookingId }));
+
+        exception.Message.Should().Be($"Validation failed: \n -- UserDto: User {_customerUser.Id} is not an admin");
+
+        var booking = await _bookMeContext.Bookings
+            .FirstAsync(b => b.Id == (Guid)bookingId);
+
+        booking.Status.Should().Be(BookingStatus.Pending);
+    }
+
+    [Fact]
+    public async Task ConfirmNonExistentBooking_ShouldNotSucceedAsync()
+    {
+        // Arrange
+        var nonExistentBookingId = Guid.NewGuid();
+        _mockHttpContext.SetUser(_adminUser);
+
+        // Act
+        var result = await _bookingController.ConfirmBookingAsync(
+            new ConfirmBookingDto { BookingId = nonExistentBookingId });
+
+        // Assert
+        result.ValidateBadRequestResult<List<Error>>(errors =>
+        {
+            errors.Should().HaveCount(1);
+            errors.Any(error => error.Description.Contains($"Booking with id {nonExistentBookingId} not found")).Should().BeTrue();
+        });
     }
     #endregion
 }

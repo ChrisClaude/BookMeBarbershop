@@ -9,7 +9,7 @@ public class ConfirmBookingCommandValidator : AbstractValidator<ConfirmBookingCo
     public ConfirmBookingCommandValidator()
     {
         RuleFor(x => x.BookingId).NotEmpty();
-        RuleFor(x => x).Must(x => x.UserDTo.IsAdmin)
-            .WithMessage(x => $"User {x.UserDTo.Id} is not an admin");
+        RuleFor(x => x.UserDto).Must(x => x.IsAdmin)
+            .WithMessage(x => $"User {x.UserDto.Id} is not an admin");
     }
 }

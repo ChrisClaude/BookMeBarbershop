@@ -41,7 +41,7 @@ public class CancelBookingCommandHandlerTests
 
         var command = new CancelBookingCommand(_bookingId)
         {
-            UserDTo = new UserDto
+            UserDto = new UserDto
             {
                 Id = _userId,
                 Roles = new[] {
@@ -73,7 +73,7 @@ public class CancelBookingCommandHandlerTests
 
         var command = new CancelBookingCommand(_bookingId)
         {
-            UserDTo = new UserDto
+            UserDto = new UserDto
             {
                 Id = _userId,
                 Roles = new[] {
@@ -110,7 +110,7 @@ public class CancelBookingCommandHandlerTests
 
         var command = new CancelBookingCommand(_bookingId)
         {
-            UserDTo = new UserDto
+            UserDto = new UserDto
             {
                 Id = _userId,
                 Roles = new[] {
@@ -147,7 +147,7 @@ public class CancelBookingCommandHandlerTests
 
         var command = new CancelBookingCommand(_bookingId)
         {
-            UserDTo = new UserDto
+            UserDto = new UserDto
             {
                 Id = _userId,
                 Roles = new[] {

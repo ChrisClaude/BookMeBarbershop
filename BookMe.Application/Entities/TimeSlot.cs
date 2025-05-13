@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookMe.Application.Entities;
 
@@ -15,6 +16,9 @@ public class TimeSlot : BaseEntity, IAuditable
     public Guid? UpdatedBy { get; set; }
     public User CreatedByUser { get; set; }
     public User UpdatedByUser { get; set; }
+
+    [Timestamp]
+    public byte[] RowVersion {get; set; } // For concurrent actions
 
     public bool IsAvailable => Bookings == null || !Bookings.Any(b => b.Status == BookingStatus.Pending || b.Status == BookingStatus.Confirmed);
 }

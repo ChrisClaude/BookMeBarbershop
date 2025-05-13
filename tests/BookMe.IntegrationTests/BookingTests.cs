@@ -136,7 +136,7 @@ public class BookingTests : BaseIntegrationTest
 
     #region BookTimeSlot tests
     [Fact]
-    public async Task BookTimeSlotShouldSucceedAsync()
+    public async Task BookTimeSlotShouldWithCustomerUser_ShouldSucceedAsync()
     {
         // Arrange
         await _bookMeContext.Bookings.ExecuteDeleteAsync();
@@ -361,12 +361,4 @@ public class BookingTests : BaseIntegrationTest
         timeSlot.IsAvailable.Should().BeTrue();
     }
     #endregion
-
-    // Add the following tests:
-    // 1. Book a time slot that was part of a cancelled booking(should succeed)
-    // 2. Book a timeslot that is not available (should fail)
-    // 3. Cancel a booking that is not yours (should fail)
-    // 4. Cancel a booking that does not exist (should fail)
-
-    // Additionally, create a handler to confirm a booking
 }

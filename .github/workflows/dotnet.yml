@@ -10,24 +10,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  backend:
     runs-on: ubuntu-latest
-
-    # services:
-      # Add SQL Server service container for integration tests
-      # mssql:
-      #   image: mcr.microsoft.com/mssql/server:2022-latest
-      #   env:
-      #     SA_PASSWORD: TestDb1234_
-      #     ACCEPT_EULA: Y
-      #   ports:
-      #     - 1433:1433
-      #   options: >-
-      #     --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P TestDb1234_ -Q 'SELECT 1' || exit 1"
-      #     --health-interval 10s
-      #     --health-timeout 5s
-      #     --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
@@ -43,3 +27,24 @@ jobs:
       run: dotnet test tests/BookMe.Unitests/BookMe.UnitTests.csproj --no-build --verbosity normal
     - name: Integration Tests
       run: dotnet test tests/BookMe.IntegrationTests/BookMe.IntegrationTests.csproj --no-build --verbosity normal
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: 'bookme-ui/package.json'
+    - name: Install dependencies
+      working-directory: bookme-ui
+      run: npm install
+    - name: Run tests
+      working-directory: bookme-ui
+      run: npm run test
+    - name: Generate coverage report
+      working-directory: bookme-ui
+      run: npm run test:coverage

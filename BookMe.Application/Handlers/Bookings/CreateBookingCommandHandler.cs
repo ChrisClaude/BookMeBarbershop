@@ -16,12 +16,17 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
 {
     public async Task<Result<BookingDto>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var timeSlot = await timeSlotRepository.GetByIdAsync(request.TimeSlotId);
+        var timeSlot = await timeSlotRepository.GetByIdAsync(request.TimeSlotId, new string[] { nameof(TimeSlot.Bookings) });
         var errors = new List<Error>();
         if (timeSlot == null)
         {
-            Log.Warning("Time slot with id {TimeSlotId} not found by user {UserId}", request.TimeSlotId, request.UserDTo.Id);
-            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDTo.Id}"));
+            Log.Warning("Time slot with id {TimeSlotId} not found by user {UserId}", request.TimeSlotId, request.UserDto.Id);
+            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDto.Id}"));
+        }
+
+        if (timeSlot != null && !timeSlot.IsAvailable)
+        {
+            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} is not available"));
         }
 
         if (errors.Any())
@@ -32,12 +37,12 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
 
         var booking = new Booking
         {
-            UserId = request.UserDTo.Id,
+            UserId = request.UserDto.Id,
             TimeSlotId = request.TimeSlotId,
             Status = BookingStatus.Pending
         };
 
-        await repository.InsertAsync(booking);
+        await repository.InsertAsync(booking, false);
 
         return Result<BookingDto>.Success(booking.MapToDto());
     }

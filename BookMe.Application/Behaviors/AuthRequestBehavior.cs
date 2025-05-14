@@ -23,7 +23,7 @@ internal sealed class AuthRequestBehavior<TRequest, TResponse> : IPipelineBehavi
     {
         if (_httpContextAccessor.HttpContext.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY] is UserDto userDto)
         {
-            request.UserDTo = userDto;
+            request.UserDto = userDto;
         }
         else
         {

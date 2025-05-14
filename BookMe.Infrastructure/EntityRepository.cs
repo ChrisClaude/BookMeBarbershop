@@ -46,7 +46,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     #region Methods
 
-    public virtual async Task<TEntity> GetByIdAsync(Guid? id, CacheKey cacheKey = null, bool includeDeleted = true)
+    public virtual async Task<TEntity> GetByIdAsync(Guid? id, string[] includes = null, CacheKey cacheKey = null, bool includeDeleted = true)
     {
         if (!id.HasValue)
             return null;
@@ -58,6 +58,17 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
             {
                 query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
             }
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+
+                query = query.AsSplitQuery();
+            }
+
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 

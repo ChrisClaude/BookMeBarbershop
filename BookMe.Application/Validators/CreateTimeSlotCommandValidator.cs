@@ -19,7 +19,7 @@ public class CreateTimeSlotCommandValidator : AbstractValidator<CreateTimeSlotCo
         RuleFor(x => x).Must(x => x.StartDateTime > DateTime.UtcNow)
             .WithMessage(x => $"Start time {x.StartDateTime} must be in the future");
 
-        RuleFor(x => x.UserDTo).Must(x => x.IsAdmin)
-            .WithMessage(x => $"User {x.UserDTo.Id} is not an admin");
+        RuleFor(x => x.UserDto).Must(x => x.IsAdmin)
+            .WithMessage(x => $"User {x.UserDto.Id} is not an admin");
     }
 }

@@ -15,7 +15,12 @@ public class BookingEntityTypeConfiguration : IEntityTypeConfiguration<Booking>
         builder.Property(x => x.TimeSlotId).IsRequired();
         builder.Property(x => x.Status).IsRequired();
 
-        builder.HasOne(x => x.User).WithMany(x => x.Bookings).HasForeignKey(x => x.UserId);
-        builder.HasOne(x => x.TimeSlot).WithOne(x => x.Booking).HasForeignKey<Booking>(x => x.TimeSlotId);
+        builder.HasOne(x => x.User)
+            .WithMany(x => x.Bookings)
+            .HasForeignKey(x => x.UserId);
+
+        builder.HasOne(x => x.TimeSlot)
+            .WithMany(x => x.Bookings)
+            .HasForeignKey(x => x.TimeSlotId);
     }
 }

@@ -19,7 +19,7 @@ public class CreateTimeCommandHandler(IRepository<TimeSlot> timeSlotRepository) 
             End = request.EndDateTime
         };
 
-        timeSlot.SetAuditableProperties(request.UserDTo.Id, AuditEventType.Created);
+        timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
 
         await timeSlotRepository.InsertAsync(timeSlot, false);
 

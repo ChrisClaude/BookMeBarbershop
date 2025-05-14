@@ -16,7 +16,7 @@ public class Result
     {
     }
 
-    protected Result(bool isSuccess, IEnumerable<Error> errors, ErrorType errorType)
+    protected Result(bool isSuccess, IEnumerable<Error> errors, ErrorType errorType, ResultSuccessType successType = ResultSuccessType.Retrieved)
     {
         if ((isSuccess && errors.Any()) || (!isSuccess && (errors is null || !errors.Any())))
         {
@@ -26,11 +26,12 @@ public class Result
         IsSuccess = isSuccess;
         Errors = errors;
         ErrorType = errorType;
+        SuccessType = successType;
     }
 
     public static Result Success(ResultSuccessType successType = ResultSuccessType.Retrieved)
     {
-        return new Result(true, new List<Error>(), ErrorType.None);
+        return new Result(true, new List<Error>(), ErrorType.None, successType);
     }
 
     public static Result Failure(Error error, ErrorType errorType)

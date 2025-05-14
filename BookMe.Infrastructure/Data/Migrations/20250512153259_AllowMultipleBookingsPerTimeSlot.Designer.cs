@@ -4,6 +4,7 @@ using BookMe.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookMe.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(BookMeContext))]
-    partial class BookMeContextModelSnapshot : ModelSnapshot
+    [Migration("20250512153259_AllowMultipleBookingsPerTimeSlot")]
+    partial class AllowMultipleBookingsPerTimeSlot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,11 +93,6 @@ namespace BookMe.Infrastructure.Data.Migrations
 
                     b.Property<DateTimeOffset>("End")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<DateTimeOffset>("Start")
                         .HasColumnType("datetimeoffset");

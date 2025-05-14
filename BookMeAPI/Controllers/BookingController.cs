@@ -30,11 +30,23 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [HttpPost]
     [Authorize(Policy = Policy.CUSTOMER)]
     [ProducesResponseType<BookingDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<Result<BookingDto>>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> BookTimeSlotsAsync(BookTimeSlotsDto request)
     {
         var result = await mediator.Send(new CreateBookingCommand(request.TimeSlotId));
+
+        return result.ToActionResult();
+    }
+
+    [HttpPost]
+    [Authorize(Policy = Policy.CUSTOMER)]
+    [ProducesResponseType<BookingDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<Result<BookingDto>>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CancelBookingAsync(CancelBookingDto request)
+    {
+        var result = await mediator.Send(new CancelBookingCommand(request.BookingId));
 
         return result.ToActionResult();
     }
@@ -47,6 +59,18 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     public async Task<IActionResult> CreateTimeSlotsAsync(CreateTimeSlotsDto request)
     {
         var result = await mediator.Send(new CreateTimeSlotCommand(request.StartDateTime, request.EndDateTime));
+
+        return result.ToActionResult();
+    }
+
+    [HttpPost("confirm")]
+    [Authorize(Policy = Policy.ADMIN)]
+    [ProducesResponseType<BookingDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> ConfirmBookingAsync(ConfirmBookingDto request)
+    {
+        var result = await mediator.Send(new ConfirmBookingCommand(request.BookingId));
 
         return result.ToActionResult();
     }

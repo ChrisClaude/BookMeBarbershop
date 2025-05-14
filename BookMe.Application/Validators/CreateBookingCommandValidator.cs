@@ -10,8 +10,8 @@ public class CreateBookingCommandValidation : AbstractValidator<CreateBookingCom
     {
         RuleFor(x => x.TimeSlotId).NotEmpty();
 
-        RuleFor(x => x.UserDTo).NotNull();
-        RuleFor(x => x.UserDTo).Must(user => user.IsCustomer)
-            .WithMessage(x => $"User {x.UserDTo.Id} is not a customer");
+        RuleFor(x => x.UserDto).NotNull();
+        RuleFor(x => x.UserDto).Must(user => user.IsCustomer)
+            .WithMessage(x => $"User {x.UserDto.Id} is not a customer");
     }
 }

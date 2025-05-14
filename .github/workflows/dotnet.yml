@@ -41,7 +41,7 @@ jobs:
         cache-dependency-path: 'bookme-ui/package.json'
     - name: Install dependencies
       working-directory: bookme-ui
-      run: npm ci
+      run: npm install
     - name: Run tests
       working-directory: bookme-ui
       run: npm run test

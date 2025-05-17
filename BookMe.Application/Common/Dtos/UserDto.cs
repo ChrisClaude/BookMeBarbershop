@@ -1,6 +1,8 @@
 using System;
+using System.Text.Json.Serialization;
 using BookMe.Application.Common.Dtos.Users;
 using BookMe.Application.Enums;
+using Microsoft.OpenApi.Extensions;
 
 namespace BookMe.Application.Common.Dtos;
 
@@ -12,8 +14,4 @@ public record UserDto
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public IEnumerable<UserRoleDto> Roles { get; set; }
-
-    public bool IsAdmin => Roles.Any(x => x.Role.Name == RoleName.ADMIN);
-
-    public bool IsCustomer => Roles.Any(x => x.Role.Name == RoleName.CUSTOMER);
 }

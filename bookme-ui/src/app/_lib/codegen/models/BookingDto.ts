@@ -20,13 +20,13 @@ import {
     TimeSlotDto2ToJSON,
     TimeSlotDto2ToJSONTyped,
 } from './TimeSlotDto2';
-import type { UserDto } from './UserDto';
+import type { UserDto2 } from './UserDto2';
 import {
-    UserDtoFromJSON,
-    UserDtoFromJSONTyped,
-    UserDtoToJSON,
-    UserDtoToJSONTyped,
-} from './UserDto';
+    UserDto2FromJSON,
+    UserDto2FromJSONTyped,
+    UserDto2ToJSON,
+    UserDto2ToJSONTyped,
+} from './UserDto2';
 
 /**
  * 
@@ -48,10 +48,10 @@ export interface BookingDto {
     status?: number;
     /**
      * 
-     * @type {UserDto}
+     * @type {UserDto2}
      * @memberof BookingDto
      */
-    user?: UserDto | null;
+    user?: UserDto2 | null;
     /**
      * 
      * @type {TimeSlotDto2}
@@ -79,7 +79,7 @@ export function BookingDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         
         'id': json['id'] == null ? undefined : json['id'],
         'status': json['status'] == null ? undefined : json['status'],
-        'user': json['user'] == null ? undefined : UserDtoFromJSON(json['user']),
+        'user': json['user'] == null ? undefined : UserDto2FromJSON(json['user']),
         'timeSlot': json['timeSlot'] == null ? undefined : TimeSlotDto2FromJSON(json['timeSlot']),
     };
 }
@@ -97,7 +97,7 @@ export function BookingDtoToJSONTyped(value?: BookingDto | null, ignoreDiscrimin
         
         'id': value['id'],
         'status': value['status'],
-        'user': UserDtoToJSON(value['user']),
+        'user': UserDto2ToJSON(value['user']),
         'timeSlot': TimeSlotDto2ToJSON(value['timeSlot']),
     };
 }

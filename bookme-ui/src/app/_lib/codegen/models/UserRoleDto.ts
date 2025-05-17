@@ -20,13 +20,6 @@ import {
     RoleDtoToJSON,
     RoleDtoToJSONTyped,
 } from './RoleDto';
-import type { UserDto2 } from './UserDto2';
-import {
-    UserDto2FromJSON,
-    UserDto2FromJSONTyped,
-    UserDto2ToJSON,
-    UserDto2ToJSONTyped,
-} from './UserDto2';
 
 /**
  * 
@@ -34,12 +27,6 @@ import {
  * @interface UserRoleDto
  */
 export interface UserRoleDto {
-    /**
-     * 
-     * @type {UserDto2}
-     * @memberof UserRoleDto
-     */
-    user?: UserDto2 | null;
     /**
      * 
      * @type {RoleDto}
@@ -65,7 +52,6 @@ export function UserRoleDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean
     }
     return {
         
-        'user': json['user'] == null ? undefined : UserDto2FromJSON(json['user']),
         'role': json['role'] == null ? undefined : RoleDtoFromJSON(json['role']),
     };
 }
@@ -81,7 +67,6 @@ export function UserRoleDtoToJSONTyped(value?: UserRoleDto | null, ignoreDiscrim
 
     return {
         
-        'user': UserDto2ToJSON(value['user']),
         'role': RoleDtoToJSON(value['role']),
     };
 }

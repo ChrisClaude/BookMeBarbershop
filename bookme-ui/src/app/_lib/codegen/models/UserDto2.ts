@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { Roles } from './Roles';
+import type { UserRoleDto } from './UserRoleDto';
 import {
-    RolesFromJSON,
-    RolesFromJSONTyped,
-    RolesToJSON,
-    RolesToJSONTyped,
-} from './Roles';
+    UserRoleDtoFromJSON,
+    UserRoleDtoFromJSONTyped,
+    UserRoleDtoToJSON,
+    UserRoleDtoToJSONTyped,
+} from './UserRoleDto';
 
 /**
  * 
@@ -59,10 +59,10 @@ export interface UserDto2 {
     phoneNumber?: string | null;
     /**
      * 
-     * @type {Roles}
+     * @type {Array<UserRoleDto>}
      * @memberof UserDto2
      */
-    roles?: Roles;
+    roles?: Array<UserRoleDto> | null;
 }
 
 /**
@@ -87,7 +87,7 @@ export function UserDto2FromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'surname': json['surname'] == null ? undefined : json['surname'],
         'email': json['email'] == null ? undefined : json['email'],
         'phoneNumber': json['phoneNumber'] == null ? undefined : json['phoneNumber'],
-        'roles': json['roles'] == null ? undefined : RolesFromJSON(json['roles']),
+        'roles': json['roles'] == null ? undefined : ((json['roles'] as Array<any>).map(UserRoleDtoFromJSON)),
     };
 }
 
@@ -107,7 +107,7 @@ export function UserDto2ToJSONTyped(value?: UserDto2 | null, ignoreDiscriminator
         'surname': value['surname'],
         'email': value['email'],
         'phoneNumber': value['phoneNumber'],
-        'roles': RolesToJSON(value['roles']),
+        'roles': value['roles'] == null ? undefined : ((value['roles'] as Array<any>).map(UserRoleDtoToJSON)),
     };
 }
 

@@ -16,7 +16,11 @@ public static class ScalarConfiguration
                 .WithOAuth2Authentication(oauth2 =>
                 {
                     oauth2.ClientId = appSettings.AzureAdB2C.ClientId;
-                    oauth2.Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" };
+                    oauth2.Scopes = new[]
+                    {
+                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read",
+                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write"
+                    };
                 });
 
             options.Authentication = new ScalarAuthenticationOptions
@@ -25,7 +29,11 @@ public static class ScalarConfiguration
                 OAuth2 = new OAuth2Options
                 {
                     ClientId = appSettings.AzureAdB2C.ClientId,
-                    Scopes = new[] { $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read", $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write" },
+                    Scopes = new[]
+                    {
+                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read",
+                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write"
+                    },
                 }
             };
         });

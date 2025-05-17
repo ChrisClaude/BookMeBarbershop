@@ -1,6 +1,7 @@
 using System;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
+using BookMe.Application.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
@@ -26,7 +27,7 @@ public class CustomerAuthorizationHandler : AuthorizationHandler<CustomerRequire
             return Task.CompletedTask;
         }
 
-        if (user.IsCustomer)
+        if (user.IsCustomer())
         {
             context.Succeed(requirement);
         }

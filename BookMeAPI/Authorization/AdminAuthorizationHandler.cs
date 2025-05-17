@@ -1,6 +1,7 @@
 using System;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
+using BookMe.Application.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
@@ -32,7 +33,7 @@ public class AdminAuthorizationHandler : AuthorizationHandler<AdminRequirement>
             return Task.CompletedTask;
         }
 
-        if (requirement.IsAdmin && user.IsAdmin)
+        if (requirement.IsAdmin && user.IsAdmin())
         {
             context.Succeed(requirement);
         }

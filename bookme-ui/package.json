@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@heroui/react": "^2.7.5",
+    "@internationalized/date": "^3.8.0",
     "@openapitools/openapi-generator-cli": "^2.18.4",
     "@reduxjs/toolkit": "^2.6.1",
     "@types/jsonwebtoken": "^9.0.9",

@@ -1,44 +1,47 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Select,
-  SelectItem,
-} from "@heroui/react";
+import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
+import { BookingService } from "@/_lib/services/booking.service";
+import { Button, DatePicker, Form } from "@heroui/react";
+import { now, getLocalTimeZone } from "@internationalized/date";
 import React, { useCallback } from "react";
 
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
 export interface ValidationResult {
-  isInvalid: boolean,
-  validationErrors: string[],
-  validationDetails: ValidityState
+  isInvalid: boolean;
+  validationErrors: string[];
+  validationDetails: ValidityState;
 }
 
-const CreateTimeSlotForm = () => {
+const BookingForm = () => {
   const [errors, setErrors] = React.useState<ValidationErrors>({});
-  // const [formData, setFormData] = React.useState<{
-  //   name: string;
-  //   email: string;
-  //   phoneNumber: string;
-  //   bookingDate: string;
-  //   bookingTime: string;
-  //   terms: boolean;
-  // } | null>(null);
+  const [formData, setFormData] = React.useState<{
+    startDateTime: Date;
+    endDateTime: Date;
+  }>({
+    startDateTime: new Date(),
+    endDateTime: new Date(),
+  });
 
-  const displayNameErrorMessage = useCallback(({validationDetails}: ValidationResult) : React.ReactNode => {
-      if (validationDetails.valueMissing) {
-        return "This field is required";
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      // const data = Object.fromEntries(new FormData(e.currentTarget));
+
+      if (!formData) {
+        return;
       }
 
-      return errors.name;
-  }, [errors]);
+      const request: ApiBookingTimeslotsPostRequest = {
+        createTimeSlotsDto: {
+          startDateTime: formData.startDateTime,
+          endDateTime: formData.endDateTime,
+        },
+      };
 
-  const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // const data = Object.fromEntries(new FormData(e.currentTarget));
-  }, []);
+      BookingService.createTimeSlot({ request });
+    },
+    [formData]
+  );
 
   return (
     <>
@@ -51,59 +54,21 @@ const CreateTimeSlotForm = () => {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-md">
-          <Input
-            isRequired
-            errorMessage={displayNameErrorMessage}
-            label="Name"
-            labelPlacement="outside"
-            name="name"
-            placeholder="Enter your name"
+          <DatePicker
+            hideTimeZone
+            showMonthAndYearPickers
+            defaultValue={now(getLocalTimeZone())}
+            label="Start date and time"
+            variant="bordered"
           />
 
-          <Input
-            isRequired
-            errorMessage={({ validationDetails }) => {
-              if (validationDetails.valueMissing) {
-                return "Please enter your email";
-              }
-              if (validationDetails.typeMismatch) {
-                return "Please enter a valid email address";
-              }
-            }}
-            label="Email"
-            labelPlacement="outside"
-            name="email"
-            placeholder="Enter your email"
-            type="email"
+          <DatePicker
+            hideTimeZone
+            showMonthAndYearPickers
+            defaultValue={now(getLocalTimeZone())}
+            label="End date and time"
+            variant="bordered"
           />
-
-          <Select
-            isRequired
-            label="Country"
-            labelPlacement="outside"
-            name="country"
-            placeholder="Select country"
-          >
-            <SelectItem key="ar">Argentina</SelectItem>
-            <SelectItem key="us">United States</SelectItem>
-            <SelectItem key="ca">Canada</SelectItem>
-            <SelectItem key="uk">United Kingdom</SelectItem>
-            <SelectItem key="au">Australia</SelectItem>
-          </Select>
-
-          <Checkbox
-            isRequired
-            classNames={{
-              label: "text-small",
-            }}
-            isInvalid={!!errors.terms}
-            name="terms"
-            validationBehavior="aria"
-            value="true"
-            onValueChange={() => setErrors((prev) => ({ ...prev, terms: "" }))}
-          >
-            I agree to the terms and conditions
-          </Checkbox>
 
           {errors.terms && (
             <span className="text-danger text-small">{errors.terms}</span>
@@ -120,4 +85,4 @@ const CreateTimeSlotForm = () => {
   );
 };
 
-export default CreateTimeSlotForm;
+export default BookingForm;

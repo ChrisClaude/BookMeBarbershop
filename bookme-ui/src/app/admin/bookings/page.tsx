@@ -1,6 +1,6 @@
 "use client";
+import CreateTimeSlotForm from "@/_components/admin/CreateTimeSlotForm";
 import { withAuth } from "@/_components/auth/AuthGuard";
-import CreateTimeSlotForm from "@/_components/CreateTimeSlotForm";
 import React from "react";
 
 const BookingAdminPage = () => {

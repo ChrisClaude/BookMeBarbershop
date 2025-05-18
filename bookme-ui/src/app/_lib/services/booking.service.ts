@@ -23,22 +23,17 @@ export class BookingService {
 
   public static async createTimeSlot({
     request,
-    token,
   }: {
     request: ApiBookingTimeslotsPostRequest;
-    token: string;
   }): Promise<Result<TimeSlotDto>> {
     try {
-      const headers = this.buildHeaders({ token });
-      const response = await this.bookMeApi.apiBookingTimeslotsPostRaw(request, {
-        headers,
-      });
+      const response = await this.bookMeApi.apiBookingTimeslotsPostRaw(request);
 
       if (response.raw.status !== 200) {
         const error = await response.raw.json();
         return {
           success: false,
-          errors: [error?.toString() || "Error fetching user"],
+          errors: [error?.toString() || "Error creating time slot"],
         };
       }
       const body = await response.raw.json();
@@ -48,13 +43,13 @@ export class BookingService {
       };
     } catch (error) {
       logError(
-        error?.toString() || "Error fetching user",
-        "GetUserError",
+        error?.toString() || "Error creating time slot",
+        "CreateTimeSlotError",
         error
       );
       return {
         success: false,
-        errors: [error?.toString() || "Error fetching user"],
+        errors: [error?.toString() || "Error creating time slot"],
       };
     }
   }

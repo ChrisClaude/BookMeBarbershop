@@ -1,9 +1,10 @@
+import { ApiBookingTimeslotsPostRequest, TimeSlotDto } from "../codegen";
 import { Result } from "../types/common.types";
 import { logError } from "../utils/logging.utils";
-import { UserApiWithConfig } from "./api.service";
+import { BookingApiWithConfig } from "./api.service";
 
-export class UserService {
-  protected static userApi = new UserApiWithConfig();
+export class BookingService {
+  protected static bookMeApi = new BookingApiWithConfig();
 
   private static buildHeaders({
     token,
@@ -20,13 +21,18 @@ export class UserService {
     return headers;
   }
 
-  public static async getUserProfile({
+  public static async createTimeSlot({
+    request,
     token,
-  }: {token: string;
-  }): Promise<Result<string | undefined>> {
+  }: {
+    request: ApiBookingTimeslotsPostRequest;
+    token: string;
+  }): Promise<Result<TimeSlotDto>> {
     try {
       const headers = this.buildHeaders({ token });
-      const response = await this.userApi.apiUserMeGetRaw({ headers });
+      const response = await this.bookMeApi.apiBookingTimeslotsPostRaw(request, {
+        headers,
+      });
 
       if (response.raw.status !== 200) {
         const error = await response.raw.json();
@@ -38,7 +44,7 @@ export class UserService {
       const body = await response.raw.json();
       return {
         success: true,
-        data: body as string,
+        data: body as TimeSlotDto,
       };
     } catch (error) {
       logError(

@@ -16,7 +16,9 @@ const Sidebar = () => {
   return (
     <aside className="h-full w-48 bg-gray-300 flex flex-col">
       <div className="bg-gray-300 p-4">
-        <Logo />
+        <Link href="/admin">
+          <Logo />
+        </Link>
       </div>
       <nav className="flex flex-col">
         <Link
@@ -36,7 +38,7 @@ const Sidebar = () => {
           Users
         </Link>
         <Link
-          href="/admin/users"
+          href="/admin/bookings"
           className={`block p-2 hover:bg-gray-200 ${
             isActive("/admin/bookings") ? "bg-gray-200" : ""
           }`}

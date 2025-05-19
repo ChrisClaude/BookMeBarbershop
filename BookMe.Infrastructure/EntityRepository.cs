@@ -67,15 +67,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
                 query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
             }
 
-            if (includes != null)
-            {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
-
-                query = query.AsSplitQuery();
-            }
+            Include(query, includes);
 
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -119,6 +111,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
 
     public virtual async Task<IList<TEntity>> GetAllAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
         CacheKey cacheKey = null,
         bool includeDeleted = true
     )
@@ -132,6 +125,8 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
             }
 
             query = func != null ? func(query) : query;
+
+            Include(query, includes);
 
             return await query.ToListAsync();
         }
@@ -359,6 +354,21 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         var items = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 
         return new PagedList<TEntity>(items, pageIndex, pageSize, totalCount);
+    }
+
+    private static IQueryable<TEntity> Include(IQueryable<TEntity> query, string[] includes)
+    {
+        if (includes != null)
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            query = query.AsSplitQuery();
+        }
+
+        return query;
     }
     #endregion
 

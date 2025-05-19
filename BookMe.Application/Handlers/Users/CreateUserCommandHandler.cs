@@ -28,6 +28,8 @@ public class CreateUserCommandHandler(IRepository<User> repository) : IRequestHa
 
         await repository.InsertAsync(user, false);
 
-        return Result<UserDto>.Success(user.MapToDto());
+        var userWithRole = await repository.GetByIdAsync(user.Id, new string[] { "UserRoles", "UserRoles.Role" });
+
+        return Result<UserDto>.Success(userWithRole.MapToDto());
     }
 }

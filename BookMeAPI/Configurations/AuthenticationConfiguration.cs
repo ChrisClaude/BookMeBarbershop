@@ -15,19 +15,28 @@ namespace BookMeAPI.Configurations;
 /// </summary>
 public static class AuthenticationConfiguration
 {
-    public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, ConfigurationManager configuration)
+    public static IServiceCollection ConfigureAuthentication(
+        this IServiceCollection services,
+        ConfigurationManager configuration
+    )
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(options =>
-            {
-                configuration.Bind("AppSettings:AzureAdB2C", options);
-                options.TokenValidationParameters.NameClaimType = "name";
-                options.Events = new JwtBearerEvents
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(
+                options =>
                 {
-                    OnTokenValidated = HandleOnTokenValidatedAsync,
-
-                };
-            }, options => { configuration.Bind("AppSettings:AzureAdB2C", options); });
+                    configuration.Bind("AppSettings:AzureAdB2C", options);
+                    options.TokenValidationParameters.NameClaimType = "name";
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = HandleOnTokenValidatedAsync,
+                    };
+                },
+                options =>
+                {
+                    configuration.Bind("AppSettings:AzureAdB2C", options);
+                }
+            );
 
         return services;
     }
@@ -36,9 +45,13 @@ public static class AuthenticationConfiguration
     {
         try
         {
-            var mediator = context.HttpContext.RequestServices.GetRequiredService<IMediator>() ?? throw new Exception("Could not get service to retrieve user.");
+            var mediator =
+                context.HttpContext.RequestServices.GetRequiredService<IMediator>()
+                ?? throw new Exception("Could not get service to retrieve user.");
 
-            var userEmail = context?.Principal?.Claims.FirstOrDefault(claim => claim.Type == "emails")?.Value;
+            var userEmail = context
+                ?.Principal?.Claims.FirstOrDefault(claim => claim.Type == "emails")
+                ?.Value;
 
             var (key, user) = await GetAuthenticateUserWithKeyAsync(mediator, userEmail);
 
@@ -82,14 +95,19 @@ public static class AuthenticationConfiguration
         }
     }
 
-    private static async Task<(string key, UserDto user)> GetAuthenticateUserWithKeyAsync(IMediator mediator, string userEmail)
+    private static async Task<(string key, UserDto user)> GetAuthenticateUserWithKeyAsync(
+        IMediator mediator,
+        string userEmail
+    )
     {
         // The email is validated as part of the command validation
         var result = await mediator.Send(new GetOrCreateUserCommand(userEmail));
 
         if (result.IsFailure)
         {
-            throw new HttpContextUserLoadingProcessFailureException(result.Errors.ToAggregateString());
+            throw new HttpContextUserLoadingProcessFailureException(
+                result.Errors.ToAggregateString()
+            );
         }
 
         return (Constant.HTTP_CONTEXT_USER_ITEM_KEY, result.Value);

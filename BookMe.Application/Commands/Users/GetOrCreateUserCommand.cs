@@ -12,6 +12,6 @@ public class GetOrCreateUserCommand : IRequest<Result<UserDto>>
 
     public GetOrCreateUserCommand(string email)
     {
-
+        Email = email;
     }
 }

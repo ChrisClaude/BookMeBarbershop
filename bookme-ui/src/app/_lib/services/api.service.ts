@@ -12,6 +12,9 @@ const getAccessToken = async () => {
 const API_CONFIG = new Configuration({
   basePath: API_BASE_PATH,
   accessToken: getAccessToken,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 export class UserApiWithConfig extends UserApi {

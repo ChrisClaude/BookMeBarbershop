@@ -1,7 +1,11 @@
 import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
 import { BookingService } from "@/_lib/services/booking.service";
 import { Button, DatePicker, Form } from "@heroui/react";
-import { now, getLocalTimeZone } from "@internationalized/date";
+import {
+  now,
+  getLocalTimeZone,
+  DateValue,
+} from "@internationalized/date";
 import React, { useCallback } from "react";
 
 export type ValidationError = string | string[];
@@ -12,29 +16,30 @@ export interface ValidationResult {
   validationDetails: ValidityState;
 }
 
-const BookingForm = () => {
+const CreateTimeSlotForm = () => {
   const [errors] = React.useState<ValidationErrors>({});
-  const [formData] = React.useState<{
-    startDateTime: Date;
-    endDateTime: Date;
+  const [formData, setFormData] = React.useState<{
+    startDateTime: DateValue;
+    endDateTime: DateValue;
   }>({
-    startDateTime: new Date(),
-    endDateTime: new Date(),
+    startDateTime: now(getLocalTimeZone()),
+    endDateTime: now(getLocalTimeZone()),
   });
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      // const data = Object.fromEntries(new FormData(e.currentTarget));
 
       if (!formData) {
         return;
       }
 
+      const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
       const request: ApiBookingTimeslotsPostRequest = {
         createTimeSlotsDto: {
-          startDateTime: formData.startDateTime,
-          endDateTime: formData.endDateTime,
+          startDateTime: formData.startDateTime.toDate(localTz),
+          endDateTime: formData.endDateTime.toDate(localTz),
         },
       };
 
@@ -59,6 +64,18 @@ const BookingForm = () => {
             showMonthAndYearPickers
             //@ts-expect-error there seems to be a type issue
             defaultValue={now(getLocalTimeZone())}
+            //@ts-expect-error there seems to be a type issue
+            value={formData.startDateTime}
+            onChange={(value: DateValue | null) => {
+              if (!value) {
+                return;
+              }
+
+              setFormData({
+                ...formData,
+                startDateTime: value,
+              });
+            }}
             label="Start date and time"
             variant="bordered"
           />
@@ -68,6 +85,18 @@ const BookingForm = () => {
             showMonthAndYearPickers
             //@ts-expect-error there seems to be a type issue
             defaultValue={now(getLocalTimeZone())}
+            //@ts-expect-error there seems to be a type issue
+            value={formData.endDateTime}
+            onChange={(value: DateValue | null) => {
+              if (!value) {
+                return;
+              }
+
+              setFormData({
+                ...formData,
+                endDateTime: value,
+              });
+            }}
             label="End date and time"
             variant="bordered"
           />
@@ -87,4 +116,4 @@ const BookingForm = () => {
   );
 };
 
-export default BookingForm;
+export default CreateTimeSlotForm;

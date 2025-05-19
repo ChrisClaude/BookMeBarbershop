@@ -13,8 +13,8 @@ export interface ValidationResult {
 }
 
 const BookingForm = () => {
-  const [errors, setErrors] = React.useState<ValidationErrors>({});
-  const [formData, setFormData] = React.useState<{
+  const [errors] = React.useState<ValidationErrors>({});
+  const [formData] = React.useState<{
     startDateTime: Date;
     endDateTime: Date;
   }>({
@@ -57,6 +57,7 @@ const BookingForm = () => {
           <DatePicker
             hideTimeZone
             showMonthAndYearPickers
+            //@ts-expect-error there seems to be a type issue
             defaultValue={now(getLocalTimeZone())}
             label="Start date and time"
             variant="bordered"
@@ -65,6 +66,7 @@ const BookingForm = () => {
           <DatePicker
             hideTimeZone
             showMonthAndYearPickers
+            //@ts-expect-error there seems to be a type issue
             defaultValue={now(getLocalTimeZone())}
             label="End date and time"
             variant="bordered"

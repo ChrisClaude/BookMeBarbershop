@@ -12,28 +12,33 @@ namespace BookMe.Infrastructure.Events;
 public class KafkaProducer : IEventPublisher
 {
     private readonly EventConfig _eventConfig;
+
     public KafkaProducer(IOptionsSnapshot<AppSettings> appSettings)
     {
         _eventConfig = appSettings.Value.EventConfig;
     }
+
     public async Task PublishAsync<TEvent>(TEvent @event)
     {
-        var config = new ProducerConfig
-        {
-            BootstrapServers = _eventConfig.Server
-        };
+        var config = new ProducerConfig { BootstrapServers = _eventConfig.Server };
 
         using var producer = new ProducerBuilder<string, string>(config).Build();
 
         try
         {
-            var deliveryResult = await producer.ProduceAsync(_eventConfig.Topic, new Message<string, string>
-            {
-                Key = @event.GetType().Name,
-                Value = JsonConvert.SerializeObject(@event)
-            });
+            var deliveryResult = await producer.ProduceAsync(
+                _eventConfig.Topic,
+                new Message<string, string>
+                {
+                    Key = @event.GetType().Name,
+                    Value = JsonConvert.SerializeObject(@event)
+                }
+            );
 
-            Log.Information("Message sent to {@deliveryResult}", deliveryResult.TopicPartitionOffset);
+            Log.Information(
+                "Message sent to {@deliveryResult}",
+                deliveryResult.TopicPartitionOffset
+            );
         }
         catch (ProduceException<string, string> e)
         {

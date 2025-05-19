@@ -17,13 +17,15 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
 
     public TransactionBehavior(ITransactionManager transactionManager)
     {
-        _transactionManager = transactionManager ?? throw new ArgumentNullException(nameof(transactionManager));
+        _transactionManager =
+            transactionManager ?? throw new ArgumentNullException(nameof(transactionManager));
     }
 
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -38,16 +40,20 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                 Log.Information(
                     "Using existing transaction for {RequestType} ({@Request})",
                     typeName,
-                    request);
+                    request
+                );
                 return await next(cancellationToken);
             }
 
-            transactionId = (await _transactionManager.BeginTransactionAsync(cancellationToken)).GetValueOrDefault();
+            transactionId = (
+                await _transactionManager.BeginTransactionAsync(cancellationToken)
+            ).GetValueOrDefault();
             Log.Information(
                 "Started transaction {TransactionId} for {RequestType} ({@Request})",
                 transactionId,
                 typeName,
-                request);
+                request
+            );
 
             // Execute the request handler
             var response = await next(cancellationToken);
@@ -59,7 +65,8 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                     "Committing transaction {TransactionId} for {RequestType}. Response: {@Response}",
                     transactionId,
                     typeName,
-                    response);
+                    response
+                );
 
                 await _transactionManager.CommitTransactionAsync(cancellationToken);
             }
@@ -76,7 +83,8 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                     "Rolling back transaction {TransactionId} for {RequestType}. Request: {@Request}",
                     transactionId,
                     typeName,
-                    request);
+                    request
+                );
 
                 await _transactionManager.RollbackTransactionAsync(cancellationToken);
             }
@@ -86,7 +94,8 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                     ex,
                     "Error processing {RequestType} without transaction. Request: {@Request}",
                     typeName,
-                    request);
+                    request
+                );
             }
 
             throw;

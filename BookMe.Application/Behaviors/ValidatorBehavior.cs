@@ -5,7 +5,8 @@ using Serilog;
 
 namespace BookMe.Application.Behaviors;
 
-public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
+public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -14,7 +15,11 @@ public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest
         _validators = validators;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken
+    )
     {
         var typeName = typeof(TRequest).Name;
 
@@ -26,7 +31,12 @@ public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest
 
         if (failures.Any())
         {
-            Log.Warning("Validation errors - {CommandType} - Command: {@Command} - Errors: {@ValidationErrors}", typeName, request, failures);
+            Log.Warning(
+                "Validation errors - {CommandType} - Command: {@Command} - Errors: {@ValidationErrors}",
+                typeName,
+                request,
+                failures
+            );
             throw new ValidationException(failures);
         }
 

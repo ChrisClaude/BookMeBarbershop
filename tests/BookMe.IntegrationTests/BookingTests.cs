@@ -26,7 +26,8 @@ public class BookingTests : BaseIntegrationTest
     private IMediator _mediator;
     private ITimeSlotQueries _timeSlotQueries;
 
-    public BookingTests(IntegrationTestWebAppFactory factory) : base(factory)
+    public BookingTests(IntegrationTestWebAppFactory factory)
+        : base(factory)
     {
         _adminUser = _bookMeContext.Users
             .Include(x => x.UserRoles)
@@ -35,10 +36,10 @@ public class BookingTests : BaseIntegrationTest
             .MapToDto();
 
         _customerUser = _bookMeContext.Users
-        .Include(x => x.UserRoles)
-        .ThenInclude(x => x.Role)
-        .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId))
-        .MapToDto();
+            .Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role)
+            .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId))
+            .MapToDto();
 
         _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         _timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
@@ -52,7 +53,6 @@ public class BookingTests : BaseIntegrationTest
         // Arrange
         await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
-
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
         {
@@ -72,8 +72,7 @@ public class BookingTests : BaseIntegrationTest
             timeSlot.Id.Should().NotBeEmpty();
         });
 
-        var timeSlots = await _bookMeContext.TimeSlots
-            .ToListAsync();
+        var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
 
         timeSlots.Should().HaveCount(1);
     }
@@ -97,12 +96,15 @@ public class BookingTests : BaseIntegrationTest
         };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(() => _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest));
+        var exception = await Assert.ThrowsAsync<ValidationException>(
+            () => _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest)
+        );
 
-        exception.Message.Should().Be($"Validation failed: \n -- UserDto: User {customerUser.Id} is not an admin");
+        exception.Message
+            .Should()
+            .Be($"Validation failed: \n -- UserDto: User {customerUser.Id} is not an admin");
 
-        var timeSlots = await _bookMeContext.TimeSlots
-            .ToListAsync();
+        var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
 
         timeSlots.Should().HaveCount(0);
     }
@@ -145,20 +147,16 @@ public class BookingTests : BaseIntegrationTest
 
         _mockHttpContext.SetUser(_adminUser);
 
-        var createTimeSlotsCommand = new CreateTimeSlotCommand
-       (DateTime.UtcNow.AddDays(10).AddHours(1),
-             DateTime.UtcNow.AddDays(10).AddHours(2)
-       );
-
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
 
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
 
         var timeSlotId = creationResult.Value.Id;
 
-        var bookTimeSlotCommand = new BookTimeSlotsDto
-        {
-            TimeSlotId = timeSlotId
-        };
+        var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
 
         _mockHttpContext.SetUser(_customerUser);
 
@@ -174,8 +172,7 @@ public class BookingTests : BaseIntegrationTest
             booking.TimeSlot.Id.Should().Be(timeSlotId);
         });
 
-        var bookings = await _bookMeContext.Bookings
-            .ToListAsync();
+        var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(1);
     }
@@ -186,30 +183,27 @@ public class BookingTests : BaseIntegrationTest
         // Arrange
         _mockHttpContext.SetUser(_adminUser);
 
-
-        var createTimeSlotsCommand = new CreateTimeSlotCommand
-      (DateTime.UtcNow.AddDays(10).AddHours(1),
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
             DateTime.UtcNow.AddDays(10).AddHours(2)
-      );
-
+        );
 
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
 
         var timeSlotId = creationResult.Value.Id;
 
-
-        var bookTimeSlotCommand = new BookTimeSlotsDto
-        {
-            TimeSlotId = timeSlotId
-        };
+        var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(() => _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand));
+        var exception = await Assert.ThrowsAsync<ValidationException>(
+            () => _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand)
+        );
 
-        exception.Message.Should().Be($"Validation failed: \n -- UserDto: User {_adminUser.Id} is not a customer");
+        exception.Message
+            .Should()
+            .Be($"Validation failed: \n -- UserDto: User {_adminUser.Id} is not a customer");
 
-        var bookings = await _bookMeContext.Bookings
-            .ToListAsync();
+        var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(0);
     }
@@ -231,11 +225,18 @@ public class BookingTests : BaseIntegrationTest
 
         // First booking
         _mockHttpContext.SetUser(_customerUser);
-        var bookResult = await _bookingController.BookTimeSlotsAsync(new BookTimeSlotsDto { TimeSlotId = timeSlotId });
-        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
+        var bookingId = ((OkObjectResult)bookResult).Value
+            .GetType()
+            .GetProperty("Id")
+            .GetValue(((OkObjectResult)bookResult).Value);
 
         // Cancel the booking
-        var cancelResult = await _bookingController.CancelBookingAsync(new CancelBookingDto { BookingId = (Guid)bookingId });
+        var cancelResult = await _bookingController.CancelBookingAsync(
+            new CancelBookingDto { BookingId = (Guid)bookingId }
+        );
 
         // Second booking attempt
         var bookTimeSlotRequest = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
@@ -261,7 +262,6 @@ public class BookingTests : BaseIntegrationTest
         bookings.Where(booking => booking.Status == BookingStatus.Pending).Should().HaveCount(1);
     }
 
-
     [Fact]
     public async Task BookAlreadyBookedTimeSlot_ShouldNotSucceedAsync()
     {
@@ -279,7 +279,9 @@ public class BookingTests : BaseIntegrationTest
 
         // First booking
         _mockHttpContext.SetUser(_customerUser);
-        await _bookingController.BookTimeSlotsAsync(new BookTimeSlotsDto { TimeSlotId = timeSlotId });
+        await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
 
         // Second booking attempt
         var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
@@ -290,7 +292,15 @@ public class BookingTests : BaseIntegrationTest
         result.ValidateBadRequestResult<List<Error>>(errors =>
         {
             errors.Should().HaveCount(1);
-            errors.Any(error => error.Description.Contains($"Time slot with id {timeSlotId} is not available")).Should().BeTrue();
+            errors
+                .Any(
+                    error =>
+                        error.Description.Contains(
+                            $"Time slot with id {timeSlotId} is not available"
+                        )
+                )
+                .Should()
+                .BeTrue();
         });
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
@@ -315,7 +325,15 @@ public class BookingTests : BaseIntegrationTest
         result.ValidateBadRequestResult<List<Error>>(errors =>
         {
             errors.Should().HaveCount(1);
-            errors.Any(error => error.Description.Contains($"Time slot with id {timeSlotId} not found by user {_customerUser.Id}")).Should().BeTrue();
+            errors
+                .Any(
+                    error =>
+                        error.Description.Contains(
+                            $"Time slot with id {timeSlotId} not found by user {_customerUser.Id}"
+                        )
+                )
+                .Should()
+                .BeTrue();
         });
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
@@ -341,23 +359,26 @@ public class BookingTests : BaseIntegrationTest
 
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
-            new BookTimeSlotsDto { TimeSlotId = timeSlotId });
-        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
+        var bookingId = ((OkObjectResult)bookResult).Value
+            .GetType()
+            .GetProperty("Id")
+            .GetValue(((OkObjectResult)bookResult).Value);
 
         // Act
         var cancelResult = await _bookingController.CancelBookingAsync(
-            new CancelBookingDto { BookingId = (Guid)bookingId });
+            new CancelBookingDto { BookingId = (Guid)bookingId }
+        );
 
         // Assert
         cancelResult.ValidateNoContentResult();
 
-        var booking = await _bookMeContext.Bookings
-            .FirstAsync(b => b.Id == (Guid)bookingId);
+        var booking = await _bookMeContext.Bookings.FirstAsync(b => b.Id == (Guid)bookingId);
 
         booking.Status.Should().Be(BookingStatus.Cancelled);
 
-        var timeSlot = await _bookMeContext.TimeSlots
-            .FirstAsync(ts => ts.Id == timeSlotId);
+        var timeSlot = await _bookMeContext.TimeSlots.FirstAsync(ts => ts.Id == timeSlotId);
 
         timeSlot.IsAvailable.Should().BeTrue();
     }
@@ -383,13 +404,18 @@ public class BookingTests : BaseIntegrationTest
         // Book as customer
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
-            new BookTimeSlotsDto { TimeSlotId = timeSlotId });
-        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
+        var bookingId = ((OkObjectResult)bookResult).Value
+            .GetType()
+            .GetProperty("Id")
+            .GetValue(((OkObjectResult)bookResult).Value);
 
         // Act - Confirm as admin
         _mockHttpContext.SetUser(_adminUser);
         var confirmResult = await _bookingController.ConfirmBookingAsync(
-            new ConfirmBookingDto { BookingId = (Guid)bookingId });
+            new ConfirmBookingDto { BookingId = (Guid)bookingId }
+        );
 
         // Assert
         confirmResult.ValidateOkResult<BookingDto>(booking =>
@@ -399,8 +425,7 @@ public class BookingTests : BaseIntegrationTest
             booking.TimeSlot.Id.Should().Be(timeSlotId);
         });
 
-        var booking = await _bookMeContext.Bookings
-            .FirstAsync(b => b.Id == (Guid)bookingId);
+        var booking = await _bookMeContext.Bookings.FirstAsync(b => b.Id == (Guid)bookingId);
 
         booking.Status.Should().Be(BookingStatus.Confirmed);
     }
@@ -424,17 +449,26 @@ public class BookingTests : BaseIntegrationTest
         // Book as customer
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
-            new BookTimeSlotsDto { TimeSlotId = timeSlotId });
-        var bookingId = ((OkObjectResult)bookResult).Value.GetType().GetProperty("Id").GetValue(((OkObjectResult)bookResult).Value);
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
+        var bookingId = ((OkObjectResult)bookResult).Value
+            .GetType()
+            .GetProperty("Id")
+            .GetValue(((OkObjectResult)bookResult).Value);
 
         // Act & Assert - Try to confirm as customer
-        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
-            _bookingController.ConfirmBookingAsync(new ConfirmBookingDto { BookingId = (Guid)bookingId }));
+        var exception = await Assert.ThrowsAsync<ValidationException>(
+            () =>
+                _bookingController.ConfirmBookingAsync(
+                    new ConfirmBookingDto { BookingId = (Guid)bookingId }
+                )
+        );
 
-        exception.Message.Should().Be($"Validation failed: \n -- UserDto: User {_customerUser.Id} is not an admin");
+        exception.Message
+            .Should()
+            .Be($"Validation failed: \n -- UserDto: User {_customerUser.Id} is not an admin");
 
-        var booking = await _bookMeContext.Bookings
-            .FirstAsync(b => b.Id == (Guid)bookingId);
+        var booking = await _bookMeContext.Bookings.FirstAsync(b => b.Id == (Guid)bookingId);
 
         booking.Status.Should().Be(BookingStatus.Pending);
     }
@@ -448,13 +482,22 @@ public class BookingTests : BaseIntegrationTest
 
         // Act
         var result = await _bookingController.ConfirmBookingAsync(
-            new ConfirmBookingDto { BookingId = nonExistentBookingId });
+            new ConfirmBookingDto { BookingId = nonExistentBookingId }
+        );
 
         // Assert
         result.ValidateBadRequestResult<List<Error>>(errors =>
         {
             errors.Should().HaveCount(1);
-            errors.Any(error => error.Description.Contains($"Booking with id {nonExistentBookingId} not found")).Should().BeTrue();
+            errors
+                .Any(
+                    error =>
+                        error.Description.Contains(
+                            $"Booking with id {nonExistentBookingId} not found"
+                        )
+                )
+                .Should()
+                .BeTrue();
         });
     }
     #endregion

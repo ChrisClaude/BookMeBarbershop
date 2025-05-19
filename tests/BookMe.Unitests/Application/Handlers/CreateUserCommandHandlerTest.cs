@@ -27,7 +27,7 @@ public class CreateUserCommandHandlerTest
     public async Task CreateUserCommandHandler_ShouldCreateUserWithCustomerRoleAsync()
     {
         // Arrange
-        var createUserCommand = new CreateOrUpdateUserCommand("John", "Doe", "john.doe@example.com", "1000000000");
+        var createUserCommand = new CreateUserCommand("John", "Doe", "john.doe@example.com", "1000000000");
 
         // Setup the repository to populate Role when InsertAsync is called
         _repository.Setup(r => r.InsertAsync(It.IsAny<User>(), true))

@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace BookMe.Application.Validators;
 
-public class CreateOrUpdateUserCommandValidator : AbstractValidator<CreateOrUpdateUserCommand>
+public class CreateOrUpdateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateOrUpdateUserCommandValidator()
     {

@@ -30,7 +30,7 @@ public class GetOrCreateUserCommandHandler(IRepository<User> repository, IMediat
             Surname = request.Email.Split("@")[0],
         };
 
-        var createUserResult = await mediator.Send(new CreateOrUpdateUserCommand(newUser.Name, newUser.Surname, newUser.Email, newUser.PhoneNumber),
+        var createUserResult = await mediator.Send(new CreateUserCommand(newUser.Name, newUser.Surname, newUser.Email, newUser.PhoneNumber),
         cancellationToken);
 
         return createUserResult;

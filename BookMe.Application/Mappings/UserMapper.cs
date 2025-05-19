@@ -34,17 +34,11 @@ public static class UserMapper
 
     public static RoleDto MapToDto(this Role role)
     {
-        return new RoleDto
-        {
-            Name = role.Name
-        };
+        return new RoleDto { Name = role.Name };
     }
 
     public static UserRoleDto MapToDto(this UserRole userRole)
     {
-        return new UserRoleDto
-        {
-            Role = userRole.Role.MapToDto()
-        };
+        return new UserRoleDto { Role = userRole.Role.MapToDto() };
     }
 }

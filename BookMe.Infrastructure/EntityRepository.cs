@@ -12,7 +12,8 @@ using Microsoft.Extensions.Options;
 
 namespace BookMe.Infrastructure;
 
-public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+public partial class EntityRepository<TEntity> : IRepository<TEntity>
+    where TEntity : BaseEntity
 {
     #region Fields
 
@@ -25,10 +26,12 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     #region Ctor
 
-    public EntityRepository(IEventPublisher eventPublisher,
+    public EntityRepository(
+        IEventPublisher eventPublisher,
         BookMeContext context,
         ICacheManager cacheManager,
-        IOptionsSnapshot<AppSettings> appSettings)
+        IOptionsSnapshot<AppSettings> appSettings
+    )
     {
         _eventPublisher = eventPublisher;
         _context = context;
@@ -46,7 +49,12 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
 
     #region Methods
 
-    public virtual async Task<TEntity> GetByIdAsync(Guid? id, string[] includes = null, CacheKey cacheKey = null, bool includeDeleted = true)
+    public virtual async Task<TEntity> GetByIdAsync(
+        Guid? id,
+        string[] includes = null,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    )
     {
         if (!id.HasValue)
             return null;
@@ -78,11 +86,14 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         if (await _cacheManager.GetAsync(cacheKey, out TEntity entity))
             return entity;
 
-
         return await getEntityAsync();
     }
 
-    public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, CacheKey cacheKey = null, bool includeDeleted = true)
+    public virtual async Task<IList<TEntity>> GetByIdsAsync(
+        IList<Guid> ids,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    )
     {
         if (ids == null || !ids.Any())
             return new List<TEntity>();
@@ -109,7 +120,8 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
     public virtual async Task<IList<TEntity>> GetAllAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
         CacheKey cacheKey = null,
-        bool includeDeleted = true)
+        bool includeDeleted = true
+    )
     {
         async Task<IList<TEntity>> getEntitiesAsync()
         {
@@ -138,7 +150,8 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         int pageIndex = 0,
         int pageSize = int.MaxValue,
         bool getOnlyTotalCount = false,
-        bool includeDeleted = true)
+        bool includeDeleted = true
+    )
     {
         var query = Table;
 
@@ -166,7 +179,10 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
         catch (DbUpdateException ex)
         {
-            throw new RepositoryException($"Error inserting entity of type {typeof(TEntity).Name}", ex);
+            throw new RepositoryException(
+                $"Error inserting entity of type {typeof(TEntity).Name}",
+                ex
+            );
         }
     }
 
@@ -189,7 +205,10 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
         catch (DbUpdateException ex)
         {
-            throw new RepositoryException($"Error inserting entities of type {typeof(TEntity).Name}", ex);
+            throw new RepositoryException(
+                $"Error inserting entities of type {typeof(TEntity).Name}",
+                ex
+            );
         }
     }
 
@@ -207,7 +226,10 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
         catch (DbUpdateException ex)
         {
-            throw new RepositoryException($"Error updating entity of type {typeof(TEntity).Name}", ex);
+            throw new RepositoryException(
+                $"Error updating entity of type {typeof(TEntity).Name}",
+                ex
+            );
         }
     }
 
@@ -231,7 +253,10 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
         catch (DbUpdateException ex)
         {
-            throw new RepositoryException($"Error updating entities of type {typeof(TEntity).Name}", ex);
+            throw new RepositoryException(
+                $"Error updating entities of type {typeof(TEntity).Name}",
+                ex
+            );
         }
     }
 
@@ -258,7 +283,10 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
         catch (DbUpdateException ex)
         {
-            throw new RepositoryException($"Error deleting entity of type {typeof(TEntity).Name}", ex);
+            throw new RepositoryException(
+                $"Error deleting entity of type {typeof(TEntity).Name}",
+                ex
+            );
         }
     }
 
@@ -292,14 +320,22 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
         }
         catch (DbUpdateException ex)
         {
-            throw new RepositoryException($"Error deleting entities of type {typeof(TEntity).Name}", ex);
+            throw new RepositoryException(
+                $"Error deleting entities of type {typeof(TEntity).Name}",
+                ex
+            );
         }
     }
 
     #endregion
 
     #region Utility methods
-    protected virtual async Task<IPagedList<TEntity>> ToPagedListAsync(IQueryable<TEntity> query, int pageIndex, int pageSize, bool getOnlyTotalCount)
+    protected virtual async Task<IPagedList<TEntity>> ToPagedListAsync(
+        IQueryable<TEntity> query,
+        int pageIndex,
+        int pageSize,
+        bool getOnlyTotalCount
+    )
     {
         if (query == null)
             throw new ArgumentNullException(nameof(query));
@@ -320,9 +356,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEnt
             pageIndex = 0;
 
         // Get paginated data
-        var items = await query.Skip(pageIndex * pageSize)
-                             .Take(pageSize)
-                             .ToListAsync();
+        var items = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 
         return new PagedList<TEntity>(items, pageIndex, pageSize, totalCount);
     }

@@ -28,6 +28,7 @@ public interface IRepository<TEntity>
 
     Task<IList<TEntity>> GetAllAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
         CacheKey cacheKey = null,
         bool includeDeleted = true
     );

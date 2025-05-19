@@ -14,7 +14,9 @@ public class GetOrCreateUserCommandHandler(IRepository<User> repository, IMediat
 {
     public async Task<Result<UserDto>> Handle(GetOrCreateUserCommand request, CancellationToken cancellationToken)
     {
-        var users = await repository.GetAllAsync(query => query.Where(x => x.Email == request.Email));
+        var users = await repository.GetAllAsync(query => query.Where(x => x.Email == request.Email),
+        ["UserRoles", "UserRoles.Role"]
+        );
 
         var user = users.FirstOrDefault();
 

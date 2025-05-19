@@ -8,26 +8,37 @@ namespace BookMe.Application.Interfaces;
 /// Represents an entity repository
 /// </summary>
 /// <typeparam name="TEntity">Entity type</typeparam>
-public interface IRepository<TEntity> where TEntity : BaseEntity
+public interface IRepository<TEntity>
+    where TEntity : BaseEntity
 {
     #region Methods
 
-    Task<TEntity> GetByIdAsync(Guid? id,
-    string[] includes = null, CacheKey cacheKey = null, bool includeDeleted = true);
+    Task<TEntity> GetByIdAsync(
+        Guid? id,
+        string[] includes = null,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    );
 
-    Task<IList<TEntity>> GetByIdsAsync(IList<Guid> ids, CacheKey cacheKey = null, bool includeDeleted = true);
+    Task<IList<TEntity>> GetByIdsAsync(
+        IList<Guid> ids,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    );
 
     Task<IList<TEntity>> GetAllAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
         CacheKey cacheKey = null,
-        bool includeDeleted = true);
+        bool includeDeleted = true
+    );
 
     Task<IPagedList<TEntity>> GetAllPagedAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
         int pageIndex = 0,
         int pageSize = int.MaxValue,
         bool getOnlyTotalCount = false,
-        bool includeDeleted = true);
+        bool includeDeleted = true
+    );
 
     Task InsertAsync(TEntity entity, bool publishEvent = true);
 

@@ -67,7 +67,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
                 query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
             }
 
-            Include(query, includes);
+            query = Include(query, includes);
 
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
@@ -126,7 +126,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
 
             query = func != null ? func(query) : query;
 
-            Include(query, includes);
+            query = Include(query, includes);
 
             return await query.ToListAsync();
         }

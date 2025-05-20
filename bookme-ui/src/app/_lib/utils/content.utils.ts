@@ -34,17 +34,17 @@ export const CONTENT = {
           rows: [
             {
               name: 'Haircut',
-              price: 'PLN 50',
+              price: 'To be negotiated',
               estimatedTime: '45 minutes',
             },
             {
               name: 'Beard trim',
-              price: 'PLN 30',
+              price: 'To be negotiated',
               estimatedTime: '30 minutes',
             },
             {
               name: 'Haircut and beard trim',
-              price: 'PLN 50',
+              price: 'To be negotiated',
               estimatedTime: '1 hour',
             },
           ],
@@ -110,17 +110,17 @@ export const CONTENT = {
           rows: [
             {
               name: 'Ostrzyżenie',
-              price: 'PLN 50',
+              price: 'Do negocjacji',
               estimatedTime: '45 minut',
             },
             {
               name: 'Strzyżenie brody',
-              price: 'PLN 30',
+              price: 'Do negocjacji',
               estimatedTime: '30 minut',
             },
             {
               name: 'Ostrzyżenie i Strzyżenie brody',
-              price: 'PLN 50',
+              price: 'Do negocjacji',
               estimatedTime: '1 godzina',
             },
           ],

@@ -28,7 +28,7 @@ public class CreateUserCommandHandler(IRepository<User> repository) : IRequestHa
 
         await repository.InsertAsync(user, false);
 
-        var userWithRole = await repository.GetByIdAsync(user.Id, new string[] { "UserRoles", "UserRoles.Role" });
+        var userWithRole = await repository.GetByIdAsync(user.Id, new string[] { nameof(User.UserRoles), $"{nameof(User.UserRoles)}.{nameof(UserRole.Role)}" });
 
         return Result<UserDto>.Success(userWithRole.MapToDto());
     }

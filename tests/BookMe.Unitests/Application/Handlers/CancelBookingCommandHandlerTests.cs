@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using BookMe.Application.Commands.Bookings;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos;

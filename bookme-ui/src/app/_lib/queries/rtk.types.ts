@@ -9,3 +9,9 @@ export type CustomBaseQueryType =
       endpoint: "booking.createTimeSlot";
       params: { request: ApiBookingTimeslotsPostRequest };
     };
+
+export type QueryResult<T> = {
+  data?: T;
+  isFetching: boolean;
+  error?: string[];
+};

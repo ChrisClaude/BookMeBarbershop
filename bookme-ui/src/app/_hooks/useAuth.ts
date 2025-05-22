@@ -8,6 +8,9 @@ import {
 import { signIn, signOut } from "next-auth/react";
 import { useCallback } from "react";
 import { UserSession } from "@/_lib/types/common.types";
+import { useGetUserProfileQuery } from "@/_lib/queries";
+import { UserDto } from "@/_lib/codegen";
+import { QueryResult } from "@/_lib/queries/rtk.types";
 
 export type Profile = {
   id: string | undefined | null;
@@ -18,6 +21,11 @@ export type Profile = {
 
 export const useAuth = () => {
   const { data, status } = useSession();
+  const {
+    data: userProfile,
+    isFetching: isFetchingUserProfile,
+    error: errorFetchingUserProfile,
+  } = useGetUserProfileQuery<QueryResult<UserDto>>({});
 
   const isUserSignedIn = useMemo(() => {
     return status === "authenticated";
@@ -38,15 +46,6 @@ export const useAuth = () => {
     });
   }, []);
 
-  const userProfile = useMemo<Profile | undefined>(() => {
-    return {
-      id: "test-id",
-      name: data?.user?.name,
-      email: data?.user?.email,
-      userType: "Customer",
-    };
-  }, [data?.user]);
-
   const session = useMemo<UserSession | null>(() => {
     if (!data) {
       return null;
@@ -54,5 +53,24 @@ export const useAuth = () => {
     return data as UserSession;
   }, [data]);
 
-  return { session, status, isUserSignedIn, login, logout, userProfile };
+  const isAdmin = useMemo(() => {
+    return userProfile?.roles?.some((userRole) => userRole.role?.name === "Admin");
+  }, [userProfile]);
+
+const isCustomer = useMemo(() => {
+    return userProfile?.roles?.some((userRole) => userRole.role?.name === "Customer");
+  }, [userProfile]);
+
+  return {
+    session,
+    status,
+    isUserSignedIn,
+    login,
+    logout,
+    userProfile,
+    isFetchingUserProfile,
+    errorFetchingUserProfile,
+    isAdmin,
+    isCustomer,
+  };
 };

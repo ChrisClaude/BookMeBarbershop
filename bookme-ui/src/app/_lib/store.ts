@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import languageReducer from './features/language/language-slice';
+import authReducer from './features/auth/auth-slice';
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       languageReducer: languageReducer,
+      authReducer: authReducer,
     },
   });
 };

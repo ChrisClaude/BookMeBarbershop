@@ -21,13 +21,9 @@ export class UserService {
     return headers;
   }
 
-  public static async getUserProfile({
-    token,
-  }: {token: string;
-  }): Promise<Result<UserDto | undefined>> {
+  public static async getUserProfile(): Promise<Result<UserDto | undefined>> {
     try {
-      const headers = this.buildHeaders({ token });
-      const response = await this.userApi.apiUserMeGetRaw({ headers });
+      const response = await this.userApi.apiUserMeGetRaw();
 
       if (response.raw.status !== 200) {
         const error = await response.raw.json();

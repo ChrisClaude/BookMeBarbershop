@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import React, { ReactNode, useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import Loader from '../Loader';
-import { useAuth } from '@/_hooks/useAuth';
-import { UserType } from '@/_lib/types';
-import { logError } from '@/_lib/utils/logging.utils';
+import React, { ReactNode, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Loader from "../Loader";
+import { useAuth } from "@/_hooks/useAuth";
+import { UserType } from "@/_lib/types";
+import { logError } from "@/_lib/utils/logging.utils";
 
 type AuthGuardProps = {
   userType: UserType;
   children: ReactNode;
   fallbackPath?: string;
   loadingComponent?: ReactNode;
-}
+};
 
 export const AuthGuard: React.FC<AuthGuardProps> = ({
   userType,
   children,
-  fallbackPath = '/',
+  fallbackPath = "/",
   loadingComponent = <Loader />,
 }) => {
-  const { status, userProfile, login } = useAuth();
+  const { status, userProfile, login, containsRoles } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
@@ -30,50 +30,53 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
     const handleAuth = async () => {
       try {
         switch (status) {
-          case 'loading':
+          case "loading":
             return;
 
-          case 'unauthenticated':
+          case "unauthenticated":
             // Store the intended destination before redirecting to login
-            sessionStorage.setItem('returnUrl', pathname);
+            sessionStorage.setItem("returnUrl", pathname);
             login();
             return;
 
-          case 'authenticated':
+          case "authenticated":
             if (!userProfile) {
-              throw new Error('User profile is undefined');
+              throw new Error("User profile is undefined");
             }
 
-            if (userProfile.userType !== userType) {
-              router.replace(fallbackPath);
+            if (
+              containsRoles([userType])
+            ) {
+              setIsAuthorized(true);
+              // Restore the intended destination after successful auth
+              const returnUrl = sessionStorage.getItem("returnUrl");
+              if (returnUrl && returnUrl !== pathname) {
+                router.replace(returnUrl);
+                sessionStorage.removeItem("returnUrl");
+              }
               return;
             }
 
-            setIsAuthorized(true);
-            // Restore the intended destination after successful auth
-            const returnUrl = sessionStorage.getItem('returnUrl');
-            if (returnUrl && returnUrl !== pathname) {
-              router.replace(returnUrl);
-              sessionStorage.removeItem('returnUrl');
-            }
+            // Redirect to fallback path if user is not authorized
+            router.replace(fallbackPath);
             break;
 
           default:
             throw new Error(`Unexpected auth status: ${status}`);
         }
       } catch (error) {
-        logError('AuthGuard error', 'AuthGuard', error);
-        router.replace('/error');
+        logError("AuthGuard error", "AuthGuard", error);
+        router.replace("/error");
       } finally {
         setIsLoading(false);
       }
     };
 
     handleAuth();
-  }, [status, userProfile, userType, router, pathname, login, fallbackPath]);
+  }, [status, userProfile, userType, router, pathname, login, fallbackPath, containsRoles]);
 
   // Show loading state
-  if (isLoading || status === 'loading' || !userProfile || !isAuthorized) {
+  if (isLoading || status === "loading" || !userProfile || !isAuthorized) {
     return loadingComponent;
   }
 
@@ -85,7 +88,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
 export const withAuth = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
   userType: UserType,
-  options: Partial<Omit<AuthGuardProps, 'userType' | 'children'>> = {}
+  options: Partial<Omit<AuthGuardProps, "userType" | "children">> = {}
 ) => {
   return function WithAuthComponent(props: P) {
     return (

@@ -11,6 +11,7 @@ import { UserSession } from "@/_lib/types/common.types";
 import { useGetUserProfileQuery } from "@/_lib/queries";
 import { UserDto } from "@/_lib/codegen";
 import { QueryResult } from "@/_lib/queries/rtk.types";
+import { ROLES } from "@/_lib/enums/constant";
 
 export type Profile = {
   id: string | undefined | null;
@@ -25,7 +26,9 @@ export const useAuth = () => {
     data: userProfile,
     isFetching: isFetchingUserProfile,
     error: errorFetchingUserProfile,
-  } = useGetUserProfileQuery<QueryResult<UserDto>>({});
+  } = useGetUserProfileQuery<QueryResult<UserDto>>({
+    keepUnusedDataFor: 10 * 60, // 10 minutes
+  });
 
   const isUserSignedIn = useMemo(() => {
     return status === "authenticated";
@@ -54,19 +57,38 @@ export const useAuth = () => {
   }, [data]);
 
   const isAdmin = useMemo(() => {
-    return userProfile?.roles?.some((userRole) => userRole.role?.name === "Admin");
+    return userProfile?.roles?.some(
+      (userRole) => userRole.role?.name === ROLES.ADMIN
+    );
   }, [userProfile]);
 
-const isCustomer = useMemo(() => {
-    return userProfile?.roles?.some((userRole) => userRole.role?.name === "Customer");
+  const isCustomer = useMemo(() => {
+    return userProfile?.roles?.some(
+      (userRole) => userRole.role?.name === ROLES.CUSTOMER
+    );
   }, [userProfile]);
+
+  /**
+   * This method checks if the logged in user has any of the roles provided in the array.
+   * @param roles array of roles to check
+   * @returns true if the logged in user has any of the roles, false otherwise
+   */
+  const containsRoles = useCallback(
+    (roles: string[]) => {
+      return userProfile?.roles?.some((userRole) =>
+        roles.includes(userRole.role?.name || "")
+      );
+    },
+    [userProfile]
+  );
 
   return {
+    login,
+    logout,
+    containsRoles,
     session,
     status,
     isUserSignedIn,
-    login,
-    logout,
     userProfile,
     isFetchingUserProfile,
     errorFetchingUserProfile,

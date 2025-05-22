@@ -1,3 +1,4 @@
+using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
 using BookMe.Application.Interfaces.Queries;
@@ -24,7 +25,7 @@ public class UserController : BaseController
 
     [HttpGet("me")]
     [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetUserAsync()
     {

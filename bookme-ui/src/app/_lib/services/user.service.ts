@@ -1,3 +1,4 @@
+import { UserDto } from "../codegen";
 import { Result } from "../types/common.types";
 import { logError } from "../utils/logging.utils";
 import { UserApiWithConfig } from "./api.service";
@@ -23,7 +24,7 @@ export class UserService {
   public static async getUserProfile({
     token,
   }: {token: string;
-  }): Promise<Result<string | undefined>> {
+  }): Promise<Result<UserDto | undefined>> {
     try {
       const headers = this.buildHeaders({ token });
       const response = await this.userApi.apiUserMeGetRaw({ headers });
@@ -38,7 +39,7 @@ export class UserService {
       const body = await response.raw.json();
       return {
         success: true,
-        data: body as string,
+        data: body as UserDto,
       };
     } catch (error) {
       logError(

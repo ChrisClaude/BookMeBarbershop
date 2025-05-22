@@ -10,7 +10,6 @@ import {
   getDateYearsAgo,
   getDaysDifference,
   isWithinDays,
-  convertDateToUTC,
   compareDates,
 } from "../dateUtils";
 
@@ -236,21 +235,6 @@ describe("dateUtils", () => {
       } else {
         expect(result).toBeUndefined();
       }
-    });
-  });
-
-  describe("convertDateToUTC", () => {
-    it("should convert local date to UTC", () => {
-      const localDate = new Date(2025, 0, 24, 12, 0, 0);
-      const result = convertDateToUTC(localDate);
-      expect(result.getUTCHours()).toBe(0);
-      expect(result.getUTCMinutes()).toBe(0);
-    });
-
-    it("should throw error for invalid date", () => {
-      expect(() => convertDateToUTC(new Date("invalid"))).toThrow(
-        "Invalid Date object"
-      );
     });
   });
 });

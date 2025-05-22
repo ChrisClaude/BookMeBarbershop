@@ -52,7 +52,7 @@ const Header = () => {
   );
 
   const SocialAndLang = () => (
-    <div className="flex items-center gap-x-6 lg:gap-x-36">
+    <div className="flex items-center gap-x-6 xl:gap-x-36">
       <div className="flex gap-x-5 items-center">
         <a
           href="https://www.instagram.com/sans_tache_papi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="

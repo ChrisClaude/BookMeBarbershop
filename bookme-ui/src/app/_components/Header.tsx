@@ -15,7 +15,7 @@ import { Tooltip } from "@heroui/react";
 const Header = () => {
   const { language } = useLanguageState();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { status, userProfile } = useAuth();
+  const { status, isAdmin } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -78,14 +78,8 @@ const Header = () => {
       </div>
       {status === "authenticated" && (
         <div>
-          <Tooltip content={`Navigate to ${userProfile?.userType} dashboard`}>
-            <Link
-              href={
-                userProfile?.userType === "Admin"
-                  ? "/admin"
-                  : "/customer/bookings"
-              }
-            >
+          <Tooltip content={`Navigate to ${isAdmin ? "admin" : "customer"} dashboard`}>
+            <Link href={isAdmin ? "/admin" : "/customer/bookings"}>
               <CgProfile size={30} className="text-primary" />
             </Link>
           </Tooltip>

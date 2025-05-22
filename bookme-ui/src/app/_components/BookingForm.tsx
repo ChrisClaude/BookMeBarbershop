@@ -1,3 +1,5 @@
+"use client";
+import { useAuth } from "@/_hooks/useAuth";
 import {
   Button,
   Checkbox,
@@ -11,9 +13,9 @@ import React, { useCallback } from "react";
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
 export interface ValidationResult {
-  isInvalid: boolean,
-  validationErrors: string[],
-  validationDetails: ValidityState
+  isInvalid: boolean;
+  validationErrors: string[];
+  validationDetails: ValidityState;
 }
 
 const BookingForm = () => {
@@ -27,13 +29,18 @@ const BookingForm = () => {
   //   terms: boolean;
   // } | null>(null);
 
-  const displayNameErrorMessage = useCallback(({validationDetails}: ValidationResult) : React.ReactNode => {
+  const { login, status } = useAuth();
+
+  const displayNameErrorMessage = useCallback(
+    ({ validationDetails }: ValidationResult): React.ReactNode => {
       if (validationDetails.valueMissing) {
         return "This field is required";
       }
 
       return errors.name;
-  }, [errors]);
+    },
+    [errors]
+  );
 
   const onSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -109,10 +116,18 @@ const BookingForm = () => {
             <span className="text-danger text-small">{errors.terms}</span>
           )}
 
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-2">
             <Button className="w-full" color="primary" type="submit">
               Submit
             </Button>
+            {status === "unauthenticated" && (
+              <>
+                <p className="separator">or</p>
+                <Button className="w-full" onPress={login}>
+                  Login
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </Form>

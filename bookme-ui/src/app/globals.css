@@ -153,3 +153,24 @@ button {
 .photo-view-exit {
   animation: fadeIn 0.3s ease-in-out reverse;
 }
+
+/* Booking form styles */
+.separator {
+  @apply flex items-center justify-center w-full my-4;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex-grow: 1;
+  height: 1px;
+  background: #ccc;
+}
+
+.separator::before {
+  margin-right: 0.5rem;
+}
+
+.separator::after {
+  margin-left: 0.5rem;
+}

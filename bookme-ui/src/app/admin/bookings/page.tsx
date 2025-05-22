@@ -1,6 +1,7 @@
 "use client";
 import CreateTimeSlotForm from "@/_components/admin/CreateTimeSlotForm";
 import { withAuth } from "@/_components/auth/AuthGuard";
+import { ROLES } from "@/_lib/enums/constant";
 import React from "react";
 
 const BookingAdminPage = () => {
@@ -12,6 +13,6 @@ const BookingAdminPage = () => {
   );
 };
 
-export default withAuth(BookingAdminPage, "Customer", {
+export default withAuth(BookingAdminPage, ROLES.ADMIN, {
   fallbackPath: "/unauthorized",
 });

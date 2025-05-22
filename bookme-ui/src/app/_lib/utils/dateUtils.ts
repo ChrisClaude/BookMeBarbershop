@@ -1,5 +1,4 @@
 import { logError } from "./logging.utils";
-import { parseISO } from 'date-fns';
 
 /* Parses a string as a date.  Date format can either by yyyy-MM-dd which is the convention when communicating with the API or dd/MM/yyyy which is the convention
        used within DatePicker.  The function also handles inputs that are type date such that it will return the date itself.
@@ -137,15 +136,6 @@ const toDatePickerFormat = (date: Date | null | undefined): string => {
   const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-indexed
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
-};
-
-const convertDateToUTC = (date: Date): Date => {
-  if (!(date instanceof Date) || isNaN(date.getTime())) {
-    throw new Error("Invalid Date object provided to convertDateToUTC.");
-  }
-
-  // Convert to ISO string (which is in UTC) and parse back to Date
-  return parseISO(date.toISOString());
 };
 
 // Formats a date to 'dd-MMM-yyyy' (e.g., 3rd February 2025 => '03-Feb-2025') to be used for displaying dates to users.
@@ -365,6 +355,5 @@ export {
   isWithinDays,
   isNotWithinDays,
   getDateMonthsFromNow,
-  convertDateToUTC,
   compareDates,
 };

@@ -44,4 +44,13 @@ public sealed record Error(string Code, string Description)
         }
         return new("invalid-argument", exceptionMessage);
     }
+
+    public static Error Conflict(string errorMessage = null)
+    {
+        if (string.IsNullOrEmpty(errorMessage))
+        {
+            errorMessage = "Conflict";
+        }
+        return new("conflict", errorMessage);
+    }
 }

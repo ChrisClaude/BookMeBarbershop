@@ -78,6 +78,49 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task CreateOverlappingTimeSlotsShouldNotSucceedAsync()
+    {
+        // Arrange
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        _mockHttpContext.SetUser(_adminUser);
+
+        var firstCreateTimeSlotsRequest = new CreateTimeSlotsDto
+        {
+            StartDateTime = DateTime.UtcNow.AddDays(10).AddHours(1),
+            EndDateTime = DateTime.UtcNow.AddDays(10).AddHours(2),
+        };
+
+        var firstResult = await _bookingController.CreateTimeSlotsAsync(
+            firstCreateTimeSlotsRequest
+        );
+
+        var createTimeSlotsRequest = new CreateTimeSlotsDto
+        {
+            StartDateTime = DateTime.UtcNow.AddDays(10).AddHours(1),
+            EndDateTime = DateTime.UtcNow.AddDays(10).AddHours(2),
+        };
+
+        // Act
+        var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
+
+        // Assert
+        result.ValidateBadRequestResult<List<Error>>(errors =>
+        {
+            errors.Should().NotBeEmpty();
+            var firstError = errors.First();
+            firstError.Should().NotBeNull();
+            firstError.Code.Should().Be("conflict");
+            firstError.Description
+                .Should()
+                .Be("The requested time slot overlaps with existing time slots");
+        });
+
+        var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
+
+        timeSlots.Should().HaveCount(1);
+    }
+
+    [Fact]
     public async Task CreateTimeSlotsWithNonAdminUser_ShouldNotSucceedAsync()
     {
         // Arrange
@@ -182,6 +225,7 @@ public class BookingTests : BaseIntegrationTest
     {
         // Arrange
         _mockHttpContext.SetUser(_adminUser);
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
 
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
             DateTime.UtcNow.AddDays(10).AddHours(1),

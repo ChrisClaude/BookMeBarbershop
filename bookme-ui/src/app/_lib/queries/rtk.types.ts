@@ -1,4 +1,4 @@
-import { ApiBookingTimeslotsPostRequest } from "../codegen";
+import { ApiBookingTimeslotsPostRequest, TimeslotsGetRequest } from "../codegen";
 
 export type CustomBaseQueryType =
   | {
@@ -8,6 +8,10 @@ export type CustomBaseQueryType =
   | {
       endpoint: "booking.createTimeSlot";
       params: { request: ApiBookingTimeslotsPostRequest };
+    }
+  | {
+      endpoint: "booking.getAvailableTimeSlots";
+      params: { request: TimeslotsGetRequest };
     };
 
 export type QueryResult<T> = {

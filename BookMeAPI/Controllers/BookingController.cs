@@ -16,7 +16,7 @@ namespace BookMeAPI.Controllers;
 [ApiController]
 public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQueries) : BaseController
 {
-    [HttpGet("/timeslots")]
+    [HttpPost("/timeslots")]
     [AllowAnonymous]
     [ProducesResponseType<Result<IEnumerable<TimeSlotDto>>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

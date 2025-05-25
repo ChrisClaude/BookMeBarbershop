@@ -1,11 +1,7 @@
 import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
-import { BookingService } from "@/_lib/services/booking.service";
+import { useCreateTimeSlotMutation } from "@/_lib/queries";
 import { Button, DatePicker, Form } from "@heroui/react";
-import {
-  now,
-  getLocalTimeZone,
-  DateValue,
-} from "@internationalized/date";
+import { now, getLocalTimeZone, DateValue } from "@internationalized/date";
 import React, { useCallback } from "react";
 
 export type ValidationError = string | string[];
@@ -26,6 +22,8 @@ const CreateTimeSlotForm = () => {
     endDateTime: now(getLocalTimeZone()).add({ hours: 2 }),
   });
 
+  const [createTimeSlot] = useCreateTimeSlotMutation();
+
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -43,16 +41,14 @@ const CreateTimeSlotForm = () => {
         },
       };
 
-      BookingService.createTimeSlot({ request });
+      createTimeSlot({ request });
     },
-    [formData]
+    [createTimeSlot, formData]
   );
 
   return (
     <>
-      <h1 className="text-2xl font-bold mb-12 text-center">
-        Create Time Slot
-      </h1>
+      <h1 className="text-2xl font-bold mb-12 text-center">Create Time Slot</h1>
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}

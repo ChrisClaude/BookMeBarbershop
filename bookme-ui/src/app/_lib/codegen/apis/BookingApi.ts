@@ -58,7 +58,7 @@ export interface ApiBookingTimeslotsPostRequest {
     createTimeSlotsDto: CreateTimeSlotsDto;
 }
 
-export interface TimeslotsGetRequest {
+export interface TimeslotsPostRequest {
     getAvailableTimeSlotsDto: GetAvailableTimeSlotsDto;
 }
 
@@ -171,11 +171,11 @@ export class BookingApi extends runtime.BaseAPI {
 
     /**
      */
-    async timeslotsGetRaw(requestParameters: TimeslotsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResultOfIEnumerableOfTimeSlotDto>> {
+    async timeslotsPostRaw(requestParameters: TimeslotsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ResultOfIEnumerableOfTimeSlotDto>> {
         if (requestParameters['getAvailableTimeSlotsDto'] == null) {
             throw new runtime.RequiredError(
                 'getAvailableTimeSlotsDto',
-                'Required parameter "getAvailableTimeSlotsDto" was null or undefined when calling timeslotsGet().'
+                'Required parameter "getAvailableTimeSlotsDto" was null or undefined when calling timeslotsPost().'
             );
         }
 
@@ -187,7 +187,7 @@ export class BookingApi extends runtime.BaseAPI {
 
         const response = await this.request({
             path: `/timeslots`,
-            method: 'GET',
+            method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: GetAvailableTimeSlotsDtoToJSON(requestParameters['getAvailableTimeSlotsDto']),
@@ -198,8 +198,8 @@ export class BookingApi extends runtime.BaseAPI {
 
     /**
      */
-    async timeslotsGet(requestParameters: TimeslotsGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ResultOfIEnumerableOfTimeSlotDto> {
-        const response = await this.timeslotsGetRaw(requestParameters, initOverrides);
+    async timeslotsPost(requestParameters: TimeslotsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ResultOfIEnumerableOfTimeSlotDto> {
+        const response = await this.timeslotsPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

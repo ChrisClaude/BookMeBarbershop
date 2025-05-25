@@ -1,4 +1,4 @@
-import { ApiBookingTimeslotsPostRequest, TimeSlotDto } from "../codegen";
+import { ApiBookingTimeslotsPostRequest, TimeSlotDto, TimeslotsPostRequest } from "../codegen";
 import { Result } from "../types/common.types";
 import { logError } from "../utils/logging.utils";
 import { BookingApiWithConfig } from "./api.service";
@@ -50,6 +50,40 @@ export class BookingService {
       return {
         success: false,
         errors: [error?.toString() || "Error creating time slot"],
+      };
+    }
+  }
+
+  public static async getAvailableTimeSlots({
+    request,
+  }: {
+    request: TimeslotsPostRequest;
+  }): Promise<Result<TimeSlotDto[]>> {
+    try {
+console.log("request", request);
+      const response = await this.bookMeApi.timeslotsPostRaw(request);
+
+      if (response.raw.status !== 200) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: [error?.toString() || "Error fetching time slots"],
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as TimeSlotDto[],
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching time slots",
+        "GetAvailableTimeSlotsError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching time slots"],
       };
     }
   }

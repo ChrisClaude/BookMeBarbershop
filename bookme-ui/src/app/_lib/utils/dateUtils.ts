@@ -6,13 +6,13 @@ import { logError } from "./logging.utils";
     */
 const parseDate = (
   dateString: string | number | Date | null | undefined
-): Date | null => {
-  if (dateString == null || dateString === "Choose Date") {
-    return null;
+): Date => {
+  if (dateString == null || dateString === undefined) {
+    throw new Error("Date string is null or undefined");
   }
 
-  if (dateString instanceof Date) {
-    return isValidDate(dateString) ? dateString : null;
+  if (dateString instanceof Date && isValidDate(dateString)) {
+    return dateString;
   }
 
   if (typeof dateString !== "string") {
@@ -20,7 +20,7 @@ const parseDate = (
   }
 
   if (dateString.length === 0) {
-    return null;
+    throw new Error("Date string is empty");
   }
 
   const formats = [
@@ -212,11 +212,9 @@ const getDateYearsAgo = (years: number): Date => {
   }
   // Create a new date based on the current UTC time
   const now = new Date();
-  return new Date(Date.UTC(
-    now.getUTCFullYear() - years,
-    now.getUTCMonth(),
-    now.getUTCDate()
-  ));
+  return new Date(
+    Date.UTC(now.getUTCFullYear() - years, now.getUTCMonth(), now.getUTCDate())
+  );
 };
 
 /**
@@ -266,23 +264,28 @@ const isWithinDays = (
   }
 
   const parsedDate = typeof date === "string" ? parseDate(date) : date;
-  const parsedFromDate = typeof fromDate === "string" ? parseDate(fromDate) : fromDate;
+  const parsedFromDate =
+    typeof fromDate === "string" ? parseDate(fromDate) : fromDate;
 
   if (!parsedDate || !parsedFromDate) {
     return false;
   }
 
   // Normalize both dates to UTC midnight
-  const d1 = new Date(Date.UTC(
-    parsedDate.getUTCFullYear(),
-    parsedDate.getUTCMonth(),
-    parsedDate.getUTCDate()
-  ));
-  const d2 = new Date(Date.UTC(
-    parsedFromDate.getUTCFullYear(),
-    parsedFromDate.getUTCMonth(),
-    parsedFromDate.getUTCDate()
-  ));
+  const d1 = new Date(
+    Date.UTC(
+      parsedDate.getUTCFullYear(),
+      parsedDate.getUTCMonth(),
+      parsedDate.getUTCDate()
+    )
+  );
+  const d2 = new Date(
+    Date.UTC(
+      parsedFromDate.getUTCFullYear(),
+      parsedFromDate.getUTCMonth(),
+      parsedFromDate.getUTCDate()
+    )
+  );
 
   // Calculate the difference in milliseconds
   const diffTime = d1.getTime() - d2.getTime();

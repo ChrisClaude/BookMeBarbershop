@@ -22,8 +22,8 @@ const CreateTimeSlotForm = () => {
     startDateTime: DateValue;
     endDateTime: DateValue;
   }>({
-    startDateTime: now(getLocalTimeZone()),
-    endDateTime: now(getLocalTimeZone()),
+    startDateTime: now(getLocalTimeZone()).add({ hours: 1 }),
+    endDateTime: now(getLocalTimeZone()).add({ hours: 2 }),
   });
 
   const onSubmit = useCallback(
@@ -63,7 +63,7 @@ const CreateTimeSlotForm = () => {
             hideTimeZone
             showMonthAndYearPickers
             //@ts-expect-error there seems to be a type issue
-            defaultValue={now(getLocalTimeZone())}
+            defaultValue={now(getLocalTimeZone()).add({ hours: 1 })}
             //@ts-expect-error there seems to be a type issue
             value={formData.startDateTime}
             onChange={(value: DateValue | null) => {
@@ -84,7 +84,7 @@ const CreateTimeSlotForm = () => {
             hideTimeZone
             showMonthAndYearPickers
             //@ts-expect-error there seems to be a type issue
-            defaultValue={now(getLocalTimeZone())}
+            defaultValue={now(getLocalTimeZone()).add({ hours: 1 })}
             //@ts-expect-error there seems to be a type issue
             value={formData.endDateTime}
             onChange={(value: DateValue | null) => {

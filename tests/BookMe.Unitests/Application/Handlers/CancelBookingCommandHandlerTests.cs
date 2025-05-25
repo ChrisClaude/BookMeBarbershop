@@ -30,9 +30,15 @@ public class CancelBookingCommandHandlerTests
     {
         // Arrange
         var user = new User { Id = _userId };
-        var booking = new Booking { Id = _bookingId, User = user, Status = BookingStatus.Pending };
+        var booking = new Booking
+        {
+            Id = _bookingId,
+            User = user,
+            Status = BookingStatus.Pending
+        };
 
-        _mockBookingRepository.Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
+        _mockBookingRepository
+            .Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
             .ReturnsAsync(booking);
 
         var command = new CancelBookingCommand(_bookingId)
@@ -40,12 +46,7 @@ public class CancelBookingCommandHandlerTests
             UserDto = new UserDto
             {
                 Id = _userId,
-                Roles = new[] {
-                    new UserRoleDto()
-                    {
-                        Role = new () { Name = RoleName.CUSTOMER }
-                    }
-                }
+                Roles = new[] { new UserRoleDto() { Role = new() { Name = RoleName.CUSTOMER } } }
             }
         };
 
@@ -64,7 +65,8 @@ public class CancelBookingCommandHandlerTests
     public async Task Handle_WhenBookingDoesNotExist_ShouldReturnNotFoundErrorAsync()
     {
         // Arrange
-        _mockBookingRepository.Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
+        _mockBookingRepository
+            .Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
             .ReturnsAsync((Booking)null);
 
         var command = new CancelBookingCommand(_bookingId)
@@ -72,12 +74,7 @@ public class CancelBookingCommandHandlerTests
             UserDto = new UserDto
             {
                 Id = _userId,
-                Roles = new[] {
-                    new UserRoleDto()
-                    {
-                        Role = new () { Name = RoleName.CUSTOMER }
-                    }
-                }
+                Roles = new[] { new UserRoleDto() { Role = new() { Name = RoleName.CUSTOMER } } }
             }
         };
 
@@ -90,7 +87,10 @@ public class CancelBookingCommandHandlerTests
         result.Errors.First().Description.Should().Be($"Booking with id {_bookingId} not found");
         result.ErrorType.Should().Be(ErrorType.BadRequest);
 
-        _mockBookingRepository.Verify(r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()), Times.Never);
+        _mockBookingRepository.Verify(
+            r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()),
+            Times.Never
+        );
     }
 
     [Fact]
@@ -99,9 +99,15 @@ public class CancelBookingCommandHandlerTests
         // Arrange
         var differentUserId = Guid.NewGuid();
         var user = new User { Id = differentUserId };
-        var booking = new Booking { Id = _bookingId, User = user, Status = BookingStatus.Pending };
+        var booking = new Booking
+        {
+            Id = _bookingId,
+            User = user,
+            Status = BookingStatus.Pending
+        };
 
-        _mockBookingRepository.Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
+        _mockBookingRepository
+            .Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
             .ReturnsAsync(booking);
 
         var command = new CancelBookingCommand(_bookingId)
@@ -109,12 +115,7 @@ public class CancelBookingCommandHandlerTests
             UserDto = new UserDto
             {
                 Id = _userId,
-                Roles = new[] {
-                    new UserRoleDto()
-                    {
-                        Role = new () { Name = RoleName.CUSTOMER }
-                    }
-                }
+                Roles = new[] { new UserRoleDto() { Role = new() { Name = RoleName.CUSTOMER } } }
             }
         };
 
@@ -124,11 +125,17 @@ public class CancelBookingCommandHandlerTests
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Errors.Should().ContainSingle();
-        result.Errors.First().Description.Should().Be($"User {_userId} is not authorized to cancel booking {_bookingId}");
+        result.Errors
+            .First()
+            .Description.Should()
+            .Be($"User {_userId} is not authorized to cancel booking {_bookingId}");
         result.ErrorType.Should().Be(ErrorType.BadRequest);
         booking.Status.Should().Be(BookingStatus.Pending);
 
-        _mockBookingRepository.Verify(r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()), Times.Never);
+        _mockBookingRepository.Verify(
+            r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()),
+            Times.Never
+        );
     }
 
     [Fact]
@@ -136,9 +143,15 @@ public class CancelBookingCommandHandlerTests
     {
         // Arrange
         var user = new User { Id = _userId };
-        var booking = new Booking { Id = _bookingId, User = user, Status = BookingStatus.Cancelled };
+        var booking = new Booking
+        {
+            Id = _bookingId,
+            User = user,
+            Status = BookingStatus.Cancelled
+        };
 
-        _mockBookingRepository.Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
+        _mockBookingRepository
+            .Setup(r => r.GetByIdAsync(_bookingId, It.IsAny<string[]>(), null, true))
             .ReturnsAsync(booking);
 
         var command = new CancelBookingCommand(_bookingId)
@@ -146,12 +159,7 @@ public class CancelBookingCommandHandlerTests
             UserDto = new UserDto
             {
                 Id = _userId,
-                Roles = new[] {
-                    new UserRoleDto()
-                    {
-                        Role = new () { Name = RoleName.CUSTOMER }
-                    }
-                }
+                Roles = new[] { new UserRoleDto() { Role = new() { Name = RoleName.CUSTOMER } } }
             }
         };
 
@@ -165,6 +173,9 @@ public class CancelBookingCommandHandlerTests
         result.ErrorType.Should().Be(ErrorType.BadRequest);
         booking.Status.Should().Be(BookingStatus.Cancelled);
 
-        _mockBookingRepository.Verify(r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()), Times.Never);
+        _mockBookingRepository.Verify(
+            r => r.UpdateAsync(It.IsAny<Booking>(), It.IsAny<bool>()),
+            Times.Never
+        );
     }
 }

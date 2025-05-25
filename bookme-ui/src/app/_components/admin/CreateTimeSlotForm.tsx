@@ -51,7 +51,7 @@ const CreateTimeSlotForm = () => {
   return (
     <>
       <h1 className="text-2xl font-bold mb-12 text-center">
-        Book your appointment
+        Create Time Slot
       </h1>
       <Form
         className="w-full justify-center items-center space-y-4"

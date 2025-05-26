@@ -64,7 +64,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
 
     [HttpPost("timeslots")]
     [Authorize(Policy = Policy.ADMIN)]
-    [ProducesResponseType<TimeSlotDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateTimeSlotsAsync(CreateTimeSlotsDto request)

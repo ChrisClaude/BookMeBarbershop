@@ -26,9 +26,9 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
         }
 
         TimeSlot timeSlot;
+        var timeSlots = new List<TimeSlotDto>();
         if (request.IsAllDay)
         {
-            var timeSlots = new List<TimeSlotDto>();
             var count = request.EndDateTime.Date.Subtract(request.StartDateTime.Date).Hours;
 
             for (var i = 0; i < count; i++)
@@ -58,7 +58,9 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
         timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
 
         await timeSlotRepository.InsertAsync(timeSlot, false);
+        timeSlots.Add(timeSlot.MapToDto());
 
-        return Result<IEnumerable<TimeSlotDto>>.Success([timeSlot.MapToDto()]);
+
+        return Result<IEnumerable<TimeSlotDto>>.Success(timeSlots);
     }
 }

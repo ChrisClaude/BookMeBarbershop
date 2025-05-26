@@ -1,5 +1,6 @@
 import { ApiBookingTimeslotsPostRequest, TimeSlotDto, TimeslotsPostRequest } from "../codegen";
 import { Result } from "../types/common.types";
+import { getErrorsFromApiResult } from "../utils/common.utils";
 import { logError } from "../utils/logging.utils";
 import { BookingApiWithConfig } from "./api.service";
 
@@ -33,7 +34,7 @@ export class BookingService {
         const error = await response.raw.json();
         return {
           success: false,
-          errors: [error?.toString() || "Error creating time slot"],
+          errors: getErrorsFromApiResult(error),
         };
       }
       const body = await response.raw.json();
@@ -66,7 +67,7 @@ export class BookingService {
         const error = await response.raw.json();
         return {
           success: false,
-          errors: [error?.toString() || "Error fetching time slots"],
+          errors: getErrorsFromApiResult(error),
         };
       }
       const body = await response.raw.json();

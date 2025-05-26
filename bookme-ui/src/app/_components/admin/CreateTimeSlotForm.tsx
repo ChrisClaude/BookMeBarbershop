@@ -17,7 +17,7 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     endDateTime: now(getLocalTimeZone()).add({ hours: 2 }),
   });
 
-  const [createTimeSlot, { isLoading, error, data, status, isSuccess }] =
+  const [createTimeSlot, { isLoading, error, isSuccess }] =
     useCreateTimeSlotMutation();
 
   const onSubmit = useCallback(
@@ -63,6 +63,21 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       {isSuccess && (
         <div className="p-4 border rounded-lg bg-green-50 text-center">
           <p className="text-green-500">Time slot created successfully</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-4 border rounded-lg bg-red-50 text-center">
+          <p className="text-red-500">
+            Error creating time slot:{" "}
+            {/* {(error as string[]).map((err) => (
+              <span key={err}>
+                {err}
+                <br />
+              </span>
+            ))} */}
+            {JSON.stringify(error)}
+          </p>
         </div>
       )}
 

@@ -1,20 +1,18 @@
 "use client";
-import CreateTimeSlotForm from "@/_components/admin/CreateTimeSlotForm";
+import CreateTimeSlotFormModal from "@/_components/admin/CreateTimeSlotFormModal";
 import TimeSlotList from "@/_components/admin/TimeSlotList";
 import { withAuth } from "@/_components/auth/AuthGuard";
 import { ROLES } from "@/_lib/enums/constant";
 import { Calendar } from "@heroui/react";
-import {
-  DateValue,
-  getLocalTimeZone,
-  now,
-} from "@internationalized/date";
+import { DateValue, getLocalTimeZone, now } from "@internationalized/date";
 import React from "react";
 
 const BookingAdminPage = () => {
   const [selectedDate, setSelectedDate] = React.useState<DateValue>(
     now(getLocalTimeZone())
   );
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   return (
     <div className="p-4">
@@ -32,8 +30,12 @@ const BookingAdminPage = () => {
         <div>
           <TimeSlotList
             selectedDate={selectedDate}
+            onCreateTimeSlot={() => setIsModalOpen(true)}
           />
-          <CreateTimeSlotForm />
+          <CreateTimeSlotFormModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
         </div>
       </div>
     </div>

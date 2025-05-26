@@ -27,8 +27,8 @@ export const api = createApi({
       query: (request) => ({
         endpoint: "booking.getAvailableTimeSlots",
         params: { request },
-        providesTags: ["TimeSlots"],
       }),
+      providesTags: ["TimeSlots"],
     }),
     //#endregion
   }),

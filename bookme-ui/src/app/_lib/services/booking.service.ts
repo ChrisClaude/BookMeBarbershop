@@ -60,7 +60,6 @@ export class BookingService {
     request: TimeslotsPostRequest;
   }): Promise<Result<TimeSlotDto[]>> {
     try {
-console.log("request", request);
       const response = await this.bookMeApi.timeslotsPostRaw(request);
 
       if (response.raw.status !== 200) {

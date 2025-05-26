@@ -65,7 +65,7 @@ public class BookingTests : BaseIntegrationTest
         var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
 
         // Assert
-        result.ValidateOkResult<IEnumerable<TimeSlotDto>>(timeSlots =>
+        result.ValidateOkResult<List<TimeSlotDto>>(timeSlots =>
         {
             var timeSlot = timeSlots.First();
             timeSlot.Start.Should().Be(createTimeSlotsRequest.StartDateTime);
@@ -177,7 +177,7 @@ public class BookingTests : BaseIntegrationTest
         var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
 
         // Assert
-        result.ValidateOkResult<IEnumerable<TimeSlotDto>>(timeSlots =>
+        result.ValidateOkResult<List<TimeSlotDto>>(timeSlots =>
         {
             timeSlots.Should().HaveCount(1);
             var timeSlot = timeSlots.First();

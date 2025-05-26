@@ -17,7 +17,8 @@ const CreateTimeSlotForm = () => {
     endDateTime: now(getLocalTimeZone()).add({ hours: 2 }),
   });
 
-  const [createTimeSlot] = useCreateTimeSlotMutation();
+  const [createTimeSlot, { isLoading, error, data, status, isSuccess }] =
+    useCreateTimeSlotMutation();
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,6 +48,12 @@ const CreateTimeSlotForm = () => {
 
   return (
     <>
+      {isSuccess && (
+        <div className="p-4 border rounded-lg bg-green-50 text-center">
+          <p className="text-green-500">Time slot created successfully</p>
+        </div>
+      )}
+
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}
@@ -76,6 +83,7 @@ const CreateTimeSlotForm = () => {
             label="Start date and time"
             labelPlacement="outside"
             variant="bordered"
+            isReadOnly={isLoading}
           />
 
           <DatePicker
@@ -101,10 +109,16 @@ const CreateTimeSlotForm = () => {
             label="End date and time"
             labelPlacement="outside"
             variant="bordered"
+            isReadOnly={isLoading}
           />
 
           <div className="flex gap-4">
-            <Button className="w-full" color="primary" type="submit">
+            <Button
+              className={`w-full ${isLoading ? "cursor-not-allowed" : ""}`}
+              color="primary"
+              type="submit"
+              isDisabled={isLoading}
+            >
               Submit
             </Button>
           </div>

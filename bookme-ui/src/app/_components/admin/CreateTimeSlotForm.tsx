@@ -6,14 +6,9 @@ import React, { useCallback } from "react";
 
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
-export interface ValidationResult {
-  isInvalid: boolean;
-  validationErrors: string[];
-  validationDetails: ValidityState;
-}
 
 const CreateTimeSlotForm = () => {
-  const [errors] = React.useState<ValidationErrors>({});
+  const [errors, setErrors] = React.useState<ValidationErrors>({});
   const [formData, setFormData] = React.useState<{
     startDateTime: DateValue;
     endDateTime: DateValue;
@@ -28,7 +23,13 @@ const CreateTimeSlotForm = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      if (!formData) {
+      // validations
+      if (formData.startDateTime > formData.endDateTime) {
+        setErrors({
+          ...errors,
+          startDateTime: "Start date must be before end date",
+        });
+
         return;
       }
 
@@ -41,7 +42,7 @@ const CreateTimeSlotForm = () => {
 
       createTimeSlot(request);
     },
-    [createTimeSlot, formData]
+    [createTimeSlot, errors, formData.endDateTime, formData.startDateTime]
   );
 
   return (
@@ -53,6 +54,9 @@ const CreateTimeSlotForm = () => {
       >
         <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-md">
           <DatePicker
+            isRequired
+            id="startDateTime"
+            name="startDateTime"
             hideTimeZone
             showMonthAndYearPickers
             //@ts-expect-error there seems to be a type issue
@@ -70,10 +74,14 @@ const CreateTimeSlotForm = () => {
               });
             }}
             label="Start date and time"
+            labelPlacement="outside"
             variant="bordered"
           />
 
           <DatePicker
+            isRequired
+            id="endDateTime"
+            name="endDateTime"
             hideTimeZone
             showMonthAndYearPickers
             //@ts-expect-error there seems to be a type issue
@@ -91,12 +99,9 @@ const CreateTimeSlotForm = () => {
               });
             }}
             label="End date and time"
+            labelPlacement="outside"
             variant="bordered"
           />
-
-          {errors.terms && (
-            <span className="text-danger text-small">{errors.terms}</span>
-          )}
 
           <div className="flex gap-4">
             <Button className="w-full" color="primary" type="submit">

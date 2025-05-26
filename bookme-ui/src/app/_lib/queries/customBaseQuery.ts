@@ -12,18 +12,15 @@ export const customBaseQuery =
       case "booking.createTimeSlot":
         return transformRTKResult(await BookingService.createTimeSlot(params));
       case "booking.getAvailableTimeSlots":
+
         return transformRTKResult(
           await BookingService.getAvailableTimeSlots({
             ...params,
             request: {
               ...params.request,
               getAvailableTimeSlotsDto: {
-                start: new Date(
-                  params.request.getAvailableTimeSlotsDto.start as Date
-                ),
-                end: new Date(
-                  params.request.getAvailableTimeSlotsDto.start as Date
-                ),
+                start: new Date(params.request.getAvailableTimeSlotsDto.start),
+                end: new Date(params.request.getAvailableTimeSlotsDto.end),
               },
             },
           })

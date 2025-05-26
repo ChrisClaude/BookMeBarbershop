@@ -1,4 +1,4 @@
-import { ApiBookingTimeslotsPostRequest, TimeslotsGetRequest } from "../codegen";
+import { ApiBookingTimeslotsPostRequest } from "../codegen";
 
 export type CustomBaseQueryType =
   | {
@@ -11,7 +11,14 @@ export type CustomBaseQueryType =
     }
   | {
       endpoint: "booking.getAvailableTimeSlots";
-      params: { request: TimeslotsGetRequest };
+      params: {
+        request: {
+          getAvailableTimeSlotsDto: {
+            start: string; // ISO string - redux cannot serialize date objects
+            end: string; // ISO string
+          };
+        };
+      };
     };
 
 export type QueryResult<T> = {

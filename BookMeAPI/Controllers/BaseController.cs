@@ -17,8 +17,12 @@ public abstract class BaseController : ControllerBase
         if (HttpContext.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY] is UserDto userDto)
         {
             return userDto;
-        } else {
-            throw new HttpContextUserLoadingProcessFailureException("User details not found in the request context.");
+        }
+        else
+        {
+            throw new HttpContextUserLoadingProcessFailureException(
+                "User details not found in the request context."
+            );
         }
     }
 }

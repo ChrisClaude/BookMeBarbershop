@@ -58,14 +58,16 @@ public class BookingTests : BaseIntegrationTest
         {
             StartDateTime = DateTime.UtcNow.AddDays(10).AddHours(1),
             EndDateTime = DateTime.UtcNow.AddDays(10).AddHours(2),
+            IsAllDay = false,
         };
 
         // Act
         var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
 
         // Assert
-        result.ValidateOkResult<TimeSlotDto>(timeSlot =>
+        result.ValidateOkResult<IEnumerable<TimeSlotDto>>(timeSlots =>
         {
+            var timeSlot = timeSlots.First();
             timeSlot.Start.Should().Be(createTimeSlotsRequest.StartDateTime);
             timeSlot.End.Should().Be(createTimeSlotsRequest.EndDateTime);
             timeSlot.IsAvailable.Should().BeTrue();
@@ -88,6 +90,7 @@ public class BookingTests : BaseIntegrationTest
         {
             StartDateTime = DateTime.UtcNow.AddDays(10).AddHours(1),
             EndDateTime = DateTime.UtcNow.AddDays(10).AddHours(2),
+            IsAllDay = false,
         };
 
         var firstResult = await _bookingController.CreateTimeSlotsAsync(
@@ -98,6 +101,7 @@ public class BookingTests : BaseIntegrationTest
         {
             StartDateTime = DateTime.UtcNow.AddDays(10).AddHours(1),
             EndDateTime = DateTime.UtcNow.AddDays(10).AddHours(2),
+            IsAllDay = false,
         };
 
         // Act
@@ -136,6 +140,7 @@ public class BookingTests : BaseIntegrationTest
         {
             StartDateTime = DateTime.UtcNow.AddDays(10).AddHours(1),
             EndDateTime = DateTime.UtcNow.AddDays(10).AddHours(2),
+            IsAllDay = false,
         };
 
         // Act & Assert
@@ -172,8 +177,10 @@ public class BookingTests : BaseIntegrationTest
         var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
 
         // Assert
-        result.ValidateOkResult<TimeSlotDto>(timeSlot =>
+        result.ValidateOkResult<IEnumerable<TimeSlotDto>>(timeSlots =>
         {
+            timeSlots.Should().HaveCount(1);
+            var timeSlot = timeSlots.First();
             timeSlot.Start.Should().Be(createTimeSlotsRequest.StartDateTime);
             timeSlot.End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
@@ -197,7 +204,7 @@ public class BookingTests : BaseIntegrationTest
 
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
 
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
 
@@ -234,7 +241,7 @@ public class BookingTests : BaseIntegrationTest
 
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
 
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
 
@@ -265,22 +272,28 @@ public class BookingTests : BaseIntegrationTest
             DateTime.UtcNow.AddDays(10).AddHours(2)
         );
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         // First booking
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var bookingId = ((OkObjectResult)bookResult).Value
             .GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Cancel the booking
+#pragma warning disable CS8605 // Unboxing a possibly null value.
         var cancelResult = await _bookingController.CancelBookingAsync(
             new CancelBookingDto { BookingId = (Guid)bookingId }
         );
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
         // Second booking attempt
         var bookTimeSlotRequest = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
@@ -319,7 +332,7 @@ public class BookingTests : BaseIntegrationTest
             DateTime.UtcNow.AddDays(10).AddHours(2)
         );
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         // First booking
         _mockHttpContext.SetUser(_customerUser);
@@ -399,21 +412,27 @@ public class BookingTests : BaseIntegrationTest
             DateTime.UtcNow.AddDays(10).AddHours(2)
         );
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var bookingId = ((OkObjectResult)bookResult).Value
             .GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Act
+#pragma warning disable CS8605 // Unboxing a possibly null value.
         var cancelResult = await _bookingController.CancelBookingAsync(
             new CancelBookingDto { BookingId = (Guid)bookingId }
         );
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
         // Assert
         cancelResult.ValidateNoContentResult();
@@ -443,23 +462,27 @@ public class BookingTests : BaseIntegrationTest
             DateTime.UtcNow.AddDays(10).AddHours(2)
         );
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         // Book as customer
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var bookingId = ((OkObjectResult)bookResult).Value
             .GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Act - Confirm as admin
         _mockHttpContext.SetUser(_adminUser);
+#pragma warning disable CS8605 // Unboxing a possibly null value.
         var confirmResult = await _bookingController.ConfirmBookingAsync(
             new ConfirmBookingDto { BookingId = (Guid)bookingId }
         );
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
         // Assert
         confirmResult.ValidateOkResult<BookingDto>(booking =>
@@ -488,31 +511,37 @@ public class BookingTests : BaseIntegrationTest
             DateTime.UtcNow.AddDays(10).AddHours(2)
         );
         var creationResult = await _mediator.Send(createTimeSlotsCommand);
-        var timeSlotId = creationResult.Value.Id;
+        var timeSlotId = creationResult.Value.First().Id;
 
         // Book as customer
         _mockHttpContext.SetUser(_customerUser);
         var bookResult = await _bookingController.BookTimeSlotsAsync(
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var bookingId = ((OkObjectResult)bookResult).Value
             .GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Act & Assert - Try to confirm as customer
+#pragma warning disable CS8605 // Unboxing a possibly null value.
         var exception = await Assert.ThrowsAsync<ValidationException>(
             () =>
                 _bookingController.ConfirmBookingAsync(
                     new ConfirmBookingDto { BookingId = (Guid)bookingId }
                 )
         );
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
         exception.Message
             .Should()
             .Be($"Validation failed: \n -- UserDto: User {_customerUser.Id} is not an admin");
 
+#pragma warning disable CS8605 // Unboxing a possibly null value.
         var booking = await _bookMeContext.Bookings.FirstAsync(b => b.Id == (Guid)bookingId);
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
         booking.Status.Should().Be(BookingStatus.Pending);
     }

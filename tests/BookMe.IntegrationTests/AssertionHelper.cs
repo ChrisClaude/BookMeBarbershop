@@ -4,10 +4,13 @@ using FluentAssertions;
 
 namespace BookMe.IntegrationTests;
 
-
 public static class AssertionHelper
 {
-    public static void ValidateOkResult<TPayload>(this IActionResult actionResult, Action<TPayload> payloadAssertion) where TPayload : class
+    public static void ValidateOkResult<TPayload>(
+        this IActionResult actionResult,
+        Action<TPayload> payloadAssertion
+    )
+        where TPayload : class
     {
         actionResult.Should().NotBeNull();
         actionResult.Should().BeOfType<OkObjectResult>();
@@ -38,7 +41,11 @@ public static class AssertionHelper
         actionResult.Should().BeOfType<NoContentResult>();
     }
 
-    public static void ValidateBadRequestResult<TPayload>(this IActionResult actionResult, Action<TPayload> payloadAssertion) where TPayload : class
+    public static void ValidateBadRequestResult<TPayload>(
+        this IActionResult actionResult,
+        Action<TPayload> payloadAssertion
+    )
+        where TPayload : class
     {
         actionResult.Should().NotBeNull();
         actionResult.Should().BeOfType<BadRequestObjectResult>();

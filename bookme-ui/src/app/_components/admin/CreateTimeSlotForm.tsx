@@ -7,7 +7,7 @@ import React, { useCallback } from "react";
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
 
-const CreateTimeSlotForm = () => {
+const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [errors, setErrors] = React.useState<ValidationErrors>({});
   const [formData, setFormData] = React.useState<{
     startDateTime: DateValue;
@@ -41,9 +41,21 @@ const CreateTimeSlotForm = () => {
         },
       };
 
-      createTimeSlot(request);
+      createTimeSlot(request)
+        .unwrap()
+        .then(() => {
+          if (onSuccess) {
+            onSuccess();
+          }
+        });
     },
-    [createTimeSlot, errors, formData.endDateTime, formData.startDateTime]
+    [
+      createTimeSlot,
+      errors,
+      formData.endDateTime,
+      formData.startDateTime,
+      onSuccess,
+    ]
   );
 
   return (

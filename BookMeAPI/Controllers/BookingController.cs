@@ -11,17 +11,29 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookMeAPI.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQueries) : BaseController
 {
-    [HttpPost("/timeslots")]
+    [HttpPost("timeslots/available")]
     [AllowAnonymous]
-    [ProducesResponseType<Result<IEnumerable<TimeSlotDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<PagedList<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetAvailableTimeSlotsDto request)
+    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetTimeSlotsDto request)
     {
         var result = await timeSlotQueries.GetAvailableTimeSlotsAsync(request.Start, request.End);
+
+        return result.ToActionResult();
+    }
+
+    [HttpPost("timeslots/all")]
+    [Authorize(Policy = Policy.ADMIN)]
+    [ProducesResponseType<PagedList<TimeSlotDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPagedTimeSlotsAsync(GetTimeSlotsDto request)
+    {
+        var result = await timeSlotQueries.GetPagedTimeSlotsAsync(request.Start, request.End);
 
         return result.ToActionResult();
     }
@@ -57,7 +69,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateTimeSlotsAsync(CreateTimeSlotsDto request)
     {
-        var result = await mediator.Send(new CreateTimeSlotCommand(request.StartDateTime, request.EndDateTime));
+        var result = await mediator.Send(new CreateTimeSlotCommand(request.StartDateTime, request.EndDateTime, request.IsAllDay));
 
         return result.ToActionResult();
     }

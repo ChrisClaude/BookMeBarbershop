@@ -4,13 +4,20 @@ using BookMe.Application.Common.Dtos;
 
 namespace BookMe.Application.Commands.Bookings;
 
-public class CreateTimeSlotCommand : AuthenticatedRequest<Result<TimeSlotDto>>
+public class CreateTimeSlotCommand : AuthenticatedRequest<Result<IEnumerable<TimeSlotDto>>>
 {
     public DateTime StartDateTime { get; set; }
     public DateTime EndDateTime { get; set; }
-    public CreateTimeSlotCommand(DateTime startDateTime, DateTime endDateTime)
+    public bool IsAllDay { get; }
+
+    public CreateTimeSlotCommand(
+        DateTime startDateTime,
+        DateTime endDateTime,
+        bool isAllDay = false
+    )
     {
         StartDateTime = startDateTime;
         EndDateTime = endDateTime;
+        IsAllDay = isAllDay;
     }
 }

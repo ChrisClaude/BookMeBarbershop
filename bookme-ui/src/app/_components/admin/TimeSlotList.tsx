@@ -6,8 +6,16 @@ import { DateValue, getLocalTimeZone } from "@internationalized/date";
 import { format } from "date-fns";
 import { useMemo } from "react";
 import TimeSlotItem from "./TimeSlotItem";
+import { GoPlusCircle } from "react-icons/go";
+import { Button, Tooltip } from "@heroui/react";
 
-const TimeSlotList = ({ selectedDate }: { selectedDate: DateValue }) => {
+const TimeSlotList = ({
+  selectedDate,
+  onCreateTimeSlot,
+}: {
+  selectedDate: DateValue;
+  onCreateTimeSlot: () => void;
+}) => {
   const request = useMemo(() => {
     const startDate = selectedDate.toDate(getLocalTimeZone());
     const endDate = selectedDate.toDate(getLocalTimeZone());
@@ -51,9 +59,21 @@ const TimeSlotList = ({ selectedDate }: { selectedDate: DateValue }) => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-2">
-        Available Time Slots for {formattedDate}
-      </h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-xl font-semibold">
+          Available Time Slots for {formattedDate}
+        </h2>
+        <Tooltip content="Create Time Slot">
+          <Button
+            isIconOnly
+            aria-label="Like"
+            color="default"
+            onPress={onCreateTimeSlot}
+          >
+            <GoPlusCircle size={25} />
+          </Button>
+        </Tooltip>
+      </div>
       {timeSlots.length === 0 ? (
         <div className="p-4 border rounded-lg bg-gray-50 text-center">
           <p className="text-gray-500">No time slots available for this date</p>

@@ -32,12 +32,10 @@ const CreateTimeSlotForm = () => {
         return;
       }
 
-      const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
       const request: ApiBookingTimeslotsPostRequest = {
         createTimeSlotsDto: {
-          startDateTime: formData.startDateTime.toDate(localTz),
-          endDateTime: formData.endDateTime.toDate(localTz),
+          startDateTime: formData.startDateTime.toDate(getLocalTimeZone()),
+          endDateTime: formData.endDateTime.toDate(getLocalTimeZone()),
         },
       };
 
@@ -48,7 +46,6 @@ const CreateTimeSlotForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl font-bold mb-12 text-center">Create Time Slot</h1>
       <Form
         className="w-full justify-center items-center space-y-4"
         validationErrors={errors}

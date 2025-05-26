@@ -5,6 +5,7 @@ import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
 import { format } from "date-fns";
 import { useMemo } from "react";
+import TimeSlotItem from "./TimeSlotItem";
 
 const TimeSlotList = ({ selectedDate }: { selectedDate: DateValue }) => {
   const request = useMemo(() => {
@@ -59,46 +60,9 @@ const TimeSlotList = ({ selectedDate }: { selectedDate: DateValue }) => {
         </div>
       ) : (
         <div className="grid gap-3">
-          {timeSlots.map((timeSlot) => {
-            // Convert UTC dates to local time for display
-            console.log("dates", timeSlot.start, timeSlot.end);
-            const startLocal = timeSlot.start;
-            const endLocal = timeSlot.end;
-
-            return (
-              <div
-                key={timeSlot.id}
-                className={`p-4 border rounded-lg shadow-sm transition-all hover:shadow-md ${
-                  timeSlot.isAvailable
-                    ? "bg-green-50 border-green-200 hover:bg-green-100"
-                    : "bg-red-50 border-red-200 hover:bg-red-100"
-                }`}
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">
-                      {format(startLocal as Date, "h:mm a")} -{" "}
-                      {format(endLocal as Date, "h:mm a")}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {format(startLocal as Date, "EEEE, MMMM d")}
-                    </p>
-                  </div>
-                  <div className="flex items-center">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        timeSlot.isAvailable
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {timeSlot.isAvailable ? "Available" : "Booked"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {timeSlots.map((timeSlot) => (
+            <TimeSlotItem key={timeSlot.id} timeSlot={timeSlot} />
+          ))}
         </div>
       )}
     </div>

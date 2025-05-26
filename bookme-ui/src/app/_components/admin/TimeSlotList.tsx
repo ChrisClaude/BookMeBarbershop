@@ -36,8 +36,6 @@ const TimeSlotList = ({ selectedDate }: { selectedDate: DateValue }) => {
     return <div>Error: {error}</div>;
   }
 
-  // console.log("local timezone", getLocalTimeZone());
-
   return (
     <div>
       {timeSlots.map((timeSlot) => (

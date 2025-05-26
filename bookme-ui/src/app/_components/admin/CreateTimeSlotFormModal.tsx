@@ -12,7 +12,7 @@ const CreateTimeSlotFormModal = ({isOpen, onClose }: { isOpen: boolean; onClose:
               Create Time Slot
             </ModalHeader>
             <ModalBody>
-              <CreateTimeSlotForm />
+              <CreateTimeSlotForm onSuccess={onClose} />
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>

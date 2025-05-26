@@ -1,7 +1,5 @@
-using System;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Errors;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookMeAPI.Extensions;

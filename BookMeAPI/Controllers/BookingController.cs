@@ -3,7 +3,6 @@ using BookMe.Application.Common;
 using BookMe.Application.Common.Bookings.Dtos;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Common.Dtos.Bookings;
-using BookMe.Application.Entities;
 using BookMe.Application.Interfaces.Queries;
 using BookMeAPI.Authorization;
 using BookMeAPI.Extensions;

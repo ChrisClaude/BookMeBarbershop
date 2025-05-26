@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMeAPI.Authorization;
 
 public static class Policy

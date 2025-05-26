@@ -1,5 +1,3 @@
-using System;
-
 internal static class DevelopmentConfiguration
 {
     public static WebApplicationBuilder AddDevelopmentConfiguration(this WebApplicationBuilder builder)

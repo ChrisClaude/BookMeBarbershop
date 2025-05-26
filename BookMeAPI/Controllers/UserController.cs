@@ -1,12 +1,9 @@
 using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos;
-using BookMe.Application.Enums;
 using BookMe.Application.Interfaces.Queries;
 using BookMeAPI.Controllers;
 using BookMeAPI.Extensions;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookMeAPI.Apis;

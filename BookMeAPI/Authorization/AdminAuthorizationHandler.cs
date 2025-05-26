@@ -1,9 +1,7 @@
-using System;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
 using BookMe.Application.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 namespace BookMeAPI.Authorization;
 

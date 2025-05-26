@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Configurations;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Interfaces;

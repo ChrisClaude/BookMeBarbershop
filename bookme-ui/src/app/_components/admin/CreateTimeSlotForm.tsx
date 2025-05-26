@@ -41,7 +41,7 @@ const CreateTimeSlotForm = () => {
         },
       };
 
-      createTimeSlot({ request });
+      createTimeSlot(request);
     },
     [createTimeSlot, formData]
   );

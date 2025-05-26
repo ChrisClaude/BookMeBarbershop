@@ -20,7 +20,8 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
   fallbackPath = "/",
   loadingComponent = <Loader />,
 }) => {
-  const { status, userProfile, login, containsRoles } = useAuth();
+  const { status, userProfile, login, containsRoles, isFetchingUserProfile } =
+    useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
@@ -40,13 +41,15 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
             return;
 
           case "authenticated":
+            if (isFetchingUserProfile) {
+              return;
+            }
+
             if (!userProfile) {
               throw new Error("User profile is undefined");
             }
 
-            if (
-              containsRoles([userType])
-            ) {
+            if (containsRoles([userType])) {
               setIsAuthorized(true);
               // Restore the intended destination after successful auth
               const returnUrl = sessionStorage.getItem("returnUrl");
@@ -73,10 +76,25 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
     };
 
     handleAuth();
-  }, [status, userProfile, userType, router, pathname, login, fallbackPath, containsRoles]);
+  }, [
+    status,
+    userProfile,
+    userType,
+    router,
+    pathname,
+    login,
+    fallbackPath,
+    containsRoles,
+    isFetchingUserProfile,
+  ]);
 
   // Show loading state
-  if (isLoading || status === "loading" || !userProfile || !isAuthorized) {
+  if (
+    isLoading ||
+    status === "loading" ||
+    isFetchingUserProfile ||
+    !isAuthorized
+  ) {
     return loadingComponent;
   }
 

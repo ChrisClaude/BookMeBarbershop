@@ -1,4 +1,3 @@
-using System;
 using BookMeAPI.Authorization;
 using Microsoft.AspNetCore.Authorization;
 

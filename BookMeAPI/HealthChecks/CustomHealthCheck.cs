@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using BookMe.Application.Caching;
 using BookMe.Application.Configurations;
 using BookMe.Application.Events;

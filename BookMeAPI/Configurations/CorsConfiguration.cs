@@ -1,7 +1,4 @@
-using System;
 using BookMe.Application.Configurations;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace BookMeAPI.Configurations;

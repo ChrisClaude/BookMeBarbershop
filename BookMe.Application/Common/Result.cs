@@ -8,15 +8,19 @@ public class Result
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
     public IEnumerable<Error> Errors { get; }
+
     [JsonIgnore]
     public ErrorType ErrorType { get; }
     public ResultSuccessType SuccessType { get; }
 
-    public Result()
-    {
-    }
+    public Result() { }
 
-    protected Result(bool isSuccess, IEnumerable<Error> errors, ErrorType errorType, ResultSuccessType successType = ResultSuccessType.Retrieved)
+    protected Result(
+        bool isSuccess,
+        IEnumerable<Error> errors,
+        ErrorType errorType,
+        ResultSuccessType successType = ResultSuccessType.Retrieved
+    )
     {
         if ((isSuccess && errors.Any()) || (!isSuccess && (errors is null || !errors.Any())))
         {
@@ -49,7 +53,12 @@ public class Result<T> : Result
 {
     public T Value { get; }
 
-    private Result(bool isSuccess, IEnumerable<Error> error, ErrorType errorType, T result = default)
+    private Result(
+        bool isSuccess,
+        IEnumerable<Error> error,
+        ErrorType errorType,
+        T result = default
+    )
         : base(isSuccess, error, errorType)
     {
         Value = result;

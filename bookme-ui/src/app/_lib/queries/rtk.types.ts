@@ -19,15 +19,18 @@ export type CustomBaseQueryType =
           };
         };
       };
-    } | {
+    }
+  | {
       endpoint: "booking.getAllTimeSlots";
       params: {
         request: {
           getAvailableTimeSlotsDto: {
             start: string; // ISO string - redux cannot serialize date objects
             end: string; // ISO string
-            isAvailable: boolean;
+            isAvailable: boolean | null;
           };
+          pageIndex?: number;
+          pageSize?: number;
         };
       };
     };

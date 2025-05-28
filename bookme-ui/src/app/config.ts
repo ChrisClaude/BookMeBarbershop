@@ -43,3 +43,5 @@ export const API_BASE_PATH: string = getConfig(
   'NEXT_PUBLIC_API_BASE_PATH',
   process.env.NEXT_PUBLIC_API_BASE_PATH
 );
+
+export const PAGE_SIZE = 15;

@@ -4,10 +4,12 @@ import { useGetAllTimeSlotsQuery } from "@/_lib/queries";
 import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
 import { format } from "date-fns";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import TimeSlotItem from "./TimeSlotItem";
 import { GoPlusCircle } from "react-icons/go";
 import { Button, Pagination, Tooltip } from "@heroui/react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { PAGE_SIZE } from "@/config";
 
 const TimeSlotList = ({
   selectedDate,
@@ -16,6 +18,16 @@ const TimeSlotList = ({
   selectedDate: DateValue;
   onCreateTimeSlot: () => void;
 }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathName = usePathname();
+
+  const pageIndex = useMemo(() => {
+    const page = searchParams.get("page");
+
+    return Number(page) || 1;
+  }, [searchParams]);
+
   const request = useMemo(() => {
     const startDate = selectedDate.toDate(getLocalTimeZone());
     const endDate = selectedDate.toDate(getLocalTimeZone());
@@ -29,7 +41,23 @@ const TimeSlotList = ({
         // TODO: Add ability to filter by availability
         isAvailable: null,
       },
+      pageIndex: pageIndex - 1, // pageIndex is 0-based
+      pageSize: PAGE_SIZE,
     };
+  }, [pageIndex, selectedDate]);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      router.push(`?page=${page}`);
+    },
+    [router]
+  );
+
+  useEffect(() => {
+    if (searchParams.size > 0) {
+      router.push(pathName);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate]);
 
   const {
@@ -94,6 +122,8 @@ const TimeSlotList = ({
             <Pagination
               initialPage={timeSlots.pageIndex}
               total={timeSlots.totalPages!}
+              onChange={handlePageChange}
+              page={pageIndex}
             />
           )}
         </div>

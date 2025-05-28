@@ -30,8 +30,20 @@ export const api = createApi({
       }),
       providesTags: ["TimeSlots"],
     }),
+    getAllTimeSlots: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getAllTimeSlots",
+        params: { request },
+      }),
+      providesTags: ["TimeSlots"],
+    }),
     //#endregion
   }),
 });
 
-export const { useGetUserProfileQuery, useGetAvailableTimeSlotsQuery, useCreateTimeSlotMutation } = api;
+export const {
+  useGetUserProfileQuery,
+  useGetAvailableTimeSlotsQuery,
+  useGetAllTimeSlotsQuery,
+  useCreateTimeSlotMutation,
+} = api;

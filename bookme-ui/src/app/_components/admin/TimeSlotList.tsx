@@ -1,6 +1,6 @@
 "use client";
-import { TimeSlotDto } from "@/_lib/codegen";
-import { useGetAvailableTimeSlotsQuery } from "@/_lib/queries";
+import { PagedListDtoOfTimeSlotDto } from "@/_lib/codegen";
+import { useGetAllTimeSlotsQuery } from "@/_lib/queries";
 import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
 import { format } from "date-fns";
@@ -26,6 +26,8 @@ const TimeSlotList = ({
       getAvailableTimeSlotsDto: {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
+        // TODO: Add ability to filter by availability
+        isAvailable: null,
       },
     };
   }, [selectedDate]);
@@ -34,7 +36,12 @@ const TimeSlotList = ({
     data: timeSlots,
     isFetching,
     error,
-  } = useGetAvailableTimeSlotsQuery<QueryResult<TimeSlotDto[]>>(request);
+  } = useGetAllTimeSlotsQuery<QueryResult<PagedListDtoOfTimeSlotDto>>(request);
+
+  const shouldShowPagination = useMemo(
+    () => timeSlots && timeSlots.totalPages! > 1,
+    [timeSlots]
+  );
 
   if (isFetching) {
     return (
@@ -44,7 +51,7 @@ const TimeSlotList = ({
     );
   }
 
-  if (error || !timeSlots) {
+  if (error || !timeSlots || !timeSlots.items) {
     return (
       <div className="p-4 border rounded-lg bg-red-50 text-center">
         <p className="text-red-500">Error loading time slots: {error}</p>
@@ -74,16 +81,21 @@ const TimeSlotList = ({
           </Button>
         </Tooltip>
       </div>
-      {timeSlots.length === 0 ? (
+      {timeSlots.items.length === 0 ? (
         <div className="p-4 border rounded-lg bg-gray-50 text-center">
           <p className="text-gray-500">No time slots available for this date</p>
         </div>
       ) : (
         <div className="grid gap-3">
-          {timeSlots.map((timeSlot) => (
+          {timeSlots.items.map((timeSlot) => (
             <TimeSlotItem key={timeSlot.id} timeSlot={timeSlot} />
           ))}
-<Pagination initialPage={1} total={10} />
+          {shouldShowPagination && (
+            <Pagination
+              initialPage={timeSlots.pageIndex}
+              total={timeSlots.totalPages!}
+            />
+          )}
         </div>
       )}
     </div>

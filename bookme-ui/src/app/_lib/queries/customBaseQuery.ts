@@ -24,6 +24,21 @@ export const customBaseQuery =
             },
           })
         );
+
+      case "booking.getAllTimeSlots":
+        return transformRTKResult(
+          await BookingService.getAllTimeSlots({
+            ...params,
+            request: {
+              ...params.request,
+              getTimeSlotsDto: {
+                start: new Date(params.request.getAvailableTimeSlotsDto.start),
+                end: new Date(params.request.getAvailableTimeSlotsDto.end),
+                isAvailable: params.request.getAvailableTimeSlotsDto.isAvailable
+              },
+            },
+          })
+        );
       default:
         throw new Error(`Unknown endpoint: ${endpoint}`);
     }

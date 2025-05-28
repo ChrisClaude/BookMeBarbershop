@@ -18,7 +18,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
 {
     [HttpPost("timeslots/available")]
     [AllowAnonymous]
-    [ProducesResponseType<PagedList<TimeSlotDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
@@ -29,7 +29,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
 
     [HttpPost("timeslots/all")]
     [Authorize(Policy = Policy.ADMIN)]
-    [ProducesResponseType<PagedList<TimeSlotDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPagedTimeSlotsAsync(GetTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {

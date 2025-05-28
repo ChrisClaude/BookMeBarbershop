@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace BookMe.Application.Entities;
 
 public class User : BaseEntity

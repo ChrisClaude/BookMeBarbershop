@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.Application.Enums;
 
 public static class Constant

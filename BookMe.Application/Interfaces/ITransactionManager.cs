@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.Application.Interfaces;
 
 public interface ITransactionManager : IDisposable, IAsyncDisposable

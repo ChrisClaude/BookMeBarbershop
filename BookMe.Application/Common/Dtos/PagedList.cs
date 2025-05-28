@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Interfaces;
 
 namespace BookMe.Application.Common.Dtos;

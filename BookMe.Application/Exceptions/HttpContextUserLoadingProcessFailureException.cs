@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.Application.Exceptions;
 
 public class HttpContextUserLoadingProcessFailureException: Exception

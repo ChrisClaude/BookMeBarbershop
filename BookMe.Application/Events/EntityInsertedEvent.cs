@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Entities;
 
 namespace BookMe.Application.Events;

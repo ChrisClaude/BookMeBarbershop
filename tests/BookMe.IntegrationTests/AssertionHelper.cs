@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
 
@@ -17,12 +16,12 @@ public static class AssertionHelper
 
         var okResult = actionResult as OkObjectResult;
 
-        okResult.Value.Should().NotBeNull();
+        okResult!.Value.Should().NotBeNull();
         okResult.Value.Should().BeOfType<TPayload>();
 
         var response = okResult.Value as TPayload;
 
-        payloadAssertion(response);
+        payloadAssertion(response!);
     }
 
     public static void ValidateCreatedResult(this IActionResult actionResult)
@@ -32,7 +31,7 @@ public static class AssertionHelper
 
         var createdResult = actionResult as CreatedResult;
 
-        createdResult.Value.Should().NotBeNull();
+        createdResult!.Value.Should().NotBeNull();
     }
 
     public static void ValidateNoContentResult(this IActionResult actionResult)
@@ -52,11 +51,11 @@ public static class AssertionHelper
 
         var badRequestResult = actionResult as BadRequestObjectResult;
 
-        badRequestResult.Value.Should().NotBeNull();
+        badRequestResult!.Value.Should().NotBeNull();
         badRequestResult.Value.Should().BeOfType<TPayload>();
 
         var response = badRequestResult.Value as TPayload;
 
-        payloadAssertion(response);
+        payloadAssertion(response!);
     }
 }

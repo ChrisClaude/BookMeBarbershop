@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using BookMe.Application.Entities;
 using BookMe.Infrastructure.Data.Configurations;

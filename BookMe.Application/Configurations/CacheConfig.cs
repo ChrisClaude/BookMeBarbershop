@@ -1,7 +1,3 @@
-using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 namespace BookMe.Application.Configurations;
 
 public class CacheConfig

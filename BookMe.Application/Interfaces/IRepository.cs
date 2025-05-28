@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Caching;
 using BookMe.Application.Entities;
 

@@ -10,6 +10,7 @@ models/ConfirmBookingDto.ts
 models/CreateTimeSlotsDto.ts
 models/GetTimeSlotsDto.ts
 models/ModelError.ts
+models/PagedListDtoOfTimeSlotDto.ts
 models/ProblemDetails.ts
 models/ResultOfBookingDto.ts
 models/RoleDto.ts

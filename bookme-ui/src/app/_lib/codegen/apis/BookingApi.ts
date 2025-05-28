@@ -20,6 +20,7 @@ import type {
   ConfirmBookingDto,
   CreateTimeSlotsDto,
   GetTimeSlotsDto,
+  PagedListDtoOfTimeSlotDto,
   ProblemDetails,
   ResultOfBookingDto,
   TimeSlotDto,
@@ -35,6 +36,8 @@ import {
     CreateTimeSlotsDtoToJSON,
     GetTimeSlotsDtoFromJSON,
     GetTimeSlotsDtoToJSON,
+    PagedListDtoOfTimeSlotDtoFromJSON,
+    PagedListDtoOfTimeSlotDtoToJSON,
     ProblemDetailsFromJSON,
     ProblemDetailsToJSON,
     ResultOfBookingDtoFromJSON,
@@ -53,13 +56,13 @@ export interface ApiBookingPostRequest {
 
 export interface ApiBookingTimeslotsAllPostRequest {
     getTimeSlotsDto: GetTimeSlotsDto;
-    pageNumber?: number;
+    pageIndex?: number;
     pageSize?: number;
 }
 
 export interface ApiBookingTimeslotsAvailablePostRequest {
     getTimeSlotsDto: GetTimeSlotsDto;
-    pageNumber?: number;
+    pageIndex?: number;
     pageSize?: number;
 }
 
@@ -142,7 +145,7 @@ export class BookingApi extends runtime.BaseAPI {
 
     /**
      */
-    async apiBookingTimeslotsAllPostRaw(requestParameters: ApiBookingTimeslotsAllPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TimeSlotDto>>> {
+    async apiBookingTimeslotsAllPostRaw(requestParameters: ApiBookingTimeslotsAllPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagedListDtoOfTimeSlotDto>> {
         if (requestParameters['getTimeSlotsDto'] == null) {
             throw new runtime.RequiredError(
                 'getTimeSlotsDto',
@@ -152,8 +155,8 @@ export class BookingApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['pageNumber'] != null) {
-            queryParameters['pageNumber'] = requestParameters['pageNumber'];
+        if (requestParameters['pageIndex'] != null) {
+            queryParameters['pageIndex'] = requestParameters['pageIndex'];
         }
 
         if (requestParameters['pageSize'] != null) {
@@ -172,19 +175,19 @@ export class BookingApi extends runtime.BaseAPI {
             body: GetTimeSlotsDtoToJSON(requestParameters['getTimeSlotsDto']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TimeSlotDtoFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagedListDtoOfTimeSlotDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiBookingTimeslotsAllPost(requestParameters: ApiBookingTimeslotsAllPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<TimeSlotDto>> {
+    async apiBookingTimeslotsAllPost(requestParameters: ApiBookingTimeslotsAllPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagedListDtoOfTimeSlotDto> {
         const response = await this.apiBookingTimeslotsAllPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
      */
-    async apiBookingTimeslotsAvailablePostRaw(requestParameters: ApiBookingTimeslotsAvailablePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<TimeSlotDto>>> {
+    async apiBookingTimeslotsAvailablePostRaw(requestParameters: ApiBookingTimeslotsAvailablePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagedListDtoOfTimeSlotDto>> {
         if (requestParameters['getTimeSlotsDto'] == null) {
             throw new runtime.RequiredError(
                 'getTimeSlotsDto',
@@ -194,8 +197,8 @@ export class BookingApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
-        if (requestParameters['pageNumber'] != null) {
-            queryParameters['pageNumber'] = requestParameters['pageNumber'];
+        if (requestParameters['pageIndex'] != null) {
+            queryParameters['pageIndex'] = requestParameters['pageIndex'];
         }
 
         if (requestParameters['pageSize'] != null) {
@@ -214,12 +217,12 @@ export class BookingApi extends runtime.BaseAPI {
             body: GetTimeSlotsDtoToJSON(requestParameters['getTimeSlotsDto']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TimeSlotDtoFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagedListDtoOfTimeSlotDtoFromJSON(jsonValue));
     }
 
     /**
      */
-    async apiBookingTimeslotsAvailablePost(requestParameters: ApiBookingTimeslotsAvailablePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<TimeSlotDto>> {
+    async apiBookingTimeslotsAvailablePost(requestParameters: ApiBookingTimeslotsAvailablePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagedListDtoOfTimeSlotDto> {
         const response = await this.apiBookingTimeslotsAvailablePostRaw(requestParameters, initOverrides);
         return await response.value();
     }

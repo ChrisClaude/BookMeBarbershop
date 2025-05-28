@@ -222,5 +222,35 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             orderedTimeSlots.Last().End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
     }
+
+    [Fact]
+    public async Task CreateAllDayTimeSlotIthMoreThan24Hours_ShouldNotSucceedAsync()
+    {
+        // Arrange
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        _mockHttpContext.SetUser(_adminUser);
+
+        var createTimeSlotsRequest = new CreateTimeSlotsDto
+        {
+            StartDateTime = DateTime.Today.AddDays(1),
+            EndDateTime = DateTime.Today.AddDays(1).AddHours(24).AddMinutes(30),
+            IsAllDay = true,
+        };
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ValidationException>(
+            () => _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest)
+        );
+
+        exception.Message
+            .Should()
+            .Be(
+                "Validation failed: \n -- : All-day time slots must not be apart by more than 24 hours"
+            );
+
+        var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
+
+        timeSlots.Should().HaveCount(0);
+    }
     #endregion
 }

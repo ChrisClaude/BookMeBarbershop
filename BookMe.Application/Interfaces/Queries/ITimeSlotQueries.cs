@@ -7,11 +7,15 @@ public interface ITimeSlotQueries
 {
     Task<Result<IPagedList<TimeSlotDto>>> GetAvailableTimeSlotsAsync(
         DateTimeOffset start,
-        DateTimeOffset end
+        DateTimeOffset end,
+        int pageNumber = 1,
+        int pageSize = 10
     );
 
     Task<Result<IPagedList<TimeSlotDto>>> GetPagedTimeSlotsAsync(
         DateTimeOffset start,
-        DateTimeOffset end
+        DateTimeOffset end,
+        int pageNumber = 1,
+        int pageSize = 10
     );
 }

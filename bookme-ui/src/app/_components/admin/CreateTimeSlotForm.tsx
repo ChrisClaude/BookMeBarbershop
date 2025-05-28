@@ -1,6 +1,6 @@
 import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
 import { useCreateTimeSlotMutation } from "@/_lib/queries";
-import { Button, DatePicker, Form } from "@heroui/react";
+import { Button, Checkbox, DatePicker, Form } from "@heroui/react";
 import { now, getLocalTimeZone, DateValue } from "@internationalized/date";
 import React, { useCallback } from "react";
 
@@ -12,9 +12,11 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [formData, setFormData] = React.useState<{
     startDateTime: DateValue;
     endDateTime: DateValue;
+    isAllDay: boolean;
   }>({
     startDateTime: now(getLocalTimeZone()).add({ hours: 1 }),
     endDateTime: now(getLocalTimeZone()).add({ hours: 2 }),
+    isAllDay: false,
   });
 
   const [createTimeSlot, { isLoading, error, isSuccess }] =
@@ -38,6 +40,7 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         createTimeSlotsDto: {
           startDateTime: formData.startDateTime.toDate(getLocalTimeZone()),
           endDateTime: formData.endDateTime.toDate(getLocalTimeZone()),
+          isAllDay: formData.isAllDay,
         },
       };
 
@@ -54,6 +57,7 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       errors,
       formData.endDateTime,
       formData.startDateTime,
+      formData.isAllDay,
       onSuccess,
     ]
   );
@@ -70,12 +74,6 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         <div className="p-4 border rounded-lg bg-red-50 text-center">
           <p className="text-red-500">
             Error creating time slot:{" "}
-            {/* {(error as string[]).map((err) => (
-              <span key={err}>
-                {err}
-                <br />
-              </span>
-            ))} */}
             {JSON.stringify(error)}
           </p>
         </div>
@@ -138,6 +136,21 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
             variant="bordered"
             isReadOnly={isLoading}
           />
+
+          <Checkbox
+            id="isAllDay"
+            name="isAllDay"
+            isSelected={formData.isAllDay}
+            onValueChange={(isSelected) => {
+              setFormData({
+                ...formData,
+                isAllDay: isSelected,
+              });
+            }}
+            isDisabled={isLoading}
+          >
+            Create time slots for the whole day
+          </Checkbox>
 
           <div className="flex gap-4">
             <Button

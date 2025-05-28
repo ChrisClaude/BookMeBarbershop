@@ -53,10 +53,14 @@ export interface ApiBookingPostRequest {
 
 export interface ApiBookingTimeslotsAllPostRequest {
     getTimeSlotsDto: GetTimeSlotsDto;
+    pageNumber?: number;
+    pageSize?: number;
 }
 
 export interface ApiBookingTimeslotsAvailablePostRequest {
     getTimeSlotsDto: GetTimeSlotsDto;
+    pageNumber?: number;
+    pageSize?: number;
 }
 
 export interface ApiBookingTimeslotsPostRequest {
@@ -148,6 +152,14 @@ export class BookingApi extends runtime.BaseAPI {
 
         const queryParameters: any = {};
 
+        if (requestParameters['pageNumber'] != null) {
+            queryParameters['pageNumber'] = requestParameters['pageNumber'];
+        }
+
+        if (requestParameters['pageSize'] != null) {
+            queryParameters['pageSize'] = requestParameters['pageSize'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         headerParameters['Content-Type'] = 'application/json-patch+json';
@@ -181,6 +193,14 @@ export class BookingApi extends runtime.BaseAPI {
         }
 
         const queryParameters: any = {};
+
+        if (requestParameters['pageNumber'] != null) {
+            queryParameters['pageNumber'] = requestParameters['pageNumber'];
+        }
+
+        if (requestParameters['pageSize'] != null) {
+            queryParameters['pageSize'] = requestParameters['pageSize'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 

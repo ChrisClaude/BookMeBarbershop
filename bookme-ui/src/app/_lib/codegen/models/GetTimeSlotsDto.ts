@@ -31,6 +31,12 @@ export interface GetTimeSlotsDto {
      * @memberof GetTimeSlotsDto
      */
     end?: Date;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetTimeSlotsDto
+     */
+    isAvailable?: boolean;
 }
 
 /**
@@ -52,6 +58,7 @@ export function GetTimeSlotsDtoFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'start': json['start'] == null ? undefined : (new Date(json['start'])),
         'end': json['end'] == null ? undefined : (new Date(json['end'])),
+        'isAvailable': json['isAvailable'] == null ? undefined : json['isAvailable'],
     };
 }
 
@@ -68,6 +75,7 @@ export function GetTimeSlotsDtoToJSONTyped(value?: GetTimeSlotsDto | null, ignor
         
         'start': value['start'] == null ? undefined : ((value['start']).toISOString()),
         'end': value['end'] == null ? undefined : ((value['end']).toISOString()),
+        'isAvailable': value['isAvailable'],
     };
 }
 

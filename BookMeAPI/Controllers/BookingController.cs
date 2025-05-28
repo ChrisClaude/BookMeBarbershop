@@ -20,9 +20,9 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [AllowAnonymous]
     [ProducesResponseType<PagedList<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetTimeSlotsDto request)
+    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
-        var result = await timeSlotQueries.GetAvailableTimeSlotsAsync(request.Start, request.End);
+        var result = await timeSlotQueries.GetAvailableTimeSlotsAsync(request.Start, request.End, pageIndex, pageSize);
 
         return result.ToActionResult();
     }
@@ -31,9 +31,9 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType<PagedList<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPagedTimeSlotsAsync(GetTimeSlotsDto request)
+    public async Task<IActionResult> GetPagedTimeSlotsAsync(GetTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
-        var result = await timeSlotQueries.GetPagedTimeSlotsAsync(request.Start, request.End);
+        var result = await timeSlotQueries.GetPagedTimeSlotsAsync(request.Start, request.End, pageIndex, pageSize);
 
         return result.ToActionResult();
     }

@@ -180,7 +180,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             timeSlot.End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
     }
+    #endregion
 
+    #region All day time slot tests
     [Fact]
     public async Task CreateAllDayTimeSlot_ShouldSucceedAsync()
     {

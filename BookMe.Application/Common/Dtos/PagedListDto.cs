@@ -2,7 +2,6 @@ namespace BookMe.Application.Common.Dtos;
 
 public record PagedListDto<T>
 {
-
     /// <summary>
     /// Page index
     /// </summary>

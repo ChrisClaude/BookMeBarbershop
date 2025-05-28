@@ -8,6 +8,7 @@ export * from './ConfirmBookingDto';
 export * from './CreateTimeSlotsDto';
 export * from './GetTimeSlotsDto';
 export * from './ModelError';
+export * from './PagedListDtoOfTimeSlotDto';
 export * from './ProblemDetails';
 export * from './ResultOfBookingDto';
 export * from './RoleDto';

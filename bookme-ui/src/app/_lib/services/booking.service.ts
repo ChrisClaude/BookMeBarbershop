@@ -1,4 +1,8 @@
-import { ApiBookingTimeslotsPostRequest, TimeSlotDto, TimeslotsPostRequest } from "../codegen";
+import {
+  ApiBookingTimeslotsAvailablePostRequest,
+  ApiBookingTimeslotsPostRequest,
+  TimeSlotDto,
+} from "../codegen";
 import { Result } from "../types/common.types";
 import { getErrorsFromApiResult } from "../utils/common.utils";
 import { logError } from "../utils/logging.utils";
@@ -58,10 +62,12 @@ export class BookingService {
   public static async getAvailableTimeSlots({
     request,
   }: {
-    request: TimeslotsPostRequest;
+    request: ApiBookingTimeslotsAvailablePostRequest;
   }): Promise<Result<TimeSlotDto[]>> {
     try {
-      const response = await this.bookMeApi.timeslotsPostRaw(request);
+      const response = await this.bookMeApi.apiBookingTimeslotsAvailablePostRaw(
+        request
+      );
 
       if (response.raw.status !== 200) {
         const error = await response.raw.json();

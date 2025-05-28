@@ -36,7 +36,7 @@ export interface GetTimeSlotsDto {
      * @type {boolean}
      * @memberof GetTimeSlotsDto
      */
-    isAvailable?: boolean;
+    isAvailable?: boolean | null;
 }
 
 /**

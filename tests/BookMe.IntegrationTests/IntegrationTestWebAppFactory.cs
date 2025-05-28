@@ -14,21 +14,22 @@ namespace BookMe.IntegrationTests;
 
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-
     private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder()
-    .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-    .WithPassword("TestDb1234_")
-    .Build();
+        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        .WithPassword("TestDb1234_")
+        .Build();
 
     public MockHttpContextAccessor MockHttpContext { get; } = new MockHttpContextAccessor();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         // Add test configuration
-        builder.ConfigureAppConfiguration((context, config) =>
-        {
-            config.AddInMemoryCollection(TestConfig.GetConfiguration());
-        });
+        builder.ConfigureAppConfiguration(
+            (context, config) =>
+            {
+                config.AddInMemoryCollection(TestConfig.GetConfiguration());
+            }
+        );
 
         builder.ConfigureTestServices(services =>
         {

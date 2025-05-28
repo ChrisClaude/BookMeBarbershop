@@ -19,9 +19,12 @@ public class CreateTimeSlotCommandValidator : AbstractValidator<CreateTimeSlotCo
         RuleFor(x => x)
             .Must(
                 x =>
-                    !x.IsAllDay
-                    && x.EndDateTime - x.StartDateTime
-                        <= TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(1))
+                    x.IsAllDay
+                    || (
+                        !x.IsAllDay
+                        && x.EndDateTime - x.StartDateTime
+                            <= TimeSpan.FromHours(1).Add(TimeSpan.FromMinutes(1))
+                    )
             )
             .WithMessage(x => $"Time slot must not be apart by more than 1 hour");
 

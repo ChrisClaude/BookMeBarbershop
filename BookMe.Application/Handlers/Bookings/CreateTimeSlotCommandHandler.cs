@@ -25,31 +25,18 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
             return Result<IEnumerable<TimeSlotDto>>.Failure(new List<Error> { Error.Conflict("The requested time slot overlaps with existing time slots") }, ErrorType.BadRequest);
         }
 
-        TimeSlot timeSlot;
-        var timeSlots = new List<TimeSlotDto>();
         if (request.IsAllDay)
         {
-            var count = request.EndDateTime.Date.Subtract(request.StartDateTime.Date).Hours;
+            var count = request.EndDateTime.Subtract(request.StartDateTime).Hours;
 
-            for (var i = 0; i < count; i++)
-            {
-                timeSlot = new TimeSlot
-                {
-                    Start = request.StartDateTime.AddHours(i),
-                    End = request.StartDateTime.AddHours(i + 1)
-                };
+            var newTimeSlotList = GenerateTimeSlotsForAllDay(request, count);
 
-                timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
+            await timeSlotRepository.InsertAsync(newTimeSlotList, false);
 
-                await timeSlotRepository.InsertAsync(timeSlot, false);
-
-                timeSlots.Add(timeSlot.MapToDto());
-            }
-
-            return Result<IEnumerable<TimeSlotDto>>.Success(timeSlots);
+            return Result<IEnumerable<TimeSlotDto>>.Success(newTimeSlotList.Select(x => x.MapToDto()).ToList());
         }
 
-        timeSlot = new TimeSlot
+        var timeSlot = new TimeSlot
         {
             Start = request.StartDateTime,
             End = request.EndDateTime
@@ -58,9 +45,28 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
         timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
 
         await timeSlotRepository.InsertAsync(timeSlot, false);
-        timeSlots.Add(timeSlot.MapToDto());
 
 
-        return Result<IEnumerable<TimeSlotDto>>.Success(timeSlots);
+        return Result<IEnumerable<TimeSlotDto>>.Success([timeSlot.MapToDto()]);
+    }
+
+    private static List<TimeSlot> GenerateTimeSlotsForAllDay(CreateTimeSlotCommand request, int count)
+    {
+        var newTimeSlotList = new List<TimeSlot>();
+
+        for (var i = 0; i < count; i++)
+        {
+            TimeSlot timeSlot = new TimeSlot
+            {
+                Start = request.StartDateTime.AddHours(i),
+                End = request.StartDateTime.AddHours(i + 1)
+            };
+
+            timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
+
+            newTimeSlotList.Add(timeSlot);
+        }
+
+        return newTimeSlotList;
     }
 }

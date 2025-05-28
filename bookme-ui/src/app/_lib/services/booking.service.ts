@@ -1,6 +1,7 @@
 import {
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
+  PagedListDtoOfTimeSlotDto,
   TimeSlotDto,
 } from "../codegen";
 import { Result } from "../types/common.types";
@@ -63,7 +64,42 @@ export class BookingService {
     request,
   }: {
     request: ApiBookingTimeslotsAvailablePostRequest;
-  }): Promise<Result<TimeSlotDto[]>> {
+  }): Promise<Result<PagedListDtoOfTimeSlotDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingTimeslotsAvailablePostRaw(
+        request
+      );
+
+      if (response.raw.status !== 200) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as PagedListDtoOfTimeSlotDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching time slots",
+        "GetAvailableTimeSlotsError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching time slots"],
+      };
+    }
+  }
+
+public static async getAllTimeSlots({
+    request,
+  }: {
+    request: ApiBookingTimeslotsAvailablePostRequest;
+  }): Promise<Result<PagedListDtoOfTimeSlotDto>> {
     try {
       const response = await this.bookMeApi.apiBookingTimeslotsAllPostRaw(
         request
@@ -79,12 +115,12 @@ export class BookingService {
       const body = await response.raw.json();
       return {
         success: true,
-        data: body as TimeSlotDto[],
+        data: body as PagedListDtoOfTimeSlotDto,
       };
     } catch (error) {
       logError(
         error?.toString() || "Error fetching time slots",
-        "GetAvailableTimeSlotsError",
+        "GetAllTimeSlotsError",
         error
       );
       return {

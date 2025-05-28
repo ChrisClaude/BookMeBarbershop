@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { useMemo } from "react";
 import TimeSlotItem from "./TimeSlotItem";
 import { GoPlusCircle } from "react-icons/go";
-import { Button, Tooltip } from "@heroui/react";
+import { Button, Pagination, Tooltip } from "@heroui/react";
 
 const TimeSlotList = ({
   selectedDate,
@@ -83,6 +83,7 @@ const TimeSlotList = ({
           {timeSlots.map((timeSlot) => (
             <TimeSlotItem key={timeSlot.id} timeSlot={timeSlot} />
           ))}
+<Pagination initialPage={1} total={10} />
         </div>
       )}
     </div>

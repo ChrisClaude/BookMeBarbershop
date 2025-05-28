@@ -65,7 +65,7 @@ export class BookingService {
     request: ApiBookingTimeslotsAvailablePostRequest;
   }): Promise<Result<TimeSlotDto[]>> {
     try {
-      const response = await this.bookMeApi.apiBookingTimeslotsAvailablePostRaw(
+      const response = await this.bookMeApi.apiBookingTimeslotsAllPostRaw(
         request
       );
 

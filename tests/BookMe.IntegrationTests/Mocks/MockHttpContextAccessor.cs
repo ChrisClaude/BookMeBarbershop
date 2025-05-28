@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
-using BookMe.Application.Common.Dtos.Users;
 
 namespace BookMe.IntegrationTests.Mocks;
 

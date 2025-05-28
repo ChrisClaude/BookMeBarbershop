@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Commands.Abstractions;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;

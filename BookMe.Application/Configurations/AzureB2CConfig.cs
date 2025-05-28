@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.Application.Configurations;
 
 public class AzureB2CConfig

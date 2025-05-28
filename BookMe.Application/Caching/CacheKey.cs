@@ -1,6 +1,4 @@
-using System;
 using BookMe.Application.Configurations;
-using Microsoft.Extensions.Options;
 
 namespace BookMe.Application.Caching;
 

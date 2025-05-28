@@ -1,11 +1,7 @@
 using BookMe.Application.Behaviors;
-using BookMe.Application.Commands;
-using BookMe.Application.Commands.Users;
 using BookMe.Application.Extensions;
 using BookMe.Application.Interfaces.Queries;
 using BookMe.Application.Queries;
-using BookMe.Application.Validators;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 

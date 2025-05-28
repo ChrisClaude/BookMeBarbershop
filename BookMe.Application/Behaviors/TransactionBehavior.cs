@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Interfaces;
 using MediatR;
 using Serilog;

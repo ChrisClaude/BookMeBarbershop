@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Common.Dtos;
 using MediatR;
 

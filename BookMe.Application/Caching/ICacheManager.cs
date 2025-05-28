@@ -1,6 +1,3 @@
-using System;
-using BookMe.Application.Caching;
-
 namespace BookMe.Application.Caching;
 
 public interface ICacheManager

@@ -1,5 +1,3 @@
-using System;
-using BookMe.Application.Commands.Abstractions;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos;
 using MediatR;

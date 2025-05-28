@@ -1,8 +1,4 @@
-using System;
-using System.Text.Json.Serialization;
 using BookMe.Application.Common.Dtos.Users;
-using BookMe.Application.Enums;
-using Microsoft.OpenApi.Extensions;
 
 namespace BookMe.Application.Common.Dtos;
 

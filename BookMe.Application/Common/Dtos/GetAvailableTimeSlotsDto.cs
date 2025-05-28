@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.Application.Common.Dtos;
 
 public record GetTimeSlotsDto

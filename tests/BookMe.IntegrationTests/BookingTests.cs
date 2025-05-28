@@ -1,5 +1,4 @@
-﻿using BookMe.Application.Commands.Abstractions;
-using BookMe.Application.Commands.Bookings;
+﻿using BookMe.Application.Commands.Bookings;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Bookings.Dtos;
 using BookMe.Application.Common.Dtos;

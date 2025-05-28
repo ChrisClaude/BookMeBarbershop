@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Entities;
 using BookMe.Application.Enums;
 using BookMe.Infrastructure.Data;

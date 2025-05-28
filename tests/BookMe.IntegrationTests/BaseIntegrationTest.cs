@@ -1,4 +1,3 @@
-using System;
 using BookMe.Infrastructure.Data;
 using BookMe.IntegrationTests.Mocks;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +18,6 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
         _bookMeContext = _scope.ServiceProvider.GetRequiredService<BookMeContext>();
         _mockHttpContext = _factory.MockHttpContext;
     }
-
 
     public void Dispose()
     {

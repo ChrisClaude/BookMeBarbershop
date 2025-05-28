@@ -1,4 +1,3 @@
-using System;
 using BookMe.Application.Commands.Bookings;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Errors;

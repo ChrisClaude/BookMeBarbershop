@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.Application.Entities;
 
 public class Booking : BaseEntity

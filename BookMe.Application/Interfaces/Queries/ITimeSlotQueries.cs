@@ -5,14 +5,14 @@ namespace BookMe.Application.Interfaces.Queries;
 
 public interface ITimeSlotQueries
 {
-    Task<Result<IPagedList<TimeSlotDto>>> GetAvailableTimeSlotsAsync(
+    Task<Result<PagedListDto<TimeSlotDto>>> GetAvailableTimeSlotsAsync(
         DateTimeOffset start,
         DateTimeOffset end,
         int pageNumber = 1,
         int pageSize = 10
     );
 
-    Task<Result<IPagedList<TimeSlotDto>>> GetPagedTimeSlotsAsync(
+    Task<Result<PagedListDto<TimeSlotDto>>> GetPagedTimeSlotsAsync(
         DateTimeOffset start,
         DateTimeOffset end,
         int pageNumber = 1,

@@ -17,13 +17,17 @@ public static class TimeSlotMapper
         };
     }
 
-    public static IPagedList<TimeSlotDto> MapToDto(this IPagedList<TimeSlot> timeSlots)
+    public static PagedListDto<TimeSlotDto> MapToDto(this IPagedList<TimeSlot> timeSlots)
     {
-        return new PagedList<TimeSlotDto>(
-            timeSlots.Select(x => x.MapToDto()).ToList(),
-            timeSlots.PageIndex,
-            timeSlots.PageSize,
-            timeSlots.TotalCount
-        );;
+        return new PagedListDto<TimeSlotDto>
+        {
+            PageIndex = timeSlots.PageIndex,
+            PageSize = timeSlots.PageSize,
+            TotalCount = timeSlots.TotalCount,
+            TotalPages = timeSlots.TotalPages,
+            HasPreviousPage = timeSlots.HasPreviousPage,
+            HasNextPage = timeSlots.HasNextPage,
+            Items = timeSlots.Select(x => x.MapToDto()).ToList()
+        };
     }
 }

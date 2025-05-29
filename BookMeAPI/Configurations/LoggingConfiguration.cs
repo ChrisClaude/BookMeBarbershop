@@ -10,14 +10,18 @@ namespace BookMeAPI.Configurations;
 
 public static class LoggingConfiguration
 {
-    public static IServiceCollection ConfigureSerilog(this IServiceCollection services, AppSettings appSettings)
+    public static IServiceCollection ConfigureSerilog(
+        this IServiceCollection services,
+        AppSettings appSettings
+    )
     {
         var elasticUri = appSettings.Elasticsearch.Uri;
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+        var environment =
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
         var applicationName = "BookMeAPI";
 
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
+        Log.Logger = new LoggerConfiguration().MinimumLevel
+            .Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .Enrich.FromLogContext()
@@ -25,47 +29,69 @@ public static class LoggingConfiguration
             .Enrich.WithEnvironmentName()
             .Enrich.WithProperty("Application", applicationName)
             .WriteTo.Console(
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+            )
             .WriteTo.Conditional(
                 evt => appSettings.Serilog.EnableFileLogging,
-                sinkConfig => sinkConfig.File(
-                    path: "logs/log-.txt",
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: 7,
-                    fileSizeLimitBytes: 5242880, // 5MB
-                    rollOnFileSizeLimit: true,
-                    shared: true,
-                    flushToDiskInterval: TimeSpan.FromSeconds(1)))
+                sinkConfig =>
+                    sinkConfig.File(
+                        path: "logs/log-.txt",
+                        rollingInterval: RollingInterval.Day,
+                        retainedFileCountLimit: 7,
+                        fileSizeLimitBytes: 5242880, // 5MB
+                        rollOnFileSizeLimit: true,
+                        shared: true,
+                        flushToDiskInterval: TimeSpan.FromSeconds(1)
+                    )
+            )
             .WriteTo.Conditional(
                 evt => !string.IsNullOrEmpty(elasticUri),
-                sinkConfig => sinkConfig.Elasticsearch(new[] { new Uri(elasticUri!) }, opts =>
-            {
-                // Data stream configuration
-                opts.DataStream = new DataStreamName(
-                    "logs",
-                    applicationName.ToLower(),
-                    environment.ToLower());
-            }, transport =>
-            {
-                if (!string.IsNullOrEmpty(appSettings.Elasticsearch.ApiKey))
-                {
-                    transport.Authentication(new ApiKey(appSettings.Elasticsearch.ApiKey));
-                }
+                sinkConfig =>
+                    sinkConfig
+                        .Elasticsearch(
+                            new[] { new Uri(elasticUri!) },
+                            opts =>
+                            {
+                                // Data stream configuration
+                                opts.DataStream = new DataStreamName(
+                                    "logs",
+                                    applicationName.ToLower(),
+                                    environment.ToLower()
+                                );
+                            },
+                            transport =>
+                            {
+                                if (!string.IsNullOrEmpty(appSettings.Elasticsearch.ApiKey))
+                                {
+                                    transport.Authentication(
+                                        new ApiKey(appSettings.Elasticsearch.ApiKey)
+                                    );
+                                }
 
-                if (!string.IsNullOrEmpty(appSettings.Elasticsearch.Username) &&
-                    !string.IsNullOrEmpty(appSettings.Elasticsearch.Password))
-                {
-                    transport.Authentication(new BasicAuthentication(
-                        appSettings.Elasticsearch.Username,
-                        appSettings.Elasticsearch.Password));
-                }
-            })
-            .WriteTo.Debug()
-            .WriteTo.Conditional(
-                evt => evt.Level == LogEventLevel.Error,
-                sinkConfig => sinkConfig.File(
-                    path: "logs/errors-.txt",
-                    rollingInterval: RollingInterval.Day)))
+                                if (
+                                    !string.IsNullOrEmpty(appSettings.Elasticsearch.Username)
+                                    && !string.IsNullOrEmpty(appSettings.Elasticsearch.Password)
+                                )
+                                {
+                                    transport.Authentication(
+                                        new BasicAuthentication(
+                                            appSettings.Elasticsearch.Username,
+                                            appSettings.Elasticsearch.Password
+                                        )
+                                    );
+                                }
+                            }
+                        )
+                        .WriteTo.Debug()
+                        .WriteTo.Conditional(
+                            evt => evt.Level == LogEventLevel.Error,
+                            sinkConfig =>
+                                sinkConfig.File(
+                                    path: "logs/errors-.txt",
+                                    rollingInterval: RollingInterval.Day
+                                )
+                        )
+            )
             .WriteTo.OpenTelemetry(options =>
             {
                 options.Endpoint = appSettings.OpenTelemetry.Seq.LogsUri;

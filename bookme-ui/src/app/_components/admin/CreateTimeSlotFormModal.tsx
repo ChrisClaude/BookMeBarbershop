@@ -1,8 +1,8 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
+import { Button, DateValue, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 import React from "react";
 import CreateTimeSlotForm from "./CreateTimeSlotForm";
 
-const CreateTimeSlotFormModal = ({isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+const CreateTimeSlotFormModal = ({ selectedDate, isOpen, onClose }: { selectedDate: DateValue; isOpen: boolean; onClose: () => void }) => {
   return (
     <Modal isOpen={isOpen} size="lg" onClose={onClose}>
       <ModalContent>
@@ -12,7 +12,7 @@ const CreateTimeSlotFormModal = ({isOpen, onClose }: { isOpen: boolean; onClose:
               Create Time Slot
             </ModalHeader>
             <ModalBody>
-              <CreateTimeSlotForm onSuccess={onClose} />
+              <CreateTimeSlotForm selectedDate={selectedDate} onSuccess={onClose} />
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>

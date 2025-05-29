@@ -34,6 +34,7 @@ const BookingAdminPage = () => {
           />
           <CreateTimeSlotFormModal
             isOpen={isModalOpen}
+            selectedDate={selectedDate}
             onClose={() => setIsModalOpen(false)}
           />
         </div>

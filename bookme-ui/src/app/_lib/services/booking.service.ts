@@ -5,7 +5,10 @@ import {
   TimeSlotDto,
 } from "../codegen";
 import { Result } from "../types/common.types";
-import { getErrorsFromApiResult } from "../utils/common.utils";
+import {
+  getErrorsFromApiResult,
+  isStatusCodeSuccess,
+} from "../utils/common.utils";
 import { logError } from "../utils/logging.utils";
 import { BookingApiWithConfig } from "./api.service";
 
@@ -35,7 +38,7 @@ export class BookingService {
     try {
       const response = await this.bookMeApi.apiBookingTimeslotsPostRaw(request);
 
-      if (response.raw.status !== 200) {
+      if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();
         return {
           success: false,
@@ -95,7 +98,7 @@ export class BookingService {
     }
   }
 
-public static async getAllTimeSlots({
+  public static async getAllTimeSlots({
     request,
   }: {
     request: ApiBookingTimeslotsAvailablePostRequest;

@@ -9,7 +9,7 @@ import TimeSlotItem from "./TimeSlotItem";
 import { GoPlusCircle } from "react-icons/go";
 import { Button, Pagination, Tooltip } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { PAGE_SIZE } from "@/config";
+import { SLOTS_PER_PAGE_SIZE } from "@/config";
 
 const TimeSlotList = ({
   selectedDate,
@@ -42,7 +42,7 @@ const TimeSlotList = ({
         isAvailable: null,
       },
       pageIndex: pageIndex - 1, // pageIndex is 0-based
-      pageSize: PAGE_SIZE,
+      pageSize: SLOTS_PER_PAGE_SIZE,
     };
   }, [pageIndex, selectedDate]);
 

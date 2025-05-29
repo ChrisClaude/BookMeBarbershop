@@ -56,3 +56,7 @@ export const getErrorsFromApiResult = (errorResult: ApiError[]): string[] => {
     return ["An unknown error occurred."];
   }
 };
+
+export const isStatusCodeSuccess = (statusCode: number) => {
+  return statusCode >= 200 && statusCode < 300;
+};

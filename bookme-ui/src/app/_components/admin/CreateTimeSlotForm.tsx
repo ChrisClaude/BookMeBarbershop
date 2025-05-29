@@ -1,21 +1,38 @@
 import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
 import { useCreateTimeSlotMutation } from "@/_lib/queries";
 import { Button, Checkbox, DatePicker, Form } from "@heroui/react";
-import { now, getLocalTimeZone, DateValue } from "@internationalized/date";
-import React, { useCallback } from "react";
+import {
+  now,
+  getLocalTimeZone,
+  DateValue,
+  toCalendarDateTime,
+} from "@internationalized/date";
+import React, { useCallback, useEffect } from "react";
 
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
 
-const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
+const CreateTimeSlotForm = ({
+  selectedDate,
+  onSuccess,
+}: {
+  selectedDate: DateValue;
+  onSuccess?: () => void;
+}) => {
   const [errors, setErrors] = React.useState<ValidationErrors>({});
   const [formData, setFormData] = React.useState<{
     startDateTime: DateValue;
     endDateTime: DateValue;
     isAllDay: boolean;
   }>({
-    startDateTime: now(getLocalTimeZone()).add({ hours: 1 }),
-    endDateTime: now(getLocalTimeZone()).add({ hours: 2 }),
+    startDateTime: toCalendarDateTime(
+      selectedDate,
+      now(getLocalTimeZone()).add({ hours: 1 })
+    ),
+    endDateTime: toCalendarDateTime(
+      selectedDate,
+      now(getLocalTimeZone()).add({ hours: 2 })
+    ),
     isAllDay: false,
   });
 
@@ -62,6 +79,26 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     ]
   );
 
+  useEffect(() => {
+    if (formData.isAllDay) {
+      setFormData((prevState) => {
+        return {
+          ...prevState,
+          startDateTime: prevState.startDateTime.set({
+            hour: 0,
+            minute: 0,
+            second: 0,
+          }),
+          endDateTime: prevState.endDateTime.set({
+            hour: 23,
+            minute: 59,
+            second: 59,
+          }),
+        };
+      });
+    }
+  }, [formData.isAllDay]);
+
   return (
     <>
       {isSuccess && (
@@ -73,8 +110,7 @@ const CreateTimeSlotForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       {error && (
         <div className="p-4 border rounded-lg bg-red-50 text-center">
           <p className="text-red-500">
-            Error creating time slot:{" "}
-            {JSON.stringify(error)}
+            Error creating time slot: {JSON.stringify(error)}
           </p>
         </div>
       )}

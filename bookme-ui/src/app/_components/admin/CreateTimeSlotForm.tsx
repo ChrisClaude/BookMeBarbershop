@@ -1,5 +1,6 @@
 import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
 import { useCreateTimeSlotMutation } from "@/_lib/queries";
+import { ValidationErrors } from "@/_lib/types/common.types";
 import { Button, Checkbox, DatePicker, Form } from "@heroui/react";
 import {
   now,
@@ -8,9 +9,6 @@ import {
   toCalendarDateTime,
 } from "@internationalized/date";
 import React, { useCallback, useEffect } from "react";
-
-export type ValidationError = string | string[];
-export type ValidationErrors = Record<string, ValidationError>;
 
 const CreateTimeSlotForm = ({
   selectedDate,

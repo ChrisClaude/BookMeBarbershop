@@ -3,9 +3,9 @@ import React from "react";
 import { withAuth } from "@/_components/auth/AuthGuard";
 import Header from "@/_components/Header";
 import BookingForm from "@/_components/BookingForm";
+import { ROLES } from "@/_lib/enums/constant";
 
 const BookingsPage = () => {
-
   return (
     <>
       <Header />
@@ -16,6 +16,6 @@ const BookingsPage = () => {
   );
 };
 
-export default withAuth(BookingsPage, "Customer", {
+export default withAuth(BookingsPage, ROLES.CUSTOMER, {
   fallbackPath: "/unauthorized",
 });

@@ -16,3 +16,6 @@ export type UserSession = Session & {
   accessToken: string;
   externalProvider?: string;
 };
+
+export type ValidationError = string | string[];
+export type ValidationErrors = Record<string, ValidationError>;

@@ -47,7 +47,7 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
         await timeSlotRepository.InsertAsync(timeSlot, false);
 
 
-        return Result<IEnumerable<TimeSlotDto>>.Success([timeSlot.MapToDto()]);
+        return Result<IEnumerable<TimeSlotDto>>.Success(new List<TimeSlotDto> { timeSlot.MapToDto() });
     }
 
     private static List<TimeSlot> GenerateTimeSlotsForAllDay(CreateTimeSlotCommand request, int count)

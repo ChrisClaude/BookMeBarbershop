@@ -8,7 +8,7 @@ import TimeSlotSliderItem from "./TimeSlotSliderItem";
 import { Button } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SLOTS_PER_PAGE_SIZE } from "@/config";
-import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
   const router = useRouter();
@@ -60,7 +60,12 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
   );
 
   const shouldShowNextSlotsButton = useMemo(
-    () => timeSlots && timeSlots.totalPages! > 1,
+    () => timeSlots && timeSlots.pageIndex! < timeSlots.totalPages! - 1,
+    [timeSlots]
+  );
+
+  const shouldShowPreviousSlotsButton = useMemo(
+    () => timeSlots && timeSlots.pageIndex! > 0,
     [timeSlots]
   );
 
@@ -87,15 +92,21 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
           <p className="text-gray-500">No time slots available for this date</p>
         </div>
       ) : (
-        <div className="flex justify-between items-center gap-3">
-          <div className="flex gap-3 overflow-x-auto p-3 pb-4 scrollbar-hide snap-x">
-            {timeSlots.items.map((timeSlot) => (
-              <TimeSlotSliderItem
-                key={timeSlot.id}
-                timeSlot={timeSlot}
-              />
-            ))}
-          </div>
+        <div className="flex gap-3 overflow-x-auto p-3 pb-4 scrollbar-hide snap-x">
+          {shouldShowPreviousSlotsButton && (
+            <Button
+              isIconOnly
+              aria-label="next"
+              onPress={() => handlePageChange(pageIndex - 1)}
+              className="bg-primary text-white shadow-md hover:shadow-lg transition-shadow"
+              radius="full"
+            >
+              <MdNavigateBefore size={20} />
+            </Button>
+          )}
+          {timeSlots.items.map((timeSlot) => (
+            <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
+          ))}
           {shouldShowNextSlotsButton && (
             <Button
               isIconOnly

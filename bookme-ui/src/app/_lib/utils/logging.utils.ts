@@ -7,7 +7,7 @@
  * @returns
  */
 export const logError = (message: string, name: string, cause: string | undefined | unknown = undefined, stack: string | undefined = undefined): void => {
-	const hasExternalLoggingService = false; // hardcode for now
+	const hasExternalLoggingService = false; // TODO: hardcoded for now - fix this
 	if (!hasExternalLoggingService) {
 		console.error(message, name, cause, stack);
 		return;
@@ -15,17 +15,17 @@ export const logError = (message: string, name: string, cause: string | undefine
 };
 
 export const logInfo = (message: string, name: string): void => {
-	const hasExternalLoggingService = false; // hardcode for now
+	const hasExternalLoggingService = false; // TODO: hardcoded for now - fix this
 	if (!hasExternalLoggingService) {
 		console.info(message, name);
 		return;
 	}
 };
 
-export const logWarning = (message: string, name: string): void => {
-	const hasExternalLoggingService = false; // hardcode for now
+export const logWarning = (message: string, name: string, error: unknown = undefined): void => {
+	const hasExternalLoggingService = false; // TODO: hardcoded for now - fix this
 	if (!hasExternalLoggingService) {
-		console.warn(message, name);
+		console.warn(message, name, error);
 		return;
 	}
 };

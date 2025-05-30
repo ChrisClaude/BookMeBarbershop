@@ -1,5 +1,11 @@
 import { logWarning } from "./logging.utils";
 import { ModelError as ApiError } from "../codegen";
+import {
+  E164Number,
+  isPossiblePhoneNumber,
+  isValidPhoneNumber,
+  parsePhoneNumberWithError,
+} from "libphonenumber-js";
 
 export const isNullOrUndefined = <T>(
   value: T | null | undefined
@@ -59,4 +65,44 @@ export const getErrorsFromApiResult = (errorResult: ApiError[]): string[] => {
 
 export const isStatusCodeSuccess = (statusCode: number) => {
   return statusCode >= 200 && statusCode < 300;
+};
+
+export const validatePhoneNumber = (
+  value: E164Number | undefined
+): string[] => {
+  const errors: string[] = [];
+
+  if (value) {
+    const possible = isPossiblePhoneNumber(value);
+    const valid = isValidPhoneNumber(value);
+
+    if (possible && valid) {
+      return errors;
+    } else if (possible && !valid) {
+      errors.push("Invalid phone number format for the selected country.");
+      return errors;
+    } else {
+      errors.push("Not a possible phone number.");
+      return errors;
+    }
+  } else {
+    errors.push("Phone number is empty.");
+    return errors;
+  }
+};
+
+export const toE164 = (phone: string): E164Number | undefined => {
+  if (isNullOrWhiteSpace(phone)) {
+    return undefined;
+  }
+
+  try {
+    const phoneNumber = parsePhoneNumberWithError(phone);
+    if (phoneNumber.isValid()) {
+      return phoneNumber.number as E164Number; // returns in E.164 format
+    }
+  } catch (error) {
+    logWarning("Invalid phone number", "toE164", error);
+  }
+  return undefined;
 };

@@ -1,33 +1,38 @@
 "use client";
 import { useAuth } from "@/_hooks/useAuth";
-import { ValidationErrors } from "@/_lib/types/common.types";
-import { Button, DateInput, DateValue, Form, Input } from "@heroui/react";
+import { toE164, validatePhoneNumber } from "@/_lib/utils/common.utils";
+import { Button, DateInput, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
-import React, { useCallback, useMemo } from "react";
+import { E164Number } from "libphonenumber-js";
+import React, { useCallback } from "react";
+import PhoneInput from "react-phone-number-input/input";
 
 const BookingForm = () => {
   const { userProfile } = useAuth();
-  const [errors, setErrors] = React.useState<string[]>([]);
+  const [errors, setErrors] = React.useState<
+    { field: string; message: string }[]
+  >([]);
 
   const [formData, setFormData] = React.useState<{
-    phoneNumber: string;
+    phoneNumber: E164Number | undefined;
     bookingDate: DateValue;
   }>({
-    phoneNumber: userProfile?.phoneNumber ?? "",
+    phoneNumber: toE164(userProfile?.phoneNumber ?? ""),
     bookingDate: today(getLocalTimeZone()),
   });
-
-  const canSubmit = useMemo(() => false, []);
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      if (!canSubmit) {
-        setErrors(["Please fix the errors before submitting"]);
+      const phoneErrors = validatePhoneNumber(formData.phoneNumber);
+      if (phoneErrors.length > 0) {
+        setErrors(
+          phoneErrors.map((error) => ({ field: "phoneNumber", message: error }))
+        );
         return;
       }
     },
-    [canSubmit]
+    [formData.phoneNumber]
   );
 
   return (
@@ -44,20 +49,36 @@ const BookingForm = () => {
             <div className="p-4 border rounded-lg bg-red-50 text-center">
               {errors.map((error, index) => (
                 <p className="text-red-500" key={index}>
-                  {error}
+                  {error.field} - {error.message}
                 </p>
               ))}
             </div>
           )}
 
-          <Input
-            isRequired
-            label="Phone number"
-            labelPlacement="outside"
-            name="phoneNumber"
-            placeholder="Enter your email"
-            type="tel"
-          />
+          <div className="flex flex-col gap-2">
+            <label htmlFor="phone-input">Phone Number:</label>
+            <PhoneInput
+              id="phone-input"
+              placeholder="Enter phone number"
+              value={formData.phoneNumber}
+              onChange={(value) => {
+                setFormData((prevState) => {
+                  return {
+                    ...prevState,
+                    phoneNumber: value,
+                  };
+                });
+              }}
+              defaultCountry="US" // Set a default country, e.g., "US" or get from user's IP
+              international // Force international format (e.g., +1 555 123 4567)
+              countryCallingCodeEditable={false} // Prevents users from manually editing the country code part
+            />
+            {errors.find((error) => error.field === "phoneNumber") && (
+              <p className="text-red-500">
+                {errors.find((error) => error.field === "phoneNumber")?.message}
+              </p>
+            )}
+          </div>
 
           <DateInput
             // @ts-expect-error there seems to be a type issue

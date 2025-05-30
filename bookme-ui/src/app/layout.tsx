@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "react-phone-number-input/style.css";
 import "./globals.css";
 import Script from "next/script";
 import Providers from "./_components/Providers";

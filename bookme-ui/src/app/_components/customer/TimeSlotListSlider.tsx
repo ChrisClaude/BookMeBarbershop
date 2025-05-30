@@ -87,10 +87,12 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
           <p className="text-gray-500">No time slots available for this date</p>
         </div>
       ) : (
-        <div className="flex gap-2 w-full overflow-x-auto">
-          {timeSlots.items.map((timeSlot) => (
-            <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
-          ))}
+        <div className="flex justify-between items-center gap-3">
+          <div className="flex gap-2 overflow-x-auto p-2">
+            {timeSlots.items.map((timeSlot) => (
+              <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
+            ))}
+          </div>
           {shouldShowNextSlotsButton && (
             <Button
               isIconOnly

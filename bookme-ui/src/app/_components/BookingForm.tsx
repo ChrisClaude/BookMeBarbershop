@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/_hooks/useAuth";
 import { toE164, validatePhoneNumber } from "@/_lib/utils/common.utils";
-import { Button, DateInput, DateValue, Form } from "@heroui/react";
+import { Button, DatePicker, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
 import React, { useCallback } from "react";
@@ -89,10 +89,11 @@ const BookingForm = () => {
             )}
           </div>
 
-          <DateInput
-            // @ts-expect-error there seems to be a type issue
+          <DatePicker
+            aria-label="Date (Min Date Value)"
+            //@ts-expect-error there seems to be a type issue
             defaultValue={today(getLocalTimeZone())}
-            isRequired
+            minValue={today(getLocalTimeZone())}
             label="Choose a date to see available time slots"
             labelPlacement="outside"
             name="bookingDate"

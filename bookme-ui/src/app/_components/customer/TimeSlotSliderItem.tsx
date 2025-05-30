@@ -5,7 +5,12 @@ import { Button } from "@heroui/react";
 
 const TimeSlotSliderItem = ({ timeSlot }: { timeSlot: TimeSlotDto }) => {
   return (
-    <Button radius="full" className="min-w-[10rem] text-nowrap">
+    <Button
+      radius="full"
+      className="min-w-[10rem] text-nowrap px-4 py-2 hover:scale-105 transition-transform"
+      color="primary"
+      variant="flat"
+    >
       {format(timeSlot.start as Date, "h:mm a")} -{" "}
       {format(timeSlot.end as Date, "h:mm a")}
     </Button>

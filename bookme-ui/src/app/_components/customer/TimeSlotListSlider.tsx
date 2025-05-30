@@ -88,9 +88,12 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
         </div>
       ) : (
         <div className="flex justify-between items-center gap-3">
-          <div className="flex gap-2 overflow-x-auto p-2">
+          <div className="flex gap-3 overflow-x-auto p-3 pb-4 scrollbar-hide snap-x">
             {timeSlots.items.map((timeSlot) => (
-              <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
+              <TimeSlotSliderItem
+                key={timeSlot.id}
+                timeSlot={timeSlot}
+              />
             ))}
           </div>
           {shouldShowNextSlotsButton && (
@@ -98,8 +101,10 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
               isIconOnly
               aria-label="next"
               onPress={() => handlePageChange(pageIndex + 1)}
+              className="bg-primary text-white shadow-md hover:shadow-lg transition-shadow"
+              radius="full"
             >
-              <MdNavigateNext />
+              <MdNavigateNext size={20} />
             </Button>
           )}
         </div>

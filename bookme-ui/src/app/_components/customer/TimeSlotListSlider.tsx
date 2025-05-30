@@ -1,5 +1,5 @@
 "use client";
-import { PagedListDtoOfTimeSlotDto } from "@/_lib/codegen";
+import { PagedListDtoOfTimeSlotDto, TimeSlotDto } from "@/_lib/codegen";
 import { useGetAvailableTimeSlotsQuery } from "@/_lib/queries";
 import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
@@ -10,7 +10,15 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SLOTS_PER_PAGE_SIZE } from "@/config";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
-const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
+const TimeSlotListSlider = ({
+  selectedDate,
+  onSelectTimeSlot,
+  selectedTimeSlot,
+}: {
+  selectedDate: DateValue;
+  onSelectTimeSlot: (timeSlot: TimeSlotDto) => void;
+  selectedTimeSlot: TimeSlotDto | undefined;
+ }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -46,7 +54,7 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      router.push(`?page=${page}`);
+      router.push(`?page=${page + 1}`);
     },
     [router]
   );
@@ -112,7 +120,12 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
             </Button>
           )}
           {timeSlots.items.map((timeSlot) => (
-            <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
+            <TimeSlotSliderItem
+              key={timeSlot.id}
+              timeSlot={timeSlot}
+              onSelectTimeSlot={onSelectTimeSlot}
+              isSelected={timeSlot.id === selectedTimeSlot?.id}
+            />
           ))}
           {shouldShowNextSlotsButton && (
             <Button

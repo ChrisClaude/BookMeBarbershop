@@ -7,6 +7,7 @@ import { E164Number } from "libphonenumber-js";
 import React, { useCallback } from "react";
 import PhoneInput from "react-phone-number-input";
 import TimeSlotListSlider from "./customer/TimeSlotListSlider";
+import { TimeSlotDto } from "@/_lib/codegen";
 
 const BookingForm = () => {
   const { userProfile } = useAuth();
@@ -17,9 +18,11 @@ const BookingForm = () => {
   const [formData, setFormData] = React.useState<{
     phoneNumber: E164Number | undefined;
     bookingDate: DateValue;
+    selectedTimeSlot: TimeSlotDto | undefined;
   }>({
     phoneNumber: toE164(userProfile?.phoneNumber ?? ""),
     bookingDate: today(getLocalTimeZone()),
+    selectedTimeSlot: undefined,
   });
 
   const onSubmit = useCallback(
@@ -109,7 +112,16 @@ const BookingForm = () => {
             }}
           />
 
-          <TimeSlotListSlider selectedDate={formData.bookingDate} />
+          <TimeSlotListSlider
+            selectedDate={formData.bookingDate}
+            onSelectTimeSlot={(timeSlot) => {
+              setFormData({
+                ...formData,
+                selectedTimeSlot: timeSlot,
+              });
+            }}
+            selectedTimeSlot={formData.selectedTimeSlot}
+          />
 
           <Button className="w-full" color="primary" type="submit">
             Submit

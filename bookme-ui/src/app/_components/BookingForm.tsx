@@ -6,6 +6,7 @@ import { getLocalTimeZone, today } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
 import React, { useCallback } from "react";
 import PhoneInput from "react-phone-number-input";
+import TimeSlotListSlider from "./customer/TimeSlotListSlider";
 
 const BookingForm = () => {
   const { userProfile } = useAuth();
@@ -27,7 +28,10 @@ const BookingForm = () => {
       const phoneErrors = validatePhoneNumber(formData.phoneNumber);
       if (phoneErrors.length > 0) {
         setErrors(
-          phoneErrors.map((error) => ({ field: "phone-number", message: error }))
+          phoneErrors.map((error) => ({
+            field: "phone-number",
+            message: error,
+          }))
         );
         return;
       } else {
@@ -77,7 +81,10 @@ const BookingForm = () => {
             />
             {errors.find((error) => error.field === "phone-number") && (
               <p className="text-red-500">
-                {errors.find((error) => error.field === "phone-number")?.message}
+                {
+                  errors.find((error) => error.field === "phone-number")
+                    ?.message
+                }
               </p>
             )}
           </div>
@@ -100,6 +107,8 @@ const BookingForm = () => {
               });
             }}
           />
+
+          <TimeSlotListSlider selectedDate={formData.bookingDate} />
 
           <Button className="w-full" color="primary" type="submit">
             Submit

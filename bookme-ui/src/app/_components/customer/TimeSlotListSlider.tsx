@@ -3,21 +3,14 @@ import { PagedListDtoOfTimeSlotDto } from "@/_lib/codegen";
 import { useGetAvailableTimeSlotsQuery } from "@/_lib/queries";
 import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
-import { format } from "date-fns";
 import { useCallback, useEffect, useMemo } from "react";
 import TimeSlotSliderItem from "./TimeSlotSliderItem";
-import { GoPlusCircle } from "react-icons/go";
-import { Button, Pagination, Tooltip } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SLOTS_PER_PAGE_SIZE } from "@/config";
+import { MdNavigateNext } from "react-icons/md";
 
-const TimeSlotListSlider = ({
-  selectedDate,
-  onCreateTimeSlot,
-}: {
-  selectedDate: DateValue;
-  onCreateTimeSlot: () => void;
-}) => {
+const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -62,9 +55,11 @@ const TimeSlotListSlider = ({
     data: timeSlots,
     isFetching,
     error,
-  } = useGetAvailableTimeSlotsQuery<QueryResult<PagedListDtoOfTimeSlotDto>>(request);
+  } = useGetAvailableTimeSlotsQuery<QueryResult<PagedListDtoOfTimeSlotDto>>(
+    request
+  );
 
-  const shouldShowPagination = useMemo(
+  const shouldShowNextSlotsButton = useMemo(
     () => timeSlots && timeSlots.totalPages! > 1,
     [timeSlots]
   );
@@ -85,44 +80,25 @@ const TimeSlotListSlider = ({
     );
   }
 
-  const formattedDate = format(
-    selectedDate.toDate(getLocalTimeZone()),
-    "EEEE, MMMM d, yyyy"
-  );
-
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold">
-          Available Time Slots for {formattedDate}
-        </h2>
-        <Tooltip content="Create Time Slot">
-          <Button
-            isIconOnly
-            aria-label="Like"
-            color="default"
-            onPress={onCreateTimeSlot}
-          >
-            <GoPlusCircle size={25} />
-          </Button>
-        </Tooltip>
-      </div>
       {timeSlots.items.length === 0 ? (
         <div className="p-4 border rounded-lg bg-gray-50 text-center">
           <p className="text-gray-500">No time slots available for this date</p>
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="flex gap-2 w-full overflow-x-auto">
           {timeSlots.items.map((timeSlot) => (
             <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
           ))}
-          {shouldShowPagination && (
-            <Pagination
-              initialPage={timeSlots.pageIndex}
-              total={timeSlots.totalPages!}
-              onChange={handlePageChange}
-              page={pageIndex}
-            />
+          {shouldShowNextSlotsButton && (
+            <Button
+              isIconOnly
+              aria-label="next"
+              onPress={() => handlePageChange(pageIndex + 1)}
+            >
+              <MdNavigateNext />
+            </Button>
           )}
         </div>
       )}

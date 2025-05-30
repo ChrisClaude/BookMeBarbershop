@@ -11,7 +11,7 @@ public class TimeSlotQueries(IRepository<TimeSlot> repository) : ITimeSlotQuerie
 {
     public async Task<Result<PagedListDto<TimeSlotDto>>> GetAvailableTimeSlotsAsync(DateTimeOffset start, DateTimeOffset end, int pageIndex = 0, int pageSize = 10)
     {
-        var timeSlots = await repository.GetAllPagedAsync(query => query.Where(x => x.Start >= start && x.End <= end && x.IsAvailable == true), pageIndex, pageSize);
+        var timeSlots = await repository.GetAllPagedAsync(query => query.Where(x => x.Start >= start && x.End <= end && !x.Bookings.Any(x => x.Status == BookingStatus.Pending || x.Status == BookingStatus.Confirmed)), pageIndex, pageSize);
 
         return Result<PagedListDto<TimeSlotDto>>.Success(timeSlots.MapToDto());
     }

@@ -3,7 +3,7 @@ import { PagedListDtoOfTimeSlotDto } from "@/_lib/codegen";
 import { useGetAvailableTimeSlotsQuery } from "@/_lib/queries";
 import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import TimeSlotSliderItem from "./TimeSlotSliderItem";
 import { Button } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -14,12 +14,19 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const pageIndex = useMemo(() => {
     const page = searchParams.get("page");
 
     return Number(page) || 1;
   }, [searchParams]);
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = 0;
+    }
+  }, [pageIndex]);
 
   const request = useMemo(() => {
     const startDate = selectedDate.toDate(getLocalTimeZone());
@@ -92,11 +99,11 @@ const TimeSlotListSlider = ({ selectedDate }: { selectedDate: DateValue }) => {
           <p className="text-gray-500">No time slots available for this date</p>
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto p-3 pb-4 scrollbar-hide snap-x">
+        <div className="flex gap-3 overflow-x-auto p-3 pb-4 scrollbar-hide snap-x" ref={scrollContainerRef}>
           {shouldShowPreviousSlotsButton && (
             <Button
               isIconOnly
-              aria-label="next"
+              aria-label="previous"
               onPress={() => handlePageChange(pageIndex - 1)}
               className="bg-primary text-white shadow-md hover:shadow-lg transition-shadow"
               radius="full"

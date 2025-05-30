@@ -47,7 +47,7 @@ public class BookingTests : BaseIntegrationTest
 
     #region BookTimeSlot tests
     [Fact]
-    public async Task BookTimeSlotShouldWithCustomerUser_ShouldSucceedAsync()
+    public async Task BookTimeSlotWithCustomerUser_ShouldSucceedAsync()
     {
         // Arrange
         await _bookMeContext.Bookings.ExecuteDeleteAsync();
@@ -86,7 +86,62 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task BookTimeSlotWithNonCustomerUser_ShouldNotSucceedAsync()
+    public async Task BookTimeSlotWithNonVerifiedPhoneNumber_ShouldFailAsync()
+    {
+        // Arrange
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
+        var customerWithNonVerifiedPhoneNumber = new User
+        {
+            Id = Guid.NewGuid(),
+            Name = "Jane",
+            Surname = "Doe",
+            Email = "jane.doe.customer@test.com",
+            PhoneNumber = "+48600697524",
+            IsPhoneNumberVerified = false,
+            UserRoles = new List<UserRole> { new() { RoleId = DefaultRoles.CustomerId } },
+        };
+
+        _bookMeContext.Users.Add(customerWithNonVerifiedPhoneNumber);
+        await _bookMeContext.SaveChangesAsync();
+
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+
+        _mockHttpContext.SetUser(_adminUser);
+
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+
+        var timeSlotId = creationResult.Value.First().Id;
+
+        var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
+
+        _mockHttpContext.SetUser(customerWithNonVerifiedPhoneNumber.MapToDto());
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ValidationException>(
+            () => _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand)
+        );
+
+        exception.Message
+            .Should()
+            .Be(
+                $"Validation failed: \n -- UserDto: User {customerWithNonVerifiedPhoneNumber.Id} has not verified their phone number"
+            );
+
+        var bookings = await _bookMeContext.Bookings.ToListAsync();
+        bookings.Should().HaveCount(0);
+
+        // clean up
+        _bookMeContext.Users.Remove(customerWithNonVerifiedPhoneNumber);
+        await _bookMeContext.SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task BookTimeSlotWithNonCustomerUser_ShouldFailAsync()
     {
         // Arrange
         _mockHttpContext.SetUser(_adminUser);
@@ -178,7 +233,7 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task BookAlreadyBookedTimeSlot_ShouldNotSucceedAsync()
+    public async Task BookAlreadyBookedTimeSlot_ShouldFailAsync()
     {
         // Arrange
         await _bookMeContext.Bookings.ExecuteDeleteAsync();
@@ -223,7 +278,7 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task BookTimeSlotWithInvalidId_ShouldNotSucceedAsync()
+    public async Task BookTimeSlotWithInvalidId_ShouldFailAsync()
     {
         // Arrange
         var timeSlotId = Guid.NewGuid();
@@ -356,7 +411,7 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task ConfirmBookingWithNonAdminUser_ShouldNotSucceedAsync()
+    public async Task ConfirmBookingWithNonAdminUser_ShouldFailAsync()
     {
         // Arrange - Create a booking first
         await _bookMeContext.Bookings.ExecuteDeleteAsync();
@@ -405,7 +460,7 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task ConfirmNonExistentBooking_ShouldNotSucceedAsync()
+    public async Task ConfirmNonExistentBooking_ShouldFailAsync()
     {
         // Arrange
         var nonExistentBookingId = Guid.NewGuid();

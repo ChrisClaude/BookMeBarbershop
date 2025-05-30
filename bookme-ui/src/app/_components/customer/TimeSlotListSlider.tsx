@@ -1,17 +1,17 @@
 "use client";
 import { PagedListDtoOfTimeSlotDto } from "@/_lib/codegen";
-import { useGetAllTimeSlotsQuery } from "@/_lib/queries";
+import { useGetAvailableTimeSlotsQuery } from "@/_lib/queries";
 import { QueryResult } from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
 import { format } from "date-fns";
 import { useCallback, useEffect, useMemo } from "react";
-import TimeSlotItem from "./TimeSlotItem";
+import TimeSlotSliderItem from "./TimeSlotSliderItem";
 import { GoPlusCircle } from "react-icons/go";
 import { Button, Pagination, Tooltip } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SLOTS_PER_PAGE_SIZE } from "@/config";
 
-const TimeSlotList = ({
+const TimeSlotListSlider = ({
   selectedDate,
   onCreateTimeSlot,
 }: {
@@ -38,8 +38,6 @@ const TimeSlotList = ({
       getAvailableTimeSlotsDto: {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
-        // TODO: Add ability to filter by availability
-        isAvailable: null,
       },
       pageIndex: pageIndex - 1, // pageIndex is 0-based
       pageSize: SLOTS_PER_PAGE_SIZE,
@@ -64,7 +62,7 @@ const TimeSlotList = ({
     data: timeSlots,
     isFetching,
     error,
-  } = useGetAllTimeSlotsQuery<QueryResult<PagedListDtoOfTimeSlotDto>>(request);
+  } = useGetAvailableTimeSlotsQuery<QueryResult<PagedListDtoOfTimeSlotDto>>(request);
 
   const shouldShowPagination = useMemo(
     () => timeSlots && timeSlots.totalPages! > 1,
@@ -116,7 +114,7 @@ const TimeSlotList = ({
       ) : (
         <div className="grid gap-3">
           {timeSlots.items.map((timeSlot) => (
-            <TimeSlotItem key={timeSlot.id} timeSlot={timeSlot} />
+            <TimeSlotSliderItem key={timeSlot.id} timeSlot={timeSlot} />
           ))}
           {shouldShowPagination && (
             <Pagination
@@ -132,4 +130,4 @@ const TimeSlotList = ({
   );
 };
 
-export default TimeSlotList;
+export default TimeSlotListSlider;

@@ -15,6 +15,7 @@ public static class UserMapper
             Surname = user.Surname,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
+            IsPhoneNumberVerified = user.IsPhoneNumberVerified,
             Roles = user.UserRoles?.Select(x => x.MapToDto())
         };
     }

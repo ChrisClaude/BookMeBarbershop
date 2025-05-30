@@ -2,7 +2,7 @@ import { TimeSlotDto } from "@/_lib/codegen";
 import React from "react";
 import { format } from "date-fns";
 
-const TimeSlotItem = ({ timeSlot }: { timeSlot: TimeSlotDto }) => {
+const TimeSlotSliderItem = ({ timeSlot }: { timeSlot: TimeSlotDto }) => {
   return (
     <div
       key={timeSlot.id}
@@ -38,4 +38,4 @@ const TimeSlotItem = ({ timeSlot }: { timeSlot: TimeSlotDto }) => {
   );
 };
 
-export default TimeSlotItem;
+export default TimeSlotSliderItem;

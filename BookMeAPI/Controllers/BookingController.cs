@@ -20,7 +20,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [AllowAnonymous]
     [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetAvailableTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
     {
         var result = await timeSlotQueries.GetAvailableTimeSlotsAsync(request.Start, request.End, pageIndex, pageSize);
 

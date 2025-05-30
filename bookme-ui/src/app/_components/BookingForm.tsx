@@ -5,7 +5,7 @@ import { Button, DateInput, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
 import React, { useCallback } from "react";
-import PhoneInput from "react-phone-number-input/input";
+import PhoneInput from "react-phone-number-input";
 
 const BookingForm = () => {
   const { userProfile } = useAuth();
@@ -27,9 +27,13 @@ const BookingForm = () => {
       const phoneErrors = validatePhoneNumber(formData.phoneNumber);
       if (phoneErrors.length > 0) {
         setErrors(
-          phoneErrors.map((error) => ({ field: "phoneNumber", message: error }))
+          phoneErrors.map((error) => ({ field: "phone-number", message: error }))
         );
         return;
+      } else {
+        setErrors((prevErrors) =>
+          prevErrors.filter((error) => error.field !== "phone-number")
+        );
       }
     },
     [formData.phoneNumber]
@@ -69,13 +73,11 @@ const BookingForm = () => {
                   };
                 });
               }}
-              defaultCountry="US" // Set a default country, e.g., "US" or get from user's IP
-              international // Force international format (e.g., +1 555 123 4567)
-              countryCallingCodeEditable={false} // Prevents users from manually editing the country code part
+              defaultCountry="PL"
             />
-            {errors.find((error) => error.field === "phoneNumber") && (
+            {errors.find((error) => error.field === "phone-number") && (
               <p className="text-red-500">
-                {errors.find((error) => error.field === "phoneNumber")?.message}
+                {errors.find((error) => error.field === "phone-number")?.message}
               </p>
             )}
           </div>

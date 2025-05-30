@@ -82,7 +82,7 @@ export const validatePhoneNumber = (
       errors.push("Invalid phone number format for the selected country.");
       return errors;
     } else {
-      errors.push("Not a possible phone number.");
+      errors.push("Not a correct phone number.");
       return errors;
     }
   } else {

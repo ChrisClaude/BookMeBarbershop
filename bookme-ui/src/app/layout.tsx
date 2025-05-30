@@ -31,6 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       suppressContentEditableWarning={true}
       className={montserrat.className}
     >

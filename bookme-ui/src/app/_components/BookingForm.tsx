@@ -4,7 +4,7 @@ import { toE164, validatePhoneNumber } from "@/_lib/utils/common.utils";
 import { Button, DatePicker, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
-import React, { useCallback } from "react";
+import React, { Fragment, useCallback, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import TimeSlotListSlider from "./customer/TimeSlotListSlider";
 import { TimeSlotDto } from "@/_lib/codegen";
@@ -25,6 +25,11 @@ const BookingForm = () => {
     selectedTimeSlot: undefined,
   });
 
+  const [
+    isPhoneNumberVerificationProcess,
+    setIsPhoneNumberVerificationProcessing,
+  ] = useState(false);
+
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -42,8 +47,12 @@ const BookingForm = () => {
           prevErrors.filter((error) => error.field !== "phone-number")
         );
       }
+
+      if (!userProfile?.isPhoneNumberVerified) {
+        setIsPhoneNumberVerificationProcessing(true);
+      }
     },
-    [formData.phoneNumber]
+    [formData.phoneNumber, userProfile?.isPhoneNumberVerified]
   );
 
   return (
@@ -92,40 +101,44 @@ const BookingForm = () => {
             )}
           </div>
 
-          <DatePicker
-            aria-label="Date (Min Date Value)"
-            //@ts-expect-error there seems to be a type issue
-            defaultValue={today(getLocalTimeZone())}
-            minValue={today(getLocalTimeZone())}
-            label="Choose a date to see available time slots"
-            labelPlacement="outside"
-            name="bookingDate"
-            onChange={(value: DateValue | null) => {
-              if (!value) {
-                return;
-              }
+          {!isPhoneNumberVerificationProcess && (
+            <Fragment>
+              <DatePicker
+                aria-label="Date (Min Date Value)"
+                //@ts-expect-error there seems to be a type issue
+                defaultValue={today(getLocalTimeZone())}
+                minValue={today(getLocalTimeZone())}
+                label="Choose a date to see available time slots"
+                labelPlacement="outside"
+                name="bookingDate"
+                onChange={(value: DateValue | null) => {
+                  if (!value) {
+                    return;
+                  }
 
-              setFormData({
-                ...formData,
-                bookingDate: value,
-              });
-            }}
-          />
+                  setFormData({
+                    ...formData,
+                    bookingDate: value,
+                  });
+                }}
+              />
 
-          <TimeSlotListSlider
-            selectedDate={formData.bookingDate}
-            onSelectTimeSlot={(timeSlot) => {
-              setFormData({
-                ...formData,
-                selectedTimeSlot: timeSlot,
-              });
-            }}
-            selectedTimeSlot={formData.selectedTimeSlot}
-          />
+              <TimeSlotListSlider
+                selectedDate={formData.bookingDate}
+                onSelectTimeSlot={(timeSlot) => {
+                  setFormData({
+                    ...formData,
+                    selectedTimeSlot: timeSlot,
+                  });
+                }}
+                selectedTimeSlot={formData.selectedTimeSlot}
+              />
 
-          <Button className="w-full" color="primary" type="submit">
-            Submit
-          </Button>
+              <Button className="w-full" color="primary" type="submit">
+                Submit
+              </Button>
+            </Fragment>
+          )}
         </div>
       </Form>
     </>

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BookMe.Application.Caching;
 using BookMe.Application.Entities;
 
@@ -47,6 +48,12 @@ public interface IRepository<TEntity>
     Task UpdateAsync(TEntity entity, bool publishEvent = true);
 
     Task UpdateAsync(IList<TEntity> entities, bool publishEvent = true);
+
+    Task UpdateSpecificPropertiesAsync(
+        Guid id,
+        Dictionary<Expression<Func<TEntity, object>>, object> propertyUpdates,
+        bool publishEvent = true
+    );
 
     Task DeleteAsync(TEntity entity, bool publishEvent = true);
 

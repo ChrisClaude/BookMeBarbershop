@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BookMe.Application.Caching;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Configurations;
@@ -8,6 +9,7 @@ using BookMe.Application.Interfaces;
 using BookMe.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace BookMe.Infrastructure;
 
@@ -249,6 +251,44 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         {
             throw new RepositoryException(
                 $"Error updating entities of type {typeof(TEntity).Name}",
+                ex
+            );
+        }
+    }
+
+    public virtual async Task UpdateSpecificPropertiesAsync(
+        Guid id,
+        Dictionary<Expression<Func<TEntity, object>>, object> propertyUpdates,
+        bool publishEvent = true
+    )
+    {
+        try
+        {
+            var entity = await _context.Set<TEntity>().FindAsync(id);
+            if (entity == null)
+                throw new NotFoundException($"Entity with ID {id} not found");
+
+            var entry = _context.Entry(entity);
+
+            foreach (var kvp in propertyUpdates)
+            {
+                entry.Property(kvp.Key).CurrentValue = kvp.Value;
+            }
+
+            await _context.SaveChangesAsync();
+
+            if (publishEvent)
+                await _eventPublisher.PublishAsync(new EntityUpdatedEvent<TEntity>(entity));
+        }
+        catch (DbUpdateException ex)
+        {
+            Log.Error(
+                ex,
+                "Error updating properties of entity type {EntityType}",
+                typeof(TEntity).Name
+            );
+            throw new RepositoryException(
+                $"Error updating properties of entity type {typeof(TEntity).Name}",
                 ex
             );
         }

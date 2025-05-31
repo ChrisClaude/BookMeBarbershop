@@ -1,4 +1,3 @@
-using System;
 using AspNetCoreRateLimit;
 
 namespace BookMeAPI.Configurations;

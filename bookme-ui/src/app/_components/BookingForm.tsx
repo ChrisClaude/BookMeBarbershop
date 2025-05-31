@@ -73,7 +73,7 @@ const BookingForm = () => {
         })
           .unwrap()
           .then(() => {
-            setIsPhoneNumberVerificationProcessing(false);
+            // Set a message to the user that the verification code has been sent
           });
       } else {
       }

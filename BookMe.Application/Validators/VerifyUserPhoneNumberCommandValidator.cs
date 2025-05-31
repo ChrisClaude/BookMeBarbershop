@@ -1,11 +1,10 @@
-using System;
 using BookMe.Application.Commands.Users;
 using BookMe.Application.Common;
 using FluentValidation;
 
 namespace BookMe.Application.Validators;
 
-public class VerifyUserPhoneNumberCommandValidator : AbstractValidator<VerifyUserPhoneNumberCommand>
+public class VerifyUserPhoneNumberCommandValidator : AbstractValidator<UpdateUserPhoneNumberCommand>
 {
     public VerifyUserPhoneNumberCommandValidator()
     {

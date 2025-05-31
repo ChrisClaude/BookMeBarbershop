@@ -100,6 +100,13 @@ const BookingForm = () => {
               </p>
             )}
           </div>
+          {isPhoneNumberVerificationProcess && (
+            <Fragment>
+              <Button className="w-full" color="primary">
+                Verify code
+              </Button>
+            </Fragment>
+          )}
 
           {!isPhoneNumberVerificationProcess && (
             <Fragment>

@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Errors;
 using BookMe.Application.Configurations;
@@ -28,6 +25,12 @@ public class TwilioSmsService : ITwilioSmsService
 
     public async Task<Result> SendVerificationCodeAsync(string phoneNumber)
     {
+        var validationResult = PhoneValidatorHelper.IsValidPhoneNumber(phoneNumber);
+        if (validationResult.IsFailure)
+        {
+            return validationResult;
+        }
+
         try
         {
             await _semaphore.WaitAsync();
@@ -93,6 +96,7 @@ public class TwilioSmsService : ITwilioSmsService
         }
         catch (ApiException e)
         {
+            // TODO: Implement retry logic for network failures
             Log.Error("Failed to send verification code. {@exception}", e);
             return Result.Failure(
                 Error.ExternalServiceError("Failed to send verification code."),
@@ -113,6 +117,17 @@ public class TwilioSmsService : ITwilioSmsService
 
     public async Task<Result> VerifyCodeAsync(string phoneNumber, string code)
     {
+        var validationResult = PhoneValidatorHelper.IsValidPhoneNumber(phoneNumber);
+        if (validationResult.IsFailure)
+        {
+            return validationResult;
+        }
+
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            return Result.Failure(Error.BadRequest("Code is required."), ErrorType.BadRequest);
+        }
+
         try
         {
             Log.Information("Verifying code for {phoneNumber}", phoneNumber);

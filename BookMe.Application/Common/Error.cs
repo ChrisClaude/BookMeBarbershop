@@ -54,6 +54,15 @@ public sealed record Error(string Code, string Description)
         return new("conflict", errorMessage);
     }
 
+    public static Error BadRequest(string errorMessage = null)
+    {
+        if (string.IsNullOrEmpty(errorMessage))
+        {
+            errorMessage = "Bad Request";
+        }
+        return new("bad-request", errorMessage);
+    }
+
     public static Error ExternalServiceError(string errorMessage = null)
     {
         if (string.IsNullOrEmpty(errorMessage))

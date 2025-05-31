@@ -62,4 +62,13 @@ public sealed record Error(string Code, string Description)
         }
         return new("external-service-error", errorMessage);
     }
+
+    public static Error TooManyRequestsError(string errorMessage = null)
+    {
+        if (string.IsNullOrEmpty(errorMessage))
+        {
+            errorMessage = "Too Many Requests";
+        }
+        return new("too-many-requests", errorMessage);
+    }
 }

@@ -1,4 +1,5 @@
 ﻿namespace BookMe.Application.Common.Errors;
+
 public enum ErrorType
 {
     None = 0,
@@ -6,4 +7,5 @@ public enum ErrorType
     InternalServerError = 2,
     BadRequest = 3,
     Unauthorized = 4,
+    TooManyRequests = 5,
 }

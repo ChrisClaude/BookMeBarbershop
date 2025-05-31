@@ -19,10 +19,10 @@ import type {
   CancelBookingDto,
   ConfirmBookingDto,
   CreateTimeSlotsDto,
+  GetAvailableTimeSlotsDto,
   GetTimeSlotsDto,
   PagedListDtoOfTimeSlotDto,
   ProblemDetails,
-  ResultOfBookingDto,
   TimeSlotDto,
 } from '../models/index';
 import {
@@ -34,14 +34,14 @@ import {
     ConfirmBookingDtoToJSON,
     CreateTimeSlotsDtoFromJSON,
     CreateTimeSlotsDtoToJSON,
+    GetAvailableTimeSlotsDtoFromJSON,
+    GetAvailableTimeSlotsDtoToJSON,
     GetTimeSlotsDtoFromJSON,
     GetTimeSlotsDtoToJSON,
     PagedListDtoOfTimeSlotDtoFromJSON,
     PagedListDtoOfTimeSlotDtoToJSON,
     ProblemDetailsFromJSON,
     ProblemDetailsToJSON,
-    ResultOfBookingDtoFromJSON,
-    ResultOfBookingDtoToJSON,
     TimeSlotDtoFromJSON,
     TimeSlotDtoToJSON,
 } from '../models/index';
@@ -61,7 +61,7 @@ export interface ApiBookingTimeslotsAllPostRequest {
 }
 
 export interface ApiBookingTimeslotsAvailablePostRequest {
-    getTimeSlotsDto: GetTimeSlotsDto;
+    getAvailableTimeSlotsDto: GetAvailableTimeSlotsDto;
     pageIndex?: number;
     pageSize?: number;
 }
@@ -188,10 +188,10 @@ export class BookingApi extends runtime.BaseAPI {
     /**
      */
     async apiBookingTimeslotsAvailablePostRaw(requestParameters: ApiBookingTimeslotsAvailablePostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagedListDtoOfTimeSlotDto>> {
-        if (requestParameters['getTimeSlotsDto'] == null) {
+        if (requestParameters['getAvailableTimeSlotsDto'] == null) {
             throw new runtime.RequiredError(
-                'getTimeSlotsDto',
-                'Required parameter "getTimeSlotsDto" was null or undefined when calling apiBookingTimeslotsAvailablePost().'
+                'getAvailableTimeSlotsDto',
+                'Required parameter "getAvailableTimeSlotsDto" was null or undefined when calling apiBookingTimeslotsAvailablePost().'
             );
         }
 
@@ -214,7 +214,7 @@ export class BookingApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: GetTimeSlotsDtoToJSON(requestParameters['getTimeSlotsDto']),
+            body: GetAvailableTimeSlotsDtoToJSON(requestParameters['getAvailableTimeSlotsDto']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => PagedListDtoOfTimeSlotDtoFromJSON(jsonValue));

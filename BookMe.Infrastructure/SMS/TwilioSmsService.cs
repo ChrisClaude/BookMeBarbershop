@@ -27,11 +27,11 @@ public class TwilioSmsService : ITwilioSmsService
     private readonly AsyncRetryPolicy _retryPolicy;
     private readonly AsyncCircuitBreakerPolicy _circuitBreakerPolicy;
     private readonly AsyncPolicyWrap _resilientPolicy;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceProvider;
 
-    public TwilioSmsService(IServiceProvider serviceProvider, IOptions<AppSettings> appSettings)
+    public TwilioSmsService(IServiceScopeFactory serviceFactory, IOptions<AppSettings> appSettings)
     {
-        _serviceProvider = serviceProvider;
+        _serviceProvider = serviceFactory;
         _twilioConfig = appSettings.Value.TwilioConfig;
         _cacheConfig = appSettings.Value.CacheConfig;
         TwilioClient.Init(_twilioConfig.AccountSid, _twilioConfig.AuthToken);
@@ -185,7 +185,6 @@ public class TwilioSmsService : ITwilioSmsService
     {
         return await _resilientPolicy.ExecuteAsync(async () =>
         {
-            // Get a scoped instance of ICacheManager
             using var scope = _serviceProvider.CreateScope();
             var cacheManager = scope.ServiceProvider.GetRequiredService<ICacheManager>();
 

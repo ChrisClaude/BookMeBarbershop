@@ -36,6 +36,12 @@ export interface CreateTimeSlotsDto {
      * @type {boolean}
      * @memberof CreateTimeSlotsDto
      */
+    allowAutoConfirmation?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CreateTimeSlotsDto
+     */
     isAllDay?: boolean;
 }
 
@@ -58,6 +64,7 @@ export function CreateTimeSlotsDtoFromJSONTyped(json: any, ignoreDiscriminator: 
         
         'startDateTime': json['startDateTime'] == null ? undefined : (new Date(json['startDateTime'])),
         'endDateTime': json['endDateTime'] == null ? undefined : (new Date(json['endDateTime'])),
+        'allowAutoConfirmation': json['allowAutoConfirmation'] == null ? undefined : json['allowAutoConfirmation'],
         'isAllDay': json['isAllDay'] == null ? undefined : json['isAllDay'],
     };
 }
@@ -75,6 +82,7 @@ export function CreateTimeSlotsDtoToJSONTyped(value?: CreateTimeSlotsDto | null,
         
         'startDateTime': value['startDateTime'] == null ? undefined : ((value['startDateTime']).toISOString()),
         'endDateTime': value['endDateTime'] == null ? undefined : ((value['endDateTime']).toISOString()),
+        'allowAutoConfirmation': value['allowAutoConfirmation'],
         'isAllDay': value['isAllDay'],
     };
 }

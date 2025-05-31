@@ -43,6 +43,12 @@ export interface TimeSlotDto2 {
      * @memberof TimeSlotDto2
      */
     isAvailable?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof TimeSlotDto2
+     */
+    allowAutoConfirmation?: boolean | null;
 }
 
 /**
@@ -66,6 +72,7 @@ export function TimeSlotDto2FromJSONTyped(json: any, ignoreDiscriminator: boolea
         'start': json['start'] == null ? undefined : (new Date(json['start'])),
         'end': json['end'] == null ? undefined : (new Date(json['end'])),
         'isAvailable': json['isAvailable'] == null ? undefined : json['isAvailable'],
+        'allowAutoConfirmation': json['allowAutoConfirmation'] == null ? undefined : json['allowAutoConfirmation'],
     };
 }
 
@@ -84,6 +91,7 @@ export function TimeSlotDto2ToJSONTyped(value?: TimeSlotDto2 | null, ignoreDiscr
         'start': value['start'] == null ? undefined : ((value['start']).toISOString()),
         'end': value['end'] == null ? undefined : ((value['end']).toISOString()),
         'isAvailable': value['isAvailable'],
+        'allowAutoConfirmation': value['allowAutoConfirmation'],
     };
 }
 

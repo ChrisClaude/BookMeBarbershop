@@ -26,6 +26,14 @@ export const customBaseQuery =
           })
         );
 
+      case "booking.createBooking":
+        return transformRTKResult(
+          await BookingService.createBooking({
+            ...params,
+            request: params.request,
+          })
+        );
+
       case "booking.getAllTimeSlots":
         return transformRTKResult(
           await BookingService.getAllTimeSlots({
@@ -57,6 +65,7 @@ export const customBaseQuery =
             request: params.request,
           })
         );
+
       default:
         throw new Error(`Unknown endpoint: ${endpoint}`);
     }

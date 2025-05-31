@@ -1,4 +1,9 @@
-import { ApiBookingTimeslotsPostRequest, ApiPhoneVerificationSendCodePostRequest, ApiPhoneVerificationVerifyCodePostRequest } from "../codegen";
+import {
+  ApiBookingBookTimeslotPostRequest,
+  ApiBookingTimeslotsPostRequest,
+  ApiPhoneVerificationSendCodePostRequest,
+  ApiPhoneVerificationVerifyCodePostRequest,
+} from "../codegen";
 
 export type CustomBaseQueryType =
   | {
@@ -33,7 +38,8 @@ export type CustomBaseQueryType =
           pageSize?: number;
         };
       };
-    } | {
+    }
+  | {
       endpoint: "phoneVerification.verifyPhoneNumber";
       params: {
         request: ApiPhoneVerificationSendCodePostRequest;
@@ -43,6 +49,12 @@ export type CustomBaseQueryType =
       endpoint: "phoneVerification.verifyCodeNumber";
       params: {
         request: ApiPhoneVerificationVerifyCodePostRequest;
+      };
+    }
+  | {
+      endpoint: "booking.createBooking";
+      params: {
+        request: ApiBookingBookTimeslotPostRequest;
       };
     };
 

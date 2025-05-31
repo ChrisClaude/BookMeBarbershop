@@ -1,7 +1,9 @@
 import {
+  ApiBookingBookTimeslotPostRequest,
   ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
+  BookingDto,
   PagedListDtoOfTimeSlotDto,
   TimeSlotDto,
 } from "../codegen";
@@ -60,6 +62,41 @@ export class BookingService {
       return {
         success: false,
         errors: [error?.toString() || "Error creating time slot"],
+      };
+    }
+  }
+
+  public static async createBooking({
+    request,
+  }: {
+    request: ApiBookingBookTimeslotPostRequest;
+  }): Promise<Result<BookingDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingBookTimeslotPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as BookingDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error booking time slot",
+        "CreateBookingError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error booking time slot"],
       };
     }
   }

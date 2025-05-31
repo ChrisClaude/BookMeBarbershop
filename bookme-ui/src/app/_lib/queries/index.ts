@@ -37,6 +37,13 @@ export const api = createApi({
       }),
       providesTags: ["TimeSlots"],
     }),
+
+    createBooking: builder.mutation({
+      query: (request) => ({
+        endpoint: "booking.createBooking",
+        params: { request },
+      }),
+    }),
     //#endregion
 
     //#region PhoneVerification
@@ -63,4 +70,5 @@ export const {
   useCreateTimeSlotMutation,
   useVerifyPhoneNumberMutation,
   useVerifyCodeNumberMutation,
+  useCreateBookingMutation,
 } = api;

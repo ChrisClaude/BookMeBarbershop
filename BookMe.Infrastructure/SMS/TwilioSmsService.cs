@@ -31,6 +31,7 @@ public class TwilioSmsService : ITwilioSmsService
     public TwilioSmsService(ICacheManager cacheManager, IOptionsSnapshot<AppSettings> appSettings)
     {
         _twilioConfig = appSettings.Value.TwilioConfig;
+        _cacheConfig = appSettings.Value.CacheConfig;
         TwilioClient.Init(_twilioConfig.AccountSid, _twilioConfig.AuthToken);
         _cacheManager = cacheManager;
 

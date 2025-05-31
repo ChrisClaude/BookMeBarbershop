@@ -5,6 +5,7 @@ using BookMe.Application.Common.Errors;
 using BookMe.Application.Configurations;
 using BookMe.Application.Enums;
 using BookMe.Application.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.CircuitBreaker;
@@ -26,14 +27,14 @@ public class TwilioSmsService : ITwilioSmsService
     private readonly AsyncRetryPolicy _retryPolicy;
     private readonly AsyncCircuitBreakerPolicy _circuitBreakerPolicy;
     private readonly AsyncPolicyWrap _resilientPolicy;
-    private readonly ICacheManager _cacheManager;
+    private readonly IServiceProvider _serviceProvider;
 
-    public TwilioSmsService(ICacheManager cacheManager, IOptions<AppSettings> appSettings)
+    public TwilioSmsService(IServiceProvider serviceProvider, IOptions<AppSettings> appSettings)
     {
+        _serviceProvider = serviceProvider;
         _twilioConfig = appSettings.Value.TwilioConfig;
         _cacheConfig = appSettings.Value.CacheConfig;
         TwilioClient.Init(_twilioConfig.AccountSid, _twilioConfig.AuthToken);
-        _cacheManager = cacheManager;
 
         _circuitBreakerPolicy = Policy
             .Handle<ApiException>()
@@ -184,12 +185,16 @@ public class TwilioSmsService : ITwilioSmsService
     {
         return await _resilientPolicy.ExecuteAsync(async () =>
         {
+            // Get a scoped instance of ICacheManager
+            using var scope = _serviceProvider.CreateScope();
+            var cacheManager = scope.ServiceProvider.GetRequiredService<ICacheManager>();
+
             var cacheKey = new CacheKey(
                 $"{CacheKeyConstants.TWILIO_VERIFICATION_RESULT}_{phoneNumber}",
                 _cacheConfig
             );
 
-            if (await _cacheManager.GetAsync<string>(cacheKey, out _))
+            if (await cacheManager.GetAsync<string>(cacheKey, out _))
             {
                 Log.Information(
                     "Getting verification result from cache. Code verified successfully for {phoneNumber}",
@@ -246,7 +251,7 @@ public class TwilioSmsService : ITwilioSmsService
 
                 Log.Information("Code verified successfully for {phoneNumber}", phoneNumber);
 
-                await _cacheManager.AddAsync(cacheKey, verificationCheck.Sid);
+                await cacheManager.AddAsync(cacheKey, verificationCheck.Sid);
 
                 return Result.Success();
             }

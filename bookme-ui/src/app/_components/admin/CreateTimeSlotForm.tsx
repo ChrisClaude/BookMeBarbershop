@@ -83,12 +83,12 @@ const CreateTimeSlotForm = ({
         return {
           ...prevState,
           startDateTime: prevState.startDateTime.set({
-            hour: 0,
+            hour: 9,
             minute: 0,
             second: 0,
           }),
           endDateTime: prevState.endDateTime.set({
-            hour: 23,
+            hour: 21,
             minute: 59,
             second: 59,
           }),

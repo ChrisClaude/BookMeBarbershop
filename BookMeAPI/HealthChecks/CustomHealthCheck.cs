@@ -16,21 +16,28 @@ public class CustomHealthCheck : IHealthCheck
     public CustomHealthCheck(
         ICacheManager cacheManager,
         IEventPublisher eventPublisher,
-        IOptionsSnapshot<AppSettings> appSettings)
+        IOptionsSnapshot<AppSettings> appSettings
+    )
     {
         _cacheManager = cacheManager;
         _eventPublisher = eventPublisher;
         _appSettings = appSettings.Value;
     }
 
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    public async Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context,
+        CancellationToken cancellationToken = default
+    )
     {
         var isHealthy = true;
         var data = new Dictionary<string, object>();
 
         try
         {
-            var cacheKey = new CacheKey($"health_check_{DateTime.UtcNow.Ticks}", _appSettings);
+            var cacheKey = new CacheKey(
+                $"health_check_{DateTime.UtcNow.Ticks}",
+                _appSettings.CacheConfig
+            );
 
             await _cacheManager.AddAsync(cacheKey, "test");
             await _cacheManager.GetAsync<string>(cacheKey, out var cacheValue);

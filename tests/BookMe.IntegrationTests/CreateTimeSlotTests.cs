@@ -230,8 +230,8 @@ public class CreateTimeSlotTests : BaseIntegrationTest
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
         {
-            StartDateTime = DateTime.Today.AddDays(1),
-            EndDateTime = DateTime.Today.AddDays(1).AddHours(23),
+            StartDateTime = DateTime.Today.AddDays(1).AddHours(9),
+            EndDateTime = DateTime.Today.AddDays(1).AddHours(21),
             IsAllDay = true,
         };
 
@@ -241,7 +241,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         // Assert
         result.ValidateOkResult<List<TimeSlotDto>>(timeSlots =>
         {
-            timeSlots.Should().HaveCount(23);
+            timeSlots.Should().HaveCount(12);
             timeSlots.Should().OnlyContain(x => x.Id != Guid.Empty);
             timeSlots.Select(x => x.Id).Should().OnlyHaveUniqueItems();
 

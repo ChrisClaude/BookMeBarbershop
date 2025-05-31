@@ -4,7 +4,7 @@ import { customBaseQuery } from "./customBaseQuery";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery(),
-  tagTypes: ["TimeSlots"],
+  tagTypes: ["TimeSlots", "User"],
   endpoints: (builder) => ({
     //#region User
     getUserProfile: builder.query({
@@ -12,6 +12,7 @@ export const api = createApi({
         endpoint: "user.getUserProfile",
         params: null,
       }),
+      providesTags: ["User"],
     }),
     //#endregion
 
@@ -58,6 +59,7 @@ export const api = createApi({
         endpoint: "phoneVerification.verifyCodeNumber",
         params: { request },
       }),
+      invalidatesTags: ["User"], // invalidate user profile to refetch it and get the updated phone number verification status
     }),
     //#endregion
   }),

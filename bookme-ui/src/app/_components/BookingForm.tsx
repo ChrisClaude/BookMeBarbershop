@@ -1,6 +1,10 @@
 "use client";
 import { useAuth } from "@/_hooks/useAuth";
-import { toE164, validatePhoneNumber } from "@/_lib/utils/common.utils";
+import {
+  isNullOrWhiteSpace,
+  toE164,
+  validatePhoneNumber,
+} from "@/_lib/utils/common.utils";
 import { Button, DatePicker, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
@@ -8,6 +12,10 @@ import React, { Fragment, useCallback, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import TimeSlotListSlider from "./customer/TimeSlotListSlider";
 import { TimeSlotDto } from "@/_lib/codegen";
+import {
+  useVerifyCodeNumberMutation,
+  useVerifyPhoneNumberMutation,
+} from "@/_lib/queries";
 
 const BookingForm = () => {
   const { userProfile } = useAuth();
@@ -19,16 +27,24 @@ const BookingForm = () => {
     phoneNumber: E164Number | undefined;
     bookingDate: DateValue;
     selectedTimeSlot: TimeSlotDto | undefined;
+    verificationCode: string | undefined;
   }>({
     phoneNumber: toE164(userProfile?.phoneNumber ?? ""),
     bookingDate: today(getLocalTimeZone()),
     selectedTimeSlot: undefined,
+    verificationCode: undefined,
   });
 
   const [
     isPhoneNumberVerificationProcess,
     setIsPhoneNumberVerificationProcessing,
   ] = useState(false);
+
+  const [verifyPhoneNumber, { isLoading: isVerifyingPhoneNumber }] =
+    useVerifyPhoneNumberMutation();
+
+  const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
+    useVerifyCodeNumberMutation();
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,10 +66,43 @@ const BookingForm = () => {
 
       if (!userProfile?.isPhoneNumberVerified) {
         setIsPhoneNumberVerificationProcessing(true);
+        verifyPhoneNumber({
+          phoneNumber: formData.phoneNumber,
+        })
+          .unwrap()
+          .then(() => {
+            setIsPhoneNumberVerificationProcessing(false);
+          });
+      } else {
       }
     },
-    [formData.phoneNumber, userProfile?.isPhoneNumberVerified]
+    [
+      formData.phoneNumber,
+      userProfile?.isPhoneNumberVerified,
+      verifyPhoneNumber,
+    ]
   );
+
+  const handleVerifyCode = () => {
+    if (isNullOrWhiteSpace(formData.verificationCode)) {
+      setErrors([
+        {
+          field: "verification-code",
+          message: "Verification code is required",
+        },
+      ]);
+      return;
+    }
+
+    verifyCodeNumber({
+      phoneNumber: formData.phoneNumber,
+      code: formData.verificationCode,
+    })
+      .unwrap()
+      .then(() => {
+        setIsPhoneNumberVerificationProcessing(false);
+      });
+  };
 
   return (
     <>
@@ -102,7 +151,12 @@ const BookingForm = () => {
           </div>
           {isPhoneNumberVerificationProcess && (
             <Fragment>
-              <Button className="w-full" color="primary">
+{/* Add verification code input */}
+              <Button
+                className="w-full"
+                color="primary"
+                onPress={handleVerifyCode}
+              >
                 Verify code
               </Button>
             </Fragment>

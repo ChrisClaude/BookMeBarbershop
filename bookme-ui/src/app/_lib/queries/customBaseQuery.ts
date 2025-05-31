@@ -17,7 +17,7 @@ export const customBaseQuery =
             ...params,
             request: {
               ...params.request,
-              getTimeSlotsDto: {
+              getAvailableTimeSlotsDto: {
                 start: new Date(params.request.getAvailableTimeSlotsDto.start),
                 end: new Date(params.request.getAvailableTimeSlotsDto.end),
               },
@@ -34,7 +34,6 @@ export const customBaseQuery =
               getTimeSlotsDto: {
                 start: new Date(params.request.getAvailableTimeSlotsDto.start),
                 end: new Date(params.request.getAvailableTimeSlotsDto.end),
-                isAvailable: params.request.getAvailableTimeSlotsDto.isAvailable,
               },
               pageIndex: params.request.pageIndex,
               pageSize: params.request.pageSize,

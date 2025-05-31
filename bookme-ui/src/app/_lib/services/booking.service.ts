@@ -1,4 +1,5 @@
 import {
+  ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
   PagedListDtoOfTimeSlotDto,
@@ -101,7 +102,7 @@ export class BookingService {
   public static async getAllTimeSlots({
     request,
   }: {
-    request: ApiBookingTimeslotsAvailablePostRequest;
+    request: ApiBookingTimeslotsAllPostRequest;
   }): Promise<Result<PagedListDtoOfTimeSlotDto>> {
     try {
       const response = await this.bookMeApi.apiBookingTimeslotsAllPostRaw(

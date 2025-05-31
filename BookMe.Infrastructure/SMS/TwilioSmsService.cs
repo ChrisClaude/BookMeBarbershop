@@ -1,11 +1,15 @@
 using System.Collections.Concurrent;
+using BookMe.Application.Caching;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Errors;
 using BookMe.Application.Configurations;
+using BookMe.Application.Enums;
 using BookMe.Application.Interfaces;
 using Microsoft.Extensions.Options;
 using Polly;
+using Polly.CircuitBreaker;
 using Polly.Retry;
+using Polly.Wrap;
 using Serilog;
 using Twilio;
 using Twilio.Exceptions;
@@ -15,15 +19,37 @@ namespace BookMe.Infrastructure.SMS;
 
 public class TwilioSmsService : ITwilioSmsService
 {
-    private readonly TwilioConfig _twilioSettings;
+    private readonly TwilioConfig _twilioConfig;
+    private readonly CacheConfig _cacheConfig;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly ConcurrentDictionary<string, DateTime> _lastVerificationAttempts = new();
     private readonly AsyncRetryPolicy _retryPolicy;
+    private readonly AsyncCircuitBreakerPolicy _circuitBreakerPolicy;
+    private readonly AsyncPolicyWrap _resilientPolicy;
+    private readonly ICacheManager _cacheManager;
 
-    public TwilioSmsService(IOptionsSnapshot<AppSettings> appSettings)
+    public TwilioSmsService(ICacheManager cacheManager, IOptionsSnapshot<AppSettings> appSettings)
     {
-        _twilioSettings = appSettings.Value.TwilioConfig;
-        TwilioClient.Init(_twilioSettings.AccountSid, _twilioSettings.AuthToken);
+        _twilioConfig = appSettings.Value.TwilioConfig;
+        TwilioClient.Init(_twilioConfig.AccountSid, _twilioConfig.AuthToken);
+        _cacheManager = cacheManager;
+
+        _circuitBreakerPolicy = Policy
+            .Handle<ApiException>()
+            .CircuitBreakerAsync(
+                exceptionsAllowedBeforeBreaking: 5,
+                durationOfBreak: TimeSpan.FromMinutes(1),
+                onBreak: (ex, breakDuration) =>
+                {
+                    Log.Warning(
+                        "Circuit breaker opened for {breakDuration} due to: {exception}",
+                        breakDuration,
+                        ex.Message
+                    );
+                },
+                onReset: () => Log.Information("Circuit breaker reset, calls allowed again"),
+                onHalfOpen: () => Log.Information("Circuit breaker half-open, next call is trial")
+            );
 
         _retryPolicy = Policy
             .Handle<ApiException>(ex =>
@@ -52,6 +78,8 @@ public class TwilioSmsService : ITwilioSmsService
                     );
                 }
             );
+
+        _resilientPolicy = Policy.WrapAsync(_circuitBreakerPolicy, _retryPolicy);
     }
 
     public async Task<Result> SendVerificationCodeAsync(string phoneNumber)
@@ -71,7 +99,7 @@ public class TwilioSmsService : ITwilioSmsService
                 if (IsMinWaitingTimeNotElapsed(timeSinceLastAttempt))
                 {
                     var secondsToWait =
-                        _twilioSettings.MinSecondsBetweenRequests
+                        _twilioConfig.MinSecondsBetweenRequests
                         - (int)timeSinceLastAttempt.TotalSeconds;
 
                     Log.Error(
@@ -96,7 +124,7 @@ public class TwilioSmsService : ITwilioSmsService
             _semaphore.Release();
         }
 
-        return await _retryPolicy.ExecuteAsync(async () =>
+        return await _resilientPolicy.ExecuteAsync(async () =>
         {
             try
             {
@@ -105,7 +133,7 @@ public class TwilioSmsService : ITwilioSmsService
                 var verification = await VerificationResource.CreateAsync(
                     to: phoneNumber,
                     channel: "sms",
-                    pathServiceSid: _twilioSettings.VerifyServiceSid
+                    pathServiceSid: _twilioConfig.VerifyServiceSid
                 );
 
                 if (verification.Status != "pending")
@@ -137,8 +165,22 @@ public class TwilioSmsService : ITwilioSmsService
 
     public async Task<Result> VerifyCodeAsync(string phoneNumber, string code)
     {
-        return await _retryPolicy.ExecuteAsync(async () =>
+        return await _resilientPolicy.ExecuteAsync(async () =>
         {
+            var cacheKey = new CacheKey(
+                $"{CacheKeyConstants.TWILIO_VERIFICATION_RESULT}_{phoneNumber}",
+                _cacheConfig
+            );
+
+            if (await _cacheManager.GetAsync<string>(cacheKey, out _))
+            {
+                Log.Information(
+                    "Getting verification result from cache. Code verified successfully for {phoneNumber}",
+                    phoneNumber
+                );
+                return Result.Success();
+            }
+
             var validationResult = PhoneValidatorHelper.IsValidPhoneNumber(phoneNumber);
             if (validationResult.IsFailure)
             {
@@ -157,7 +199,7 @@ public class TwilioSmsService : ITwilioSmsService
                 var verificationCheck = await VerificationCheckResource.CreateAsync(
                     to: phoneNumber,
                     code: code,
-                    pathServiceSid: _twilioSettings.VerifyServiceSid
+                    pathServiceSid: _twilioConfig.VerifyServiceSid
                 );
 
                 if (verificationCheck.Status != "approved")
@@ -167,6 +209,10 @@ public class TwilioSmsService : ITwilioSmsService
                         ErrorType.BadRequest
                     );
                 }
+
+                Log.Information("Code verified successfully for {phoneNumber}", phoneNumber);
+
+                await _cacheManager.AddAsync(cacheKey, verificationCheck.Sid);
 
                 return Result.Success();
             }
@@ -180,7 +226,7 @@ public class TwilioSmsService : ITwilioSmsService
 
     private bool IsMinWaitingTimeNotElapsed(TimeSpan timeSinceLastAttempt)
     {
-        return timeSinceLastAttempt.TotalSeconds < _twilioSettings.MinSecondsBetweenRequests;
+        return timeSinceLastAttempt.TotalSeconds < _twilioConfig.MinSecondsBetweenRequests;
     }
 
     private bool HasVerificationBeenSent(string phoneNumber, out DateTime lastAttempt)

@@ -26,7 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IEventPublisher, KafkaProducer>();
         services.AddScoped<ITransactionManager, TransactionManager>();
         services.AddScoped<ICacheManager, MemoryCacheManager>();
-        services.AddScoped<ITwilioSmsService, TwilioSmsService>();
+        services.AddSingleton<ITwilioSmsService, TwilioSmsService>();
 
         return services;
     }

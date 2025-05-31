@@ -137,6 +137,22 @@ public class TwilioSmsService : ITwilioSmsService
                     pathServiceSid: _twilioConfig.VerifyServiceSid
                 );
 
+                if (verification.Status == "failed")
+                {
+                    Log.Error(
+                        "Failed to send verification code. This could be a validation error. Phone number: {phoneNumber}. Status: {status} {@verification}",
+                        phoneNumber,
+                        verification.Status,
+                        verification
+                    );
+                    return Result.Failure(
+                        Error.BadRequest(
+                            $"Failed to send verification code. Maybe a phone number validation error. Status: {verification.Status}"
+                        ),
+                        ErrorType.BadRequest
+                    );
+                }
+
                 if (verification.Status != "pending")
                 {
                     Log.Error(
@@ -202,6 +218,23 @@ public class TwilioSmsService : ITwilioSmsService
                     code: code,
                     pathServiceSid: _twilioConfig.VerifyServiceSid
                 );
+
+                if (verificationCheck.Status == "failed")
+                {
+                    Log.Error(
+                        "Failed to verify code. This could be a validation error. Phone number: {phoneNumber} Code: {code}. Status: {status} {@verificationCheck}",
+                        phoneNumber,
+                        code,
+                        verificationCheck.Status,
+                        verificationCheck
+                    );
+                    return Result.Failure(
+                        Error.BadRequest(
+                            $"Failed to verify code. Maybe a phone number or code validation error. Status: {verificationCheck.Status}"
+                        ),
+                        ErrorType.BadRequest
+                    );
+                }
 
                 if (verificationCheck.Status != "approved")
                 {

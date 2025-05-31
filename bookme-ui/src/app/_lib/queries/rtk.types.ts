@@ -1,4 +1,4 @@
-import { ApiBookingTimeslotsPostRequest } from "../codegen";
+import { ApiBookingTimeslotsPostRequest, ApiPhoneVerificationSendCodePostRequest, ApiPhoneVerificationVerifyCodePostRequest } from "../codegen";
 
 export type CustomBaseQueryType =
   | {
@@ -32,6 +32,17 @@ export type CustomBaseQueryType =
           pageIndex?: number;
           pageSize?: number;
         };
+      };
+    } | {
+      endpoint: "phoneVerification.verifyPhoneNumber";
+      params: {
+        request: ApiPhoneVerificationSendCodePostRequest;
+      };
+    }
+  | {
+      endpoint: "phoneVerification.verifyCodeNumber";
+      params: {
+        request: ApiPhoneVerificationVerifyCodePostRequest;
       };
     };
 

@@ -1,4 +1,4 @@
-import { ApiPhoneVerificationSendCodePostRequest } from "../codegen";
+import { ApiPhoneVerificationSendCodePostRequest, ApiPhoneVerificationVerifyCodePostRequest } from "../codegen";
 import { Result } from "../types/common.types";
 import {
   getErrorsFromApiResult,
@@ -48,11 +48,11 @@ export class PhoneVerificationService {
   public static async verifyCodeNumber({
     request,
   }: {
-    request: ApiPhoneVerificationSendCodePostRequest;
+    request: ApiPhoneVerificationVerifyCodePostRequest;
   }): Promise<Result<boolean>> {
     try {
       const response =
-        await this.phoneVerificationApi.apiPhoneVerificationSendCodePostRaw(
+        await this.phoneVerificationApi.apiPhoneVerificationVerifyCodePostRaw(
           request
         );
 

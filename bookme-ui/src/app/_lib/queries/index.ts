@@ -38,6 +38,21 @@ export const api = createApi({
       providesTags: ["TimeSlots"],
     }),
     //#endregion
+
+    //#region PhoneVerification
+    verifyPhoneNumber: builder.mutation({
+      query: (request) => ({
+        endpoint: "phoneVerification.verifyPhoneNumber",
+        params: { request },
+      }),
+    }),
+    verifyCodeNumber: builder.mutation({
+      query: (request) => ({
+        endpoint: "phoneVerification.verifyCodeNumber",
+        params: { request },
+      }),
+    }),
+    //#endregion
   }),
 });
 
@@ -46,4 +61,6 @@ export const {
   useGetAvailableTimeSlotsQuery,
   useGetAllTimeSlotsQuery,
   useCreateTimeSlotMutation,
+  useVerifyPhoneNumberMutation,
+  useVerifyCodeNumberMutation,
 } = api;

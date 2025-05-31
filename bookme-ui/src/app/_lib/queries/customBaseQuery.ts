@@ -1,4 +1,5 @@
 import { BookingService } from "../services/booking.service";
+import { PhoneVerificationService } from "../services/phoneVerification.service";
 import { UserService } from "../services/user.service";
 import { CustomBaseQueryType } from "./rtk.types";
 import { transformRTKResult } from "./rtkHelpers";
@@ -38,6 +39,22 @@ export const customBaseQuery =
               pageIndex: params.request.pageIndex,
               pageSize: params.request.pageSize,
             },
+          })
+        );
+
+      case "phoneVerification.verifyPhoneNumber":
+        return transformRTKResult(
+          await PhoneVerificationService.verifyPhoneNumber({
+            ...params,
+            request: params.request,
+          })
+        );
+
+      case "phoneVerification.verifyCodeNumber":
+        return transformRTKResult(
+          await PhoneVerificationService.verifyCodeNumber({
+            ...params,
+            request: params.request,
           })
         );
       default:

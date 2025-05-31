@@ -10,6 +10,7 @@ public static class AspNetCoreRateLimitConfiguration
         IConfiguration configuration
     )
     {
+        // docs for help: https://github.com/stefanprodan/AspNetCoreRateLimit/wiki/IpRateLimitMiddleware#setup
         // configure ip rate limiting
         services.Configure<IpRateLimitOptions>(configuration.GetSection("IpRateLimiting"));
         services.Configure<IpRateLimitPolicies>(configuration.GetSection("IpRateLimitPolicies"));

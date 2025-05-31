@@ -39,7 +39,8 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
         var timeSlot = new TimeSlot
         {
             Start = request.StartDateTime,
-            End = request.EndDateTime
+            End = request.EndDateTime,
+            AllowAutoConfirmation = request.AllowAutoConfirmation
         };
 
         timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
@@ -56,10 +57,11 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
 
         for (var i = 0; i < count; i++)
         {
-            TimeSlot timeSlot = new TimeSlot
+            var timeSlot = new TimeSlot
             {
                 Start = request.StartDateTime.AddHours(i),
-                End = request.StartDateTime.AddHours(i + 1)
+                End = request.StartDateTime.AddHours(i + 1),
+                AllowAutoConfirmation = request.AllowAutoConfirmation
             };
 
             timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);

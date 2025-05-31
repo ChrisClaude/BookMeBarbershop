@@ -6,6 +6,7 @@ public class TimeSlot : BaseEntity, IAuditable
 {
     public DateTimeOffset Start { get; set; }
     public DateTimeOffset End { get; set; }
+    public bool? AllowAutoConfirmation { get; set; }
 
     // A time slot can have multiple bookings
     // however only one booking can be pending or confirmed at a time

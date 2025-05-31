@@ -16,6 +16,7 @@ namespace BookMeAPI.Controllers;
 [ApiController]
 public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQueries) : BaseController
 {
+    #region TimeSlots
     [HttpPost("timeslots/available")]
     [AllowAnonymous]
     [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]
@@ -38,6 +39,20 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
         return result.ToActionResult();
     }
 
+    [HttpPost("timeslots")]
+    [Authorize(Policy = Policy.ADMIN)]
+    [ProducesResponseType<IEnumerable<TimeSlotDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CreateTimeSlotsAsync(CreateTimeSlotsDto request)
+    {
+        var result = await mediator.Send(new CreateTimeSlotCommand(request.StartDateTime, request.EndDateTime, request.IsAllDay, request.AllowAutoConfirmation));
+
+        return result.ToActionResult();
+    }
+    #endregion
+
+    #region Bookings
     [HttpPost]
     [Authorize(Policy = Policy.CUSTOMER)]
     [ProducesResponseType<BookingDto>(StatusCodes.Status200OK)]
@@ -62,17 +77,6 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
         return result.ToActionResult();
     }
 
-    [HttpPost("timeslots")]
-    [Authorize(Policy = Policy.ADMIN)]
-    [ProducesResponseType<IEnumerable<TimeSlotDto>>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> CreateTimeSlotsAsync(CreateTimeSlotsDto request)
-    {
-        var result = await mediator.Send(new CreateTimeSlotCommand(request.StartDateTime, request.EndDateTime, request.IsAllDay));
-
-        return result.ToActionResult();
-    }
 
     [HttpPost("confirm")]
     [Authorize(Policy = Policy.ADMIN)]
@@ -85,5 +89,6 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
 
         return result.ToActionResult();
     }
+    #endregion
 }
 

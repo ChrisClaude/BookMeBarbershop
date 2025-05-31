@@ -178,6 +178,44 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             var timeSlot = timeSlots.First();
             timeSlot.Start.Should().Be(createTimeSlotsRequest.StartDateTime);
             timeSlot.End.Should().Be(createTimeSlotsRequest.EndDateTime);
+            timeSlot.IsAvailable.Should().BeTrue();
+            timeSlot.AllowAutoConfirmation.Should().BeFalse();
+            timeSlot.Id.Should().NotBeEmpty();
+        });
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(30)]
+    public async Task CreateTimeSlotWithDifferentDaysAndAutoConfirmation_ShouldSucceedAsync(
+        int daysInFuture
+    )
+    {
+        // Arrange
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        _mockHttpContext.SetUser(_adminUser);
+
+        var createTimeSlotsRequest = new CreateTimeSlotsDto
+        {
+            StartDateTime = DateTime.UtcNow.AddDays(daysInFuture).AddHours(1),
+            EndDateTime = DateTime.UtcNow.AddDays(daysInFuture).AddHours(2),
+            AllowAutoConfirmation = true
+        };
+
+        // Act
+        var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
+
+        // Assert
+        result.ValidateOkResult<List<TimeSlotDto>>(timeSlots =>
+        {
+            timeSlots.Should().HaveCount(1);
+            var timeSlot = timeSlots.First();
+            timeSlot.Start.Should().Be(createTimeSlotsRequest.StartDateTime);
+            timeSlot.End.Should().Be(createTimeSlotsRequest.EndDateTime);
+            timeSlot.IsAvailable.Should().BeTrue();
+            timeSlot.Id.Should().NotBeEmpty();
+            timeSlot.AllowAutoConfirmation.Should().BeTrue();
         });
     }
     #endregion
@@ -207,6 +245,8 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             timeSlots.Should().OnlyContain(x => x.Id != Guid.Empty);
             timeSlots.Select(x => x.Id).Should().OnlyHaveUniqueItems();
 
+            timeSlots.Should().OnlyContain(x => x.AllowAutoConfirmation == false);
+
             // Verify each timeslot has 1-hour duration
             timeSlots.Should().OnlyContain(x => (x.End - x.Start) == TimeSpan.FromHours(1));
 
@@ -224,7 +264,51 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task CreateAllDayTimeSlotIthMoreThan24Hours_ShouldNotSucceedAsync()
+    public async Task CreateAllDayTimeSlotWithAutoConfirmation_ShouldSucceedAsync()
+    {
+        // Arrange
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        _mockHttpContext.SetUser(_adminUser);
+
+        var createTimeSlotsRequest = new CreateTimeSlotsDto
+        {
+            StartDateTime = DateTime.Today.AddDays(1),
+            EndDateTime = DateTime.Today.AddDays(1).AddHours(23),
+            IsAllDay = true,
+            AllowAutoConfirmation = true
+        };
+
+        // Act
+        var result = await _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest);
+
+        // Assert
+        result.ValidateOkResult<List<TimeSlotDto>>(timeSlots =>
+        {
+            timeSlots.Should().OnlyContain(x => x.AllowAutoConfirmation == true);
+            timeSlots.Should().HaveCount(23);
+            timeSlots.Should().OnlyContain(x => x.Id != Guid.Empty);
+            timeSlots.Select(x => x.Id).Should().OnlyHaveUniqueItems();
+            // should all have allowAutoConfirmation set to true
+            timeSlots.Should().OnlyContain(x => x.AllowAutoConfirmation == true);
+
+            // Verify each timeslot has 1-hour duration
+            timeSlots.Should().OnlyContain(x => (x.End - x.Start) == TimeSpan.FromHours(1));
+
+            // Verify timeslots are sequential (ordered by start time)
+            var orderedTimeSlots = timeSlots.OrderBy(x => x.Start).ToList();
+            for (int i = 0; i < orderedTimeSlots.Count - 1; i++)
+            {
+                orderedTimeSlots[i].End.Should().Be(orderedTimeSlots[i + 1].Start);
+            }
+
+            // Verify first and last timeslot match request times
+            orderedTimeSlots.First().Start.Should().Be(createTimeSlotsRequest.StartDateTime);
+            orderedTimeSlots.Last().End.Should().Be(createTimeSlotsRequest.EndDateTime);
+        });
+    }
+
+    [Fact]
+    public async Task CreateAllDayTimeSlotWithMoreThan24Hours_ShouldNotSucceedAsync()
     {
         // Arrange
         await _bookMeContext.TimeSlots.ExecuteDeleteAsync();

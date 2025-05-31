@@ -1,9 +1,11 @@
+using BookMe.Application.Commands.Users;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos.Bookings;
 using BookMe.Application.Common.Dtos.PhoneVerification;
 using BookMe.Application.Interfaces;
 using BookMeAPI.Authorization;
 using BookMeAPI.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +15,12 @@ namespace BookMeAPI.Controllers;
 [ApiController]
 public class PhoneVerificationController : BaseController
 {
+    private readonly IMediator _mediator;
     private readonly ITwilioSmsService _twilioSmsService;
 
-    public PhoneVerificationController(ITwilioSmsService twilioSmsService)
+    public PhoneVerificationController(IMediator mediator, ITwilioSmsService twilioSmsService)
     {
+        _mediator = mediator;
         _twilioSmsService = twilioSmsService;
     }
 
@@ -39,7 +43,9 @@ public class PhoneVerificationController : BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> VerifyCodeAsync([FromBody] VerifyCodeRequest request)
     {
-        var result = await _twilioSmsService.VerifyCodeAsync(request.PhoneNumber, request.Code);
+        var result = await _mediator.Send(
+            new VerifyUserPhoneNumberCommand(request.PhoneNumber, request.Code)
+        );
 
         return result.ToActionResult();
     }

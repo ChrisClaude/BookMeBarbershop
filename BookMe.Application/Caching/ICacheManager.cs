@@ -7,5 +7,4 @@ public interface ICacheManager
     Task RemoveAsync(string cacheKey);
 
     Task<bool> GetAsync<T>(CacheKey cacheKey, out T result);
-
 }

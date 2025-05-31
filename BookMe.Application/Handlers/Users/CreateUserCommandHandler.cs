@@ -12,10 +12,13 @@ namespace BookMe.Application.Handlers;
 /// <summary>
 /// Handle the creation of a new user. The user is created with a default role of a customer.
 /// </summary>
-public class CreateUserCommandHandler(IRepository<User> repository) : IRequestHandler<CreateUserCommand, Result<UserDto>>
+public class CreateUserCommandHandler(IRepository<User> repository)
+    : IRequestHandler<CreateUserCommand, Result<UserDto>>
 {
-
-    public async Task<Result<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> Handle(
+        CreateUserCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var user = new User
         {
@@ -23,12 +26,19 @@ public class CreateUserCommandHandler(IRepository<User> repository) : IRequestHa
             Surname = request.Surname,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
-            UserRoles = new List<UserRole>() { new() { RoleId = DefaultRoles.CustomerId } }
+            UserRoles = new List<UserRole>() { new() { RoleId = DefaultRoles.CustomerId } },
         };
 
         await repository.InsertAsync(user, false);
 
-        var userWithRole = await repository.GetByIdAsync(user.Id, new string[] { nameof(User.UserRoles), $"{nameof(User.UserRoles)}.{nameof(UserRole.Role)}" });
+        var userWithRole = await repository.GetByIdAsync(
+            user.Id,
+            new string[]
+            {
+                nameof(User.UserRoles),
+                $"{nameof(User.UserRoles)}.{nameof(UserRole.Role)}",
+            }
+        );
 
         return Result<UserDto>.Success(userWithRole.MapToDto());
     }

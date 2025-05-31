@@ -7,6 +7,7 @@ public class PhoneValidatorHelper
 {
     public static Result IsValidPhoneNumber(string phoneNumber)
     {
+        // docs for help: https://github.com/twcclegg/libphonenumber-csharp
         var phoneUtil = PhoneNumberUtil.GetInstance();
 
         PhoneNumber numberProto;

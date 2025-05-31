@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using BookMe.Application;
 using BookMe.Application.Configurations;
 using BookMe.Infrastructure;
@@ -21,6 +22,7 @@ internal static class WebApplicationConfiguration
 
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
+        services.AddOptions();
         services.AddMemoryCache();
 
         services
@@ -47,7 +49,8 @@ internal static class WebApplicationConfiguration
             .ConfigureSerilog(appSettings)
             .ConfigureOpenTelemetryTracing(appSettings)
             .ConfigureCors(appSettings, _corsPolicyName)
-            .ConfigureOpenApi(appSettings);
+            .ConfigureOpenApi(appSettings)
+            .ConfigureAspNetCoreRateLimit(configuration);
 
         builder.Host.UseSerilog();
 
@@ -75,6 +78,7 @@ internal static class WebApplicationConfiguration
         app.UseCors(_corsPolicyName);
         app.UseSerilogRequestLogging();
 
+        app.UseIpRateLimiting();
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseExceptionHandler();

@@ -28,7 +28,7 @@ public class TwilioSmsService : ITwilioSmsService
     private readonly AsyncPolicyWrap _resilientPolicy;
     private readonly ICacheManager _cacheManager;
 
-    public TwilioSmsService(ICacheManager cacheManager, IOptionsSnapshot<AppSettings> appSettings)
+    public TwilioSmsService(ICacheManager cacheManager, IOptions<AppSettings> appSettings)
     {
         _twilioConfig = appSettings.Value.TwilioConfig;
         _cacheConfig = appSettings.Value.CacheConfig;

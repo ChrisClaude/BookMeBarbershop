@@ -6,7 +6,7 @@ import {
   validatePhoneNumber,
 } from "@/_lib/utils/common.utils";
 import { DateValue } from "@heroui/react";
-import { getLocalTimeZone, today } from "@internationalized/date";
+import { getLocalTimeZone, now } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
 import React, { useCallback, useState } from "react";
 import { TimeSlotDto } from "@/_lib/codegen";
@@ -29,7 +29,7 @@ const useBookingForm = () => {
     verificationCode: string | undefined;
   }>({
     phoneNumber: toE164(userProfile?.phoneNumber ?? ""),
-    bookingDate: today(getLocalTimeZone()),
+    bookingDate: now(getLocalTimeZone()),
     selectedTimeSlot: undefined,
     verificationCode: undefined,
   });

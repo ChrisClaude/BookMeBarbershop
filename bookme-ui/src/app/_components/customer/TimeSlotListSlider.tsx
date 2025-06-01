@@ -39,7 +39,6 @@ const TimeSlotListSlider = ({
   const request = useMemo(() => {
     const startDate = selectedDate.toDate(getLocalTimeZone());
     const endDate = selectedDate.toDate(getLocalTimeZone());
-    startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
 
     return {

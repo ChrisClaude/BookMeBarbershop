@@ -1,166 +1,31 @@
 "use client";
-import { useAuth } from "@/_hooks/useAuth";
-import {
-  isNullOrWhiteSpace,
-  toE164,
-  validatePhoneNumber,
-} from "@/_lib/utils/common.utils";
 import { Button, DatePicker, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
-import { E164Number } from "libphonenumber-js";
-import React, { Fragment, useCallback, useState } from "react";
+import React, { Fragment } from "react";
 import PhoneInput from "react-phone-number-input";
-import TimeSlotListSlider from "./customer/TimeSlotListSlider";
-import { TimeSlotDto } from "@/_lib/codegen";
-import {
-  useCreateBookingMutation,
-  useVerifyCodeNumberMutation,
-  useVerifyPhoneNumberMutation,
-} from "@/_lib/queries";
+import TimeSlotListSlider from "../customer/TimeSlotListSlider";
+import { format } from "date-fns";
+import useBookingForm from "./useBookingForm";
 
 const BookingForm = () => {
-  const { userProfile } = useAuth();
-  const [errors, setErrors] = React.useState<
-    { field: string; message: string }[]
-  >([]);
-
-  const [formData, setFormData] = React.useState<{
-    phoneNumber: E164Number | undefined;
-    bookingDate: DateValue;
-    selectedTimeSlot: TimeSlotDto | undefined;
-    verificationCode: string | undefined;
-  }>({
-    phoneNumber: toE164(userProfile?.phoneNumber ?? ""),
-    bookingDate: today(getLocalTimeZone()),
-    selectedTimeSlot: undefined,
-    verificationCode: undefined,
-  });
-
-  const [
+  const {
+    errors,
+    formData,
+    userProfile,
+    setFormData,
     isPhoneNumberVerificationProcess,
-    setIsPhoneNumberVerificationProcessing,
-  ] = useState(false);
-
-  const [
-    verifyPhoneNumber,
-    {
-      isLoading: isVerifyingPhoneNumber,
-      error: verifyPhoneNumberError,
-      isSuccess: isCodeSent,
-    },
-  ] = useVerifyPhoneNumberMutation();
-
-  const [
-    verifyCodeNumber,
-    {
-      isLoading: isVerifyingCode,
-      isSuccess: isCodeVerified,
-      error: verifyCodeError,
-    },
-  ] = useVerifyCodeNumberMutation();
-
-  const [createBooking, { isLoading: isCreatingBooking }] =
-    useCreateBookingMutation();
-
-  const onSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const phoneErrors = validatePhoneNumber(formData.phoneNumber);
-      if (phoneErrors.length > 0) {
-        setErrors(
-          phoneErrors.map((error) => ({
-            field: "phone-number",
-            message: error,
-          }))
-        );
-        return;
-      } else {
-        setErrors((prevErrors) =>
-          prevErrors.filter((error) => error.field !== "phone-number")
-        );
-      }
-
-      if (!userProfile?.isPhoneNumberVerified) {
-        setIsPhoneNumberVerificationProcessing(true);
-        verifyPhoneNumber({
-          sendCodeRequest: {
-            phoneNumber: formData.phoneNumber,
-          },
-        })
-          .unwrap()
-          .then(() => {
-            if (verifyPhoneNumberError) {
-              setErrors([
-                {
-                  field: "phone-number",
-                  message: verifyPhoneNumberError.toString(),
-                },
-              ]);
-            }
-          });
-      } else {
-        createBooking({
-          bookTimeSlotsDto: {
-            timeSlotId: formData.selectedTimeSlot?.id,
-          },
-        })
-          .unwrap()
-          .then(() => {
-            if (verifyCodeError) {
-              setErrors([
-                {
-                  field: "verification-code",
-                  message: verifyCodeError.toString(),
-                },
-              ]);
-            }
-          });
-      }
-    },
-    [
-      createBooking,
-      formData.phoneNumber,
-      formData.selectedTimeSlot?.id,
-      userProfile?.isPhoneNumberVerified,
-      verifyCodeError,
-      verifyPhoneNumber,
-      verifyPhoneNumberError,
-    ]
-  );
-
-  const handleVerifyCode = () => {
-    if (isNullOrWhiteSpace(formData.verificationCode)) {
-      setErrors([
-        {
-          field: "verification-code",
-          message: "Verification code is required",
-        },
-      ]);
-      return;
-    }
-
-    verifyCodeNumber({
-      verifyCodeRequest: {
-        phoneNumber: formData.phoneNumber,
-        code: formData.verificationCode,
-      },
-    })
-      .unwrap()
-      .then(() => {
-        if (verifyCodeError) {
-          setErrors([
-            {
-              field: "verification-code",
-              message: verifyCodeError.toString(),
-            },
-          ]);
-        }
-
-        if (isCodeVerified) {
-          setIsPhoneNumberVerificationProcessing(false);
-        }
-      });
-  };
+    isVerifyingPhoneNumber,
+    isCodeSent,
+    isVerifyingCode,
+    isCreatingBooking,
+    bookingSuccess,
+    showConfirmation,
+    onSubmit,
+    handleVerifyCode,
+    createBooking,
+    setBookingSuccess,
+    setShowConfirmation,
+  } = useBookingForm();
 
   return (
     <>
@@ -171,7 +36,7 @@ const BookingForm = () => {
         className="w-full justify-center items-center space-y-4"
         onSubmit={onSubmit}
       >
-        <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-md">
+        <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-full px-4 sm:px-0 sm:max-w-md">
           {errors.length > 0 && (
             <div className="p-4 border rounded-lg bg-red-50 text-center">
               {errors.map((error, index) => (
@@ -179,6 +44,13 @@ const BookingForm = () => {
                   {error.field} - {error.message}
                 </p>
               ))}
+            </div>
+          )}
+          {bookingSuccess && (
+            <div className="p-4 border rounded-lg bg-green-50 text-center mb-4">
+              <p className="text-green-600">
+                Your appointment has been booked successfully!
+              </p>
             </div>
           )}
 
@@ -312,6 +184,45 @@ const BookingForm = () => {
           )}
         </div>
       </Form>
+      {showConfirmation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">Confirm your booking</h3>
+            <p>Date: {formData.bookingDate.toString()}</p>
+            <p>
+              Time: {format(formData.selectedTimeSlot?.start as Date, "h:mm a")}{" "}
+              - {format(formData.selectedTimeSlot?.end as Date, "h:mm a")}
+            </p>
+            <div className="flex gap-2 mt-4">
+              <Button
+                color="danger"
+                variant="light"
+                onPress={() => setShowConfirmation(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                isLoading={isCreatingBooking}
+                onPress={() => {
+                  createBooking({
+                    bookTimeSlotsDto: {
+                      timeSlotId: formData.selectedTimeSlot?.id,
+                    },
+                  })
+                    .unwrap()
+                    .then(() => {
+                      setBookingSuccess(true);
+                      setShowConfirmation(false);
+                    });
+                }}
+              >
+                Confirm Booking
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

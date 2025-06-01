@@ -2,7 +2,7 @@
 import React from "react";
 import { withAuth } from "@/_components/auth/AuthGuard";
 import Header from "@/_components/Header";
-import BookingForm from "@/_components/BookingForm";
+import BookingForm from "@/_components/booking-form/BookingForm";
 import { ROLES } from "@/_lib/enums/constant";
 
 const BookingsPage = () => {

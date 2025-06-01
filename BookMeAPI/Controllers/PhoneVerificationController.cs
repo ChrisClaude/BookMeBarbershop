@@ -13,10 +13,10 @@ namespace BookMeAPI.Controllers;
 [ApiController]
 public class PhoneVerificationController : BaseController
 {
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
     private readonly ITwilioSmsService _twilioSmsService;
 
-    public PhoneVerificationController(UserService userService, ITwilioSmsService twilioSmsService)
+    public PhoneVerificationController(IUserService userService, ITwilioSmsService twilioSmsService)
     {
         _userService = userService;
         _twilioSmsService = twilioSmsService;

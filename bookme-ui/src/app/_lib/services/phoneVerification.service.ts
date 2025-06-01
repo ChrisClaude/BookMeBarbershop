@@ -1,4 +1,7 @@
-import { ApiPhoneVerificationSendCodePostRequest, ApiPhoneVerificationVerifyCodePostRequest } from "../codegen";
+import {
+  ApiPhoneVerificationSendCodePostRequest,
+  ApiPhoneVerificationVerifyCodePostRequest,
+} from "../codegen";
 import { Result } from "../types/common.types";
 import {
   getErrorsFromApiResult,

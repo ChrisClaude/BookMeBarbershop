@@ -43,19 +43,13 @@ const useBookingForm = () => {
     verifyPhoneNumber,
     {
       isLoading: isVerifyingPhoneNumber,
-      error: verifyPhoneNumberError,
+      // error: verifyPhoneNumberError,
       isSuccess: isCodeSent,
     },
   ] = useVerifyPhoneNumberMutation();
 
-  const [
-    verifyCodeNumber,
-    {
-      isLoading: isVerifyingCode,
-      isSuccess: isCodeVerified,
-      error: verifyCodeError,
-    },
-  ] = useVerifyCodeNumberMutation();
+  const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
+    useVerifyCodeNumberMutation();
 
   const [createBooking, { isLoading: isCreatingBooking }] =
     useCreateBookingMutation();
@@ -89,15 +83,14 @@ const useBookingForm = () => {
           },
         })
           .unwrap()
-          .then(() => {
-            if (verifyPhoneNumberError) {
-              setErrors([
-                {
-                  field: "phone-number",
-                  message: verifyPhoneNumberError.toString(),
-                },
-              ]);
-            }
+          .then()
+          .catch((error) => {
+            setErrors([
+              {
+                field: "phone-number",
+                message: JSON.stringify(error),
+              },
+            ]);
           });
       } else {
         setShowConfirmation(true);
@@ -107,7 +100,6 @@ const useBookingForm = () => {
       formData.phoneNumber,
       userProfile?.isPhoneNumberVerified,
       verifyPhoneNumber,
-      verifyPhoneNumberError,
     ]
   );
 
@@ -130,18 +122,15 @@ const useBookingForm = () => {
     })
       .unwrap()
       .then(() => {
-        if (verifyCodeError) {
-          setErrors([
-            {
-              field: "verification-code",
-              message: verifyCodeError.toString(),
-            },
-          ]);
-        }
-
-        if (isCodeVerified) {
-          setIsPhoneNumberVerificationProcessing(false);
-        }
+        setIsPhoneNumberVerificationProcessing(false);
+      })
+      .catch((error) => {
+        setErrors([
+          {
+            field: "verification-code",
+            message: JSON.stringify(error),
+          },
+        ]);
       });
   };
 

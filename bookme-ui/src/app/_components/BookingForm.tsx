@@ -13,6 +13,7 @@ import PhoneInput from "react-phone-number-input";
 import TimeSlotListSlider from "./customer/TimeSlotListSlider";
 import { TimeSlotDto } from "@/_lib/codegen";
 import {
+  useCreateBookingMutation,
   useVerifyCodeNumberMutation,
   useVerifyPhoneNumberMutation,
 } from "@/_lib/queries";
@@ -40,11 +41,26 @@ const BookingForm = () => {
     setIsPhoneNumberVerificationProcessing,
   ] = useState(false);
 
-  const [verifyPhoneNumber, { isLoading: isVerifyingPhoneNumber }] =
-    useVerifyPhoneNumberMutation();
+  const [
+    verifyPhoneNumber,
+    {
+      isLoading: isVerifyingPhoneNumber,
+      error: verifyPhoneNumberError,
+      isSuccess: isCodeSent,
+    },
+  ] = useVerifyPhoneNumberMutation();
 
-  const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
-    useVerifyCodeNumberMutation();
+  const [
+    verifyCodeNumber,
+    {
+      isLoading: isVerifyingCode,
+      isSuccess: isCodeVerified,
+      error: verifyCodeError,
+    },
+  ] = useVerifyCodeNumberMutation();
+
+  const [createBooking, { isLoading: isCreatingBooking }] =
+    useCreateBookingMutation();
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,15 +89,42 @@ const BookingForm = () => {
         })
           .unwrap()
           .then(() => {
-            // Set a message to the user that the verification code has been sent
+            if (verifyPhoneNumberError) {
+              setErrors([
+                {
+                  field: "phone-number",
+                  message: verifyPhoneNumberError.toString(),
+                },
+              ]);
+            }
           });
       } else {
+        createBooking({
+          bookTimeSlotsDto: {
+            timeSlotId: formData.selectedTimeSlot?.id,
+          },
+        })
+          .unwrap()
+          .then(() => {
+            if (verifyCodeError) {
+              setErrors([
+                {
+                  field: "verification-code",
+                  message: verifyCodeError.toString(),
+                },
+              ]);
+            }
+          });
       }
     },
     [
+      createBooking,
       formData.phoneNumber,
+      formData.selectedTimeSlot?.id,
       userProfile?.isPhoneNumberVerified,
+      verifyCodeError,
       verifyPhoneNumber,
+      verifyPhoneNumberError,
     ]
   );
 
@@ -104,7 +147,18 @@ const BookingForm = () => {
     })
       .unwrap()
       .then(() => {
-        setIsPhoneNumberVerificationProcessing(false);
+        if (verifyCodeError) {
+          setErrors([
+            {
+              field: "verification-code",
+              message: verifyCodeError.toString(),
+            },
+          ]);
+        }
+
+        if (isCodeVerified) {
+          setIsPhoneNumberVerificationProcessing(false);
+        }
       });
   };
 
@@ -144,6 +198,11 @@ const BookingForm = () => {
               }}
               defaultCountry="PL"
             />
+            {isCodeSent && (
+              <p className="text-sm text-gray-500 text-center">
+                We&apos;ll send you a verification code to confirm your number.
+              </p>
+            )}
             {errors.find((error) => error.field === "phone-number") && (
               <p className="text-red-500">
                 {
@@ -237,7 +296,7 @@ const BookingForm = () => {
                 className="w-full"
                 color="primary"
                 type="submit"
-                isLoading={isVerifyingPhoneNumber}
+                isLoading={isVerifyingPhoneNumber || isCreatingBooking}
                 isDisabled={!formData.selectedTimeSlot}
               >
                 {userProfile?.isPhoneNumberVerified

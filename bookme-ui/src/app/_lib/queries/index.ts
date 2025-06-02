@@ -45,6 +45,13 @@ export const api = createApi({
         params: { request },
       }),
     }),
+
+    getBookings: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getBookings",
+        params: { request },
+      }),
+    }),
     //#endregion
 
     //#region PhoneVerification
@@ -73,4 +80,5 @@ export const {
   useVerifyPhoneNumberMutation,
   useVerifyCodeNumberMutation,
   useCreateBookingMutation,
+  useGetBookingsQuery,
 } = api;

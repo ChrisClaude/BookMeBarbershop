@@ -1,5 +1,8 @@
 import {
   ApiBookingBookTimeslotPostRequest,
+  ApiBookingGetBookingsPostRequest,
+  ApiBookingTimeslotsAllPostRequest,
+  ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
   ApiPhoneVerificationSendCodePostRequest,
   ApiPhoneVerificationVerifyCodePostRequest,
@@ -17,8 +20,14 @@ export type CustomBaseQueryType =
   | {
       endpoint: "booking.getAvailableTimeSlots";
       params: {
-        request: {
-          getAvailableTimeSlotsDto: {
+        request: Omit<
+          ApiBookingTimeslotsAvailablePostRequest,
+          "getAvailableTimeSlotsDto"
+        > & {
+          getAvailableTimeSlotsDto: Omit<
+            ApiBookingTimeslotsAvailablePostRequest["getAvailableTimeSlotsDto"],
+            "start" | "end"
+          > & {
             start: string; // ISO string - redux cannot serialize date objects
             end: string; // ISO string
           };
@@ -28,14 +37,14 @@ export type CustomBaseQueryType =
   | {
       endpoint: "booking.getAllTimeSlots";
       params: {
-        request: {
-          getAvailableTimeSlotsDto: {
+        request: Omit<ApiBookingTimeslotsAllPostRequest, "getTimeSlotsDto"> & {
+          getTimeSlotsDto: Omit<
+            ApiBookingTimeslotsAllPostRequest["getTimeSlotsDto"],
+            "start" | "end"
+          > & {
             start: string; // ISO string - redux cannot serialize date objects
             end: string; // ISO string
-            isAvailable: boolean | null;
           };
-          pageIndex?: number;
-          pageSize?: number;
         };
       };
     }
@@ -55,6 +64,19 @@ export type CustomBaseQueryType =
       endpoint: "booking.createBooking";
       params: {
         request: ApiBookingBookTimeslotPostRequest;
+      };
+    }
+  | {
+      endpoint: "booking.getBookings";
+      params: {
+        request: Omit<ApiBookingGetBookingsPostRequest, "getBookingsDto"> & {
+          getBookingsDto: Omit<
+            ApiBookingGetBookingsPostRequest["getBookingsDto"],
+            "fromDateTime"
+          > & {
+            fromDateTime: string; // ISO string - redux cannot serialize date objects
+          };
+        };
       };
     };
 

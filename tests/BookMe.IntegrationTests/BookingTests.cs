@@ -289,6 +289,9 @@ public class BookingTests : BaseIntegrationTest
     public async Task BookTimeSlotWithInvalidId_ShouldFailAsync()
     {
         // Arrange
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
         var timeSlotId = Guid.NewGuid();
         _mockHttpContext.SetUser(_customerUser);
         var bookTimeSlotCommand = new BookTimeSlotsDto

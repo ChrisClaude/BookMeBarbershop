@@ -1,9 +1,11 @@
 import {
   ApiBookingBookTimeslotPostRequest,
+  ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
   BookingDto,
+  PagedListDtoOfBookingDto,
   PagedListDtoOfTimeSlotDto,
   TimeSlotDto,
 } from "../codegen";
@@ -111,7 +113,7 @@ export class BookingService {
         request
       );
 
-      if (response.raw.status !== 200) {
+      if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();
         return {
           success: false,
@@ -146,7 +148,7 @@ export class BookingService {
         request
       );
 
-      if (response.raw.status !== 200) {
+      if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();
         return {
           success: false,
@@ -167,6 +169,41 @@ export class BookingService {
       return {
         success: false,
         errors: [error?.toString() || "Error fetching time slots"],
+      };
+    }
+  }
+
+  public static async getBookings({
+    request,
+  }: {
+    request: ApiBookingGetBookingsPostRequest;
+  }): Promise<Result<PagedListDtoOfBookingDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingGetBookingsPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as PagedListDtoOfBookingDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching bookings",
+        "GetBookingsError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching bookings"],
       };
     }
   }

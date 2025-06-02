@@ -1,5 +1,6 @@
 import { UserDto } from "../codegen";
 import { Result } from "../types/common.types";
+import { isStatusCodeSuccess } from "../utils/common.utils";
 import { logError } from "../utils/logging.utils";
 import { UserApiWithConfig } from "./api.service";
 
@@ -25,7 +26,7 @@ export class UserService {
     try {
       const response = await this.userApi.apiUserMeGetRaw();
 
-      if (response.raw.status !== 200) {
+      if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();
         return {
           success: false,

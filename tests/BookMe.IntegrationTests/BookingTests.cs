@@ -46,6 +46,11 @@ public class BookingTests : BaseIntegrationTest
         _timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
         _bookingService = _scope.ServiceProvider.GetRequiredService<IBookingQueries>();
         _bookingController = new BookingController(_mediator, _timeSlotQueries, _bookingService);
+
+        _bookingController.ControllerContext = new ControllerContext
+        {
+            HttpContext = _mockHttpContext.HttpContext!
+        };
     }
 
     #region BookTimeSlot tests

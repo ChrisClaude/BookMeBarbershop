@@ -37,15 +37,7 @@ export type CustomBaseQueryType =
   | {
       endpoint: "booking.getAllTimeSlots";
       params: {
-        request: Omit<ApiBookingTimeslotsAllPostRequest, "getTimeSlotsDto"> & {
-          getTimeSlotsDto: Omit<
-            ApiBookingTimeslotsAllPostRequest["getTimeSlotsDto"],
-            "start" | "end"
-          > & {
-            start: string; // ISO string - redux cannot serialize date objects
-            end: string; // ISO string
-          };
-        };
+        request: GetAllTimeSlotsQueryType;
       };
     }
   | {
@@ -88,5 +80,18 @@ export type GetBookingsQueryType = Omit<
     "fromDateTime"
   > & {
     fromDateTime: string; // ISO string - redux cannot serialize date objects
+  };
+};
+
+export type GetAllTimeSlotsQueryType = Omit<
+  ApiBookingTimeslotsAllPostRequest,
+  "getTimeSlotsDto"
+> & {
+  getTimeSlotsDto: Omit<
+    ApiBookingTimeslotsAllPostRequest["getTimeSlotsDto"],
+    "start" | "end"
+  > & {
+    start: string; // ISO string - redux cannot serialize date objects
+    end: string; // ISO string
   };
 };

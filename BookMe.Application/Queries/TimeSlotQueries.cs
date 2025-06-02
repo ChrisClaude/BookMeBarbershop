@@ -34,6 +34,7 @@ public class TimeSlotQueries(IRepository<TimeSlot> repository) : ITimeSlotQuerie
     {
         var timeSlots = await repository.GetAllPagedAsync(
             query => query.Where(x => x.Start >= start && x.End <= end),
+            includes: new[] { nameof(TimeSlot.Bookings) },
             pageIndex: pageIndex,
             pageSize: pageSize
         );

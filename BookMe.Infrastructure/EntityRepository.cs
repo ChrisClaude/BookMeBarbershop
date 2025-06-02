@@ -391,6 +391,13 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         if (pageIndex <= 0)
             pageIndex = 0;
 
+        // Add default ordering by Id if no ordering is specified
+        // Entity Framework Core requires explicit ordering when using  Skip with split queries to ensure consistent results
+        if (!query.Expression.ToString().Contains("OrderBy"))
+        {
+            query = query.OrderBy(e => e.Id);
+        }
+
         // Get paginated data
         var items = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 

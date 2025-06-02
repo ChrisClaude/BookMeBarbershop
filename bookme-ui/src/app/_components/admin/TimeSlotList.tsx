@@ -1,7 +1,10 @@
 "use client";
 import { PagedListDtoOfTimeSlotDto } from "@/_lib/codegen";
 import { useGetAllTimeSlotsQuery } from "@/_lib/queries";
-import { QueryResult } from "@/_lib/queries/rtk.types";
+import {
+  GetAllTimeSlotsQueryType,
+  QueryResult,
+} from "@/_lib/queries/rtk.types";
 import { DateValue, getLocalTimeZone } from "@internationalized/date";
 import { format } from "date-fns";
 import { useCallback, useEffect, useMemo } from "react";
@@ -10,6 +13,7 @@ import { GoPlusCircle } from "react-icons/go";
 import { Button, Pagination, Tooltip } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SLOTS_PER_PAGE_SIZE } from "@/config";
+import { logError } from "@/_lib/utils/logging.utils";
 
 const TimeSlotList = ({
   selectedDate,
@@ -28,14 +32,14 @@ const TimeSlotList = ({
     return Number(page) || 1;
   }, [searchParams]);
 
-  const request = useMemo(() => {
+  const request = useMemo<GetAllTimeSlotsQueryType>(() => {
     const startDate = selectedDate.toDate(getLocalTimeZone());
     const endDate = selectedDate.toDate(getLocalTimeZone());
     startDate.setHours(0, 0, 0);
     endDate.setHours(23, 59, 59);
 
     return {
-      getAvailableTimeSlotsDto: {
+      getTimeSlotsDto: {
         start: startDate.toISOString(),
         end: endDate.toISOString(),
         // TODO: Add ability to filter by availability
@@ -80,9 +84,11 @@ const TimeSlotList = ({
   }
 
   if (error || !timeSlots || !timeSlots.items) {
+    logError("Error loading time slots", "TimeSlotList", error);
+
     return (
       <div className="p-4 border rounded-lg bg-red-50 text-center">
-        <p className="text-red-500">Error loading time slots: {error}</p>
+        <p className="text-red-500">Error loading time slots</p>
       </div>
     );
   }

@@ -49,7 +49,8 @@ const BookingForm = () => {
           {bookingSuccess && (
             <div className="p-4 border rounded-lg bg-green-50 text-center mb-4">
               <p className="text-green-600">
-                Your appointment has been booked successfully!
+                Success! You&apos;ll be redirected to the bookings management
+                page in a few seconds.
               </p>
             </div>
           )}

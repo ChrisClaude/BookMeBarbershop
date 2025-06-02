@@ -8,7 +8,7 @@ import {
 import { DateValue } from "@heroui/react";
 import { getLocalTimeZone, now } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ApiBookingBookTimeslotPostRequest, TimeSlotDto } from "@/_lib/codegen";
 import {
   useCreateBookingMutation,
@@ -54,6 +54,14 @@ const useBookingForm = () => {
 
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (bookingSuccess) {
+        router.push("/customer/bookings/management");
+      }
+    }, 3500);
+  }, [bookingSuccess, isCodeSent, router]);
 
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
@@ -132,23 +140,25 @@ const useBookingForm = () => {
       });
   };
 
-  const handleCreateBooking = (request: ApiBookingBookTimeslotPostRequest) => {
-    return createBooking(request)
-      .unwrap()
-      .then(() => {
-        setBookingSuccess(true);
-        setShowConfirmation(false);
-        router.push("/customer/bookings/management");
-      })
-      .catch((error) => {
-        setErrors([
-          {
-            field: "booking",
-            message: JSON.stringify(error),
-          },
-        ]);
-      });
-  };
+  const handleCreateBooking = useCallback(
+    (request: ApiBookingBookTimeslotPostRequest) => {
+      return createBooking(request)
+        .unwrap()
+        .then(() => {
+          setBookingSuccess(true);
+          setShowConfirmation(false);
+        })
+        .catch((error) => {
+          setErrors([
+            {
+              field: "booking",
+              message: JSON.stringify(error),
+            },
+          ]);
+        });
+    },
+    [createBooking]
+  );
 
   return {
     errors,

@@ -43,7 +43,6 @@ const useBookingForm = () => {
     verifyPhoneNumber,
     {
       isLoading: isVerifyingPhoneNumber,
-      // error: verifyPhoneNumberError,
       isSuccess: isCodeSent,
     },
   ] = useVerifyPhoneNumberMutation();

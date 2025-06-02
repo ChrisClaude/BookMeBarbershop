@@ -21,12 +21,19 @@ public class AdminAuthorizationHandler : AuthorizationHandler<AdminRequirement>
 
     public AdminAuthorizationHandler(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        _httpContextAccessor =
+            httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdminRequirement requirement)
+    protected override Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        AdminRequirement requirement
+    )
     {
-        if (_httpContextAccessor.HttpContext?.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY] is not UserDto user)
+        if (
+            _httpContextAccessor.HttpContext?.Items[Constant.HTTP_CONTEXT_USER_ITEM_KEY]
+            is not UserDto user
+        )
         {
             return Task.CompletedTask;
         }

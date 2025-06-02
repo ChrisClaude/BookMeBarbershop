@@ -69,14 +69,7 @@ export type CustomBaseQueryType =
   | {
       endpoint: "booking.getBookings";
       params: {
-        request: Omit<ApiBookingGetBookingsPostRequest, "getBookingsDto"> & {
-          getBookingsDto: Omit<
-            ApiBookingGetBookingsPostRequest["getBookingsDto"],
-            "fromDateTime"
-          > & {
-            fromDateTime: string; // ISO string - redux cannot serialize date objects
-          };
-        };
+        request: GetBookingsQueryType;
       };
     };
 
@@ -84,4 +77,16 @@ export type QueryResult<T> = {
   data?: T;
   isFetching: boolean;
   error?: string[];
+};
+
+export type GetBookingsQueryType = Omit<
+  ApiBookingGetBookingsPostRequest,
+  "getBookingsDto"
+> & {
+  getBookingsDto: Omit<
+    ApiBookingGetBookingsPostRequest["getBookingsDto"],
+    "fromDateTime"
+  > & {
+    fromDateTime: string; // ISO string - redux cannot serialize date objects
+  };
 };

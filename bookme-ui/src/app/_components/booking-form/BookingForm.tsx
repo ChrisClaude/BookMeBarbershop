@@ -23,7 +23,7 @@ const BookingForm = () => {
     showConfirmation,
     onSubmit,
     handleVerifyCode,
-    setBookingSuccess,
+    handleCreateBooking,
     setShowConfirmation,
   } = useBookingForm();
 
@@ -152,7 +152,7 @@ const BookingForm = () => {
           selectedTimeSlot={formData.selectedTimeSlot}
           isCreatingBooking={isCreatingBooking}
           setShowConfirmation={setShowConfirmation}
-          setBookingSuccess={setBookingSuccess}
+          handleCreateBooking={handleCreateBooking}
         />
       )}
     </>

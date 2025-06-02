@@ -9,14 +9,16 @@ import { DateValue } from "@heroui/react";
 import { getLocalTimeZone, now } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
 import React, { useCallback, useState } from "react";
-import { TimeSlotDto } from "@/_lib/codegen";
+import { ApiBookingBookTimeslotPostRequest, TimeSlotDto } from "@/_lib/codegen";
 import {
   useCreateBookingMutation,
   useVerifyCodeNumberMutation,
   useVerifyPhoneNumberMutation,
 } from "@/_lib/queries";
+import { useRouter } from "next/navigation";
 
 const useBookingForm = () => {
+  const router = useRouter();
   const { userProfile } = useAuth();
   const [errors, setErrors] = React.useState<
     { field: string; message: string }[]
@@ -41,10 +43,7 @@ const useBookingForm = () => {
 
   const [
     verifyPhoneNumber,
-    {
-      isLoading: isVerifyingPhoneNumber,
-      isSuccess: isCodeSent,
-    },
+    { isLoading: isVerifyingPhoneNumber, isSuccess: isCodeSent },
   ] = useVerifyPhoneNumberMutation();
 
   const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
@@ -133,6 +132,24 @@ const useBookingForm = () => {
       });
   };
 
+  const handleCreateBooking = (request: ApiBookingBookTimeslotPostRequest) => {
+    return createBooking(request)
+      .unwrap()
+      .then(() => {
+        setBookingSuccess(true);
+        setShowConfirmation(false);
+        router.push("/customer/bookings/management");
+      })
+      .catch((error) => {
+        setErrors([
+          {
+            field: "booking",
+            message: JSON.stringify(error),
+          },
+        ]);
+      });
+  };
+
   return {
     errors,
     formData,
@@ -147,7 +164,7 @@ const useBookingForm = () => {
     setFormData,
     onSubmit,
     handleVerifyCode,
-    createBooking,
+    handleCreateBooking,
     setBookingSuccess,
     setShowConfirmation,
   };

@@ -1,21 +1,19 @@
-import { TimeSlotDto } from "@/_lib/codegen";
+import { ApiBookingBookTimeslotPostRequest, TimeSlotDto } from "@/_lib/codegen";
 import { Button } from "@heroui/react";
 import { format } from "date-fns";
 import React from "react";
-import useBookingForm from "./useBookingForm";
 
 const BookingConfirmationDialog = ({
   selectedTimeSlot,
   isCreatingBooking,
   setShowConfirmation,
-  setBookingSuccess,
+  handleCreateBooking,
 }: {
   selectedTimeSlot: TimeSlotDto | undefined;
   isCreatingBooking: boolean;
   setShowConfirmation: (show: boolean) => void;
-  setBookingSuccess: (success: boolean) => void;
+  handleCreateBooking: (request: ApiBookingBookTimeslotPostRequest) => void;
 }) => {
-  const { createBooking } = useBookingForm();
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg max-w-md w-full">
@@ -37,16 +35,11 @@ const BookingConfirmationDialog = ({
             color="primary"
             isLoading={isCreatingBooking}
             onPress={() => {
-              createBooking({
+              handleCreateBooking({
                 bookTimeSlotsDto: {
                   timeSlotId: selectedTimeSlot?.id,
                 },
-              })
-                .unwrap()
-                .then(() => {
-                  setBookingSuccess(true);
-                  setShowConfirmation(false);
-                });
+              });
             }}
           >
             Confirm Booking

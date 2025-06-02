@@ -18,6 +18,6 @@ public class UserQueries(IRepository<User> repository) : IUserQueries
             return Result<UserDto>.Failure(Error.NotFound("User not found"), ErrorType.NotFound);
         }
 
-        return Result<UserDto>.Success(user.MapToDto());
+        return Result.Success(user.MapToDto());
     }
 }

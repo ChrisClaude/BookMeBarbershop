@@ -25,6 +25,8 @@ public class BookingTests : BaseIntegrationTest
     private IMediator _mediator;
     private ITimeSlotQueries _timeSlotQueries;
 
+    private IBookingQueries _bookingService;
+
     public BookingTests(IntegrationTestWebAppFactory factory)
         : base(factory)
     {
@@ -42,7 +44,8 @@ public class BookingTests : BaseIntegrationTest
 
         _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         _timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
-        _bookingController = new BookingController(_mediator, _timeSlotQueries);
+        _bookingService = _scope.ServiceProvider.GetRequiredService<IBookingQueries>();
+        _bookingController = new BookingController(_mediator, _timeSlotQueries, _bookingService);
     }
 
     #region BookTimeSlot tests
@@ -486,5 +489,41 @@ public class BookingTests : BaseIntegrationTest
                 .BeTrue();
         });
     }
+
+    [Fact]
+    public async Task GetBookings_ShouldSucceedAsync()
+    {
+        // Arrange
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+
+        _mockHttpContext.SetUser(_adminUser);
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+        var timeSlotId = creationResult.Value.First().Id;
+
+        _mockHttpContext.SetUser(_customerUser);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
+
+        var request = new GetBookingsDto { FromDateTime = DateTime.Today, };
+
+        // Act
+        var result = await _bookingController.GetBookingAsync(request);
+
+        // Assert
+        result.ValidateOkResult<PagedListDto<BookingDto>>(bookings =>
+        {
+            bookings.Items.Should().HaveCount(1);
+            bookings.Items.First().Status.Should().Be(BookingStatus.Pending);
+            bookings.Items.First().User.Id.Should().Be(_customerUser.Id);
+            bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
+        });
+    }
+
     #endregion
 }

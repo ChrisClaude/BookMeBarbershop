@@ -20,6 +20,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     private BookingController _bookingController;
     private IMediator _mediator;
     private ITimeSlotQueries _timeSlotQueries;
+    private IBookingQueries _bookingQueries;
 
     public CreateTimeSlotTests(IntegrationTestWebAppFactory factory)
         : base(factory)
@@ -38,7 +39,8 @@ public class CreateTimeSlotTests : BaseIntegrationTest
 
         _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         _timeSlotQueries = _scope.ServiceProvider.GetRequiredService<ITimeSlotQueries>();
-        _bookingController = new BookingController(_mediator, _timeSlotQueries);
+        _bookingQueries = _scope.ServiceProvider.GetRequiredService<IBookingQueries>();
+        _bookingController = new BookingController(_mediator, _timeSlotQueries, _bookingQueries);
     }
 
     #region CreateTimeSlot tests

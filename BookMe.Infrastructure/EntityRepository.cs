@@ -143,6 +143,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
 
     public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
         int pageIndex = 0,
         int pageSize = int.MaxValue,
         bool getOnlyTotalCount = false,
@@ -157,6 +158,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         }
 
         query = func != null ? func(query) : query;
+        query = Include(query, includes);
 
         return await ToPagedListAsync(query, pageIndex, pageSize, getOnlyTotalCount);
     }
@@ -397,7 +399,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
 
     private static IQueryable<TEntity> Include(IQueryable<TEntity> query, string[] includes)
     {
-        if (includes != null)
+        if (includes != null && includes.Length > 0)
         {
             foreach (var include in includes)
             {

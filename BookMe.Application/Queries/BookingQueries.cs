@@ -22,12 +22,22 @@ public class BookingQueries(IRepository<Booking> repository) : IBookingQueries
         IPagedList<Booking> bookings;
         if (bookingStatus == null)
         {
-            bookings = await repository.GetAllPagedAsync(query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.User.Id == userId), pageIndex, pageSize);
+            bookings = await repository.GetAllPagedAsync(
+                query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.User.Id == userId),
+                includes: new[] { nameof(Booking.User), nameof(Booking.TimeSlot) },
+                pageIndex: pageIndex,
+                pageSize: pageSize
+            );
 
             return Result.Success(bookings.MapToDto());
         }
 
-        bookings = await repository.GetAllPagedAsync(query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.Status == bookingStatus && x.User.Id == userId), pageIndex, pageSize);
+        bookings = await repository.GetAllPagedAsync(
+            query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.Status == bookingStatus && x.User.Id == userId),
+            includes: new[] { nameof(Booking.User), nameof(Booking.TimeSlot) },
+            pageIndex: pageIndex,
+            pageSize: pageSize
+        );
 
         return Result.Success(bookings.MapToDto());
     }

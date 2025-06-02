@@ -9,8 +9,10 @@ models/CancelBookingDto.ts
 models/ConfirmBookingDto.ts
 models/CreateTimeSlotsDto.ts
 models/GetAvailableTimeSlotsDto.ts
+models/GetBookingsDto.ts
 models/GetTimeSlotsDto.ts
 models/ModelError.ts
+models/PagedListDtoOfBookingDto.ts
 models/PagedListDtoOfTimeSlotDto.ts
 models/ProblemDetails.ts
 models/Result.ts

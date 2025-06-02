@@ -14,7 +14,7 @@ namespace BookMeAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQueries) : BaseController
+public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQueries, IBookingQueries bookingQueries) : BaseController
 {
     #region TimeSlots
     [HttpPost("timeslots/available")]
@@ -84,6 +84,19 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     public async Task<IActionResult> ConfirmBookingAsync(ConfirmBookingDto request)
     {
         var result = await mediator.Send(new ConfirmBookingCommand(request.BookingId));
+
+        return result.ToActionResult();
+    }
+
+    [HttpPost("get-bookings")]
+    [Authorize(Policy = Policy.CUSTOMER)]
+    [ProducesResponseType<PagedListDto<BookingDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetBookingAsync([FromBody] GetBookingsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    {
+        var user = GetContextUser();
+        var result = await bookingQueries.GetPagedBookingsAsync(user.Id, request.FromDateTime, request.BookingStatus, pageIndex, pageSize);
 
         return result.ToActionResult();
     }

@@ -9,6 +9,7 @@ namespace BookMe.Application.Interfaces.Queries;
 public interface IBookingQueries
 {
     Task<Result<PagedListDto<BookingDto>>> GetPagedBookingsAsync(
+        Guid userId,
         DateTime fromDateTime,
         BookingStatus? bookingStatus = null,
         int pageIndex = 0,

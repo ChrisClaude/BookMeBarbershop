@@ -12,6 +12,7 @@ namespace BookMe.Application.Queries;
 public class BookingQueries(IRepository<Booking> repository) : IBookingQueries
 {
     public async Task<Result<PagedListDto<BookingDto>>> GetPagedBookingsAsync(
+        Guid userId,
         DateTime fromDateTime,
         BookingStatus? bookingStatus = null,
         int pageIndex = 0,
@@ -21,12 +22,12 @@ public class BookingQueries(IRepository<Booking> repository) : IBookingQueries
         IPagedList<Booking> bookings;
         if (bookingStatus == null)
         {
-            bookings = await repository.GetAllPagedAsync(query => query.Where(x => x.TimeSlot.Start >= fromDateTime), pageIndex, pageSize);
+            bookings = await repository.GetAllPagedAsync(query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.User.Id == userId), pageIndex, pageSize);
 
             return Result.Success(bookings.MapToDto());
         }
 
-        bookings = await repository.GetAllPagedAsync(query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.Status == bookingStatus), pageIndex, pageSize);
+        bookings = await repository.GetAllPagedAsync(query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.Status == bookingStatus && x.User.Id == userId), pageIndex, pageSize);
 
         return Result.Success(bookings.MapToDto());
     }

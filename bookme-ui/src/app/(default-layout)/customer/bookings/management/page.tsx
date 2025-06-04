@@ -1,19 +1,23 @@
 "use client";
 import { withAuth } from "@/_components/auth/AuthGuard";
-import { PagedListDtoOfBookingDto } from "@/_lib/codegen";
+import {
+  ApiBookingCancelBookingPostRequest,
+  BookingDto,
+  PagedListDtoOfBookingDto,
+} from "@/_lib/codegen";
 import {
   BOOKING_STATUS,
   bookingStatusToNumber,
   ROLES,
 } from "@/_lib/enums/constant";
-import { useGetBookingsQuery } from "@/_lib/queries";
+import { useCancelBookingMutation, useGetBookingsQuery } from "@/_lib/queries";
 import { GetBookingsQueryType, QueryResult } from "@/_lib/queries/rtk.types";
-import { Button, Chip, Pagination, Spinner } from "@heroui/react";
+import { Button, Chip, Pagination, Spinner, addToast } from "@heroui/react";
 import { getLocalTimeZone, now } from "@internationalized/date";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 
 const BookingManagementPage = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
@@ -22,14 +26,28 @@ const BookingManagementPage = () => {
   );
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [
+    cancelBooking,
+    { isLoading: isCancellingBooking, isSuccess: isBookingCancelled },
+  ] = useCancelBookingMutation();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const page = searchParams.get("page");
     if (page) setPageIndex(parseInt(page) - 1);
 
     const status = searchParams.get("status");
     if (status) setSelectedStatus(status);
   }, [searchParams]);
+
+  useEffect(() => {
+    if (isBookingCancelled) {
+      addToast({
+        title: "Booking Cancelled",
+        description: "Your booking has been cancelled.",
+        color: "success",
+      });
+    }
+  }, [isBookingCancelled]);
 
   const updateQueryParams = React.useCallback(
     (params: { page?: number; status?: string | null }) => {
@@ -67,11 +85,33 @@ const BookingManagementPage = () => {
     setPageIndex(page);
   };
 
-  const handleStatusChange = (status: string | null) => {
-    updateQueryParams({ status, page: 1 });
-    setPageIndex(0);
-    setSelectedStatus(status);
-  };
+  const handleStatusChange = useCallback(
+    (status: string | null) => {
+      updateQueryParams({ status, page: 1 });
+      setPageIndex(0);
+      setSelectedStatus(status);
+    },
+    [updateQueryParams]
+  );
+
+  const handleCancelBooking = useCallback(
+    (booking: BookingDto) => {
+      const cancellationRequest: ApiBookingCancelBookingPostRequest = {
+        cancelBookingDto: {
+          bookingId: booking.id,
+        },
+      };
+
+      addToast({
+        title: "Cancelling Booking",
+        description: "Your booking is being cancelled.",
+        promise: cancelBooking({
+          request: cancellationRequest,
+        }),
+      });
+    },
+    [cancelBooking]
+  );
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
@@ -179,8 +219,15 @@ const BookingManagementPage = () => {
                 </div>
 
                 <div className="mt-4 flex justify-end gap-2">
-                  {booking.status === bookingStatusToNumber(BOOKING_STATUS.PENDING) && (
-                    <Button color="danger" size="sm" variant="light">
+                  {booking.status ===
+                    bookingStatusToNumber(BOOKING_STATUS.PENDING) && (
+                    <Button
+                      color="danger"
+                      size="sm"
+                      variant="light"
+                      onPress={() => handleCancelBooking(booking)}
+                      isDisabled={isCancellingBooking}
+                    >
                       Cancel
                     </Button>
                   )}
@@ -189,6 +236,7 @@ const BookingManagementPage = () => {
                     href="/customer/bookings"
                     color="primary"
                     size="sm"
+                    isDisabled={isCancellingBooking}
                   >
                     Book Another
                   </Button>

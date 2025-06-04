@@ -4,7 +4,7 @@ import { customBaseQuery } from "./customBaseQuery";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery(),
-  tagTypes: ["TimeSlots", "User"],
+  tagTypes: ["TimeSlots", "User", "Booking"],
   endpoints: (builder) => ({
     //#region User
     getUserProfile: builder.query({
@@ -44,6 +44,15 @@ export const api = createApi({
         endpoint: "booking.createBooking",
         params: { request },
       }),
+      invalidatesTags: ["Booking"],
+    }),
+
+    cancelBooking: builder.mutation({
+      query: (request) => ({
+        endpoint: "booking.cancelBooking",
+        params: { request },
+      }),
+      invalidatesTags: ["Booking"],
     }),
 
     getBookings: builder.query({
@@ -51,6 +60,7 @@ export const api = createApi({
         endpoint: "booking.getBookings",
         params: { request },
       }),
+      providesTags: ["Booking"],
     }),
     //#endregion
 
@@ -80,5 +90,6 @@ export const {
   useVerifyPhoneNumberMutation,
   useVerifyCodeNumberMutation,
   useCreateBookingMutation,
+  useCancelBookingMutation,
   useGetBookingsQuery,
 } = api;

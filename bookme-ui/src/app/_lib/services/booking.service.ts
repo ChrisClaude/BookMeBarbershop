@@ -1,5 +1,6 @@
 import {
   ApiBookingBookTimeslotPostRequest,
+  ApiBookingCancelBookingPostRequest,
   ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
@@ -19,21 +20,6 @@ import { BookingApiWithConfig } from "./api.service";
 
 export class BookingService {
   protected static bookMeApi = new BookingApiWithConfig();
-
-  private static buildHeaders({
-    token,
-    contentType,
-  }: {
-    token: string;
-    contentType?: string;
-  }) {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      ["content-type"]: contentType || "application/json",
-    };
-
-    return headers;
-  }
 
   public static async createTimeSlot({
     request,
@@ -204,6 +190,38 @@ export class BookingService {
       return {
         success: false,
         errors: [error?.toString() || "Error fetching bookings"],
+      };
+    }
+  }
+
+  public static async cancelBooking({
+    request,
+  }: {
+    request: ApiBookingCancelBookingPostRequest;
+  }): Promise<Result<boolean>> {
+    try {
+      const response = await this.bookMeApi.apiBookingCancelBookingPostRaw(request);
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      return {
+        success: true,
+        data: true,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error cancelling booking",
+        "CancelBookingError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error cancelling booking"],
       };
     }
   }

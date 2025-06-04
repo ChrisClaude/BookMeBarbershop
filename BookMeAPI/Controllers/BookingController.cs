@@ -63,7 +63,7 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
         return result.ToActionResult();
     }
 
-    [HttpPost]
+    [HttpPost("cancel-booking")]
     [Authorize(Policy = Policy.CUSTOMER)]
     [ProducesResponseType<BookingDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status400BadRequest)]

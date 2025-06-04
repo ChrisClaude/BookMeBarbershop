@@ -7,21 +7,6 @@ import { UserApiWithConfig } from "./api.service";
 export class UserService {
   protected static userApi = new UserApiWithConfig();
 
-  private static buildHeaders({
-    token,
-    contentType,
-  }: {
-    token: string;
-    contentType?: string;
-  }) {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      ["content-type"]: contentType || "application/json",
-    };
-
-    return headers;
-  }
-
   public static async getUserProfile(): Promise<Result<UserDto | undefined>> {
     try {
       const response = await this.userApi.apiUserMeGetRaw();

@@ -2,17 +2,17 @@ import { BookingService } from "../services/booking.service";
 import { PhoneVerificationService } from "../services/phoneVerification.service";
 import { UserService } from "../services/user.service";
 import { CustomBaseQueryType } from "./rtk.types";
-import { transformRTKResult } from "./rtkHelpers";
+import { transformToRTKResult } from "./rtkHelpers";
 
 export const customBaseQuery = () =>
   async ({ endpoint, params }: CustomBaseQueryType) => {
     switch (endpoint) {
       case "user.getUserProfile":
-        return transformRTKResult(await UserService.getUserProfile());
+        return transformToRTKResult(await UserService.getUserProfile());
       case "booking.createTimeSlot":
-        return transformRTKResult(await BookingService.createTimeSlot(params));
+        return transformToRTKResult(await BookingService.createTimeSlot(params));
       case "booking.getAvailableTimeSlots":
-        return transformRTKResult(
+        return transformToRTKResult(
           await BookingService.getAvailableTimeSlots({
             ...params,
             request: {
@@ -26,7 +26,7 @@ export const customBaseQuery = () =>
         );
 
       case "booking.createBooking":
-        return transformRTKResult(
+        return transformToRTKResult(
           await BookingService.createBooking({
             ...params,
             request: params.request,
@@ -34,7 +34,7 @@ export const customBaseQuery = () =>
         );
 
       case "booking.getAllTimeSlots":
-        return transformRTKResult(
+        return transformToRTKResult(
           await BookingService.getAllTimeSlots({
             ...params,
             request: {
@@ -48,7 +48,7 @@ export const customBaseQuery = () =>
         );
 
       case "booking.getBookings":
-        return transformRTKResult(
+        return transformToRTKResult(
           await BookingService.getBookings({
             ...params,
             request: {
@@ -62,8 +62,16 @@ export const customBaseQuery = () =>
           })
         );
 
+      case "booking.cancelBooking":
+        return transformToRTKResult(
+          await BookingService.cancelBooking({
+            ...params,
+            request: params.request,
+          })
+        );
+
       case "phoneVerification.verifyPhoneNumber":
-        return transformRTKResult(
+        return transformToRTKResult(
           await PhoneVerificationService.verifyPhoneNumber({
             ...params,
             request: params.request,
@@ -71,7 +79,7 @@ export const customBaseQuery = () =>
         );
 
       case "phoneVerification.verifyCodeNumber":
-        return transformRTKResult(
+        return transformToRTKResult(
           await PhoneVerificationService.verifyCodeNumber({
             ...params,
             request: params.request,

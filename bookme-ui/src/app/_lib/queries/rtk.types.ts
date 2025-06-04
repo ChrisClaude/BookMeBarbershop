@@ -1,5 +1,6 @@
 import {
   ApiBookingBookTimeslotPostRequest,
+  ApiBookingCancelBookingPostRequest,
   ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
@@ -62,6 +63,12 @@ export type CustomBaseQueryType =
       endpoint: "booking.getBookings";
       params: {
         request: GetBookingsQueryType;
+      };
+    }
+  | {
+      endpoint: "booking.cancelBooking";
+      params: {
+        request: ApiBookingCancelBookingPostRequest;
       };
     };
 

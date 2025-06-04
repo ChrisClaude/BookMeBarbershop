@@ -173,7 +173,7 @@ const BookingListPage = () => {
             <p className="text-gray-600">No bookings found</p>
             <Button
               as={Link}
-              href={localLinks.customer.bookingList}
+              href={localLinks.customer.bookingAppointment}
               color="primary"
               className="mt-4"
             >
@@ -241,7 +241,7 @@ const BookingListPage = () => {
                     )}
                     <Button
                       as={Link}
-                      href={localLinks.customer.bookingList}
+                      href={localLinks.customer.bookingAppointment}
                       color="primary"
                       size="sm"
                       isDisabled={isCancellingBooking}

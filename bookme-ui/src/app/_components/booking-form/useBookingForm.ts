@@ -59,9 +59,9 @@ const useBookingForm = () => {
   useEffect(() => {
     setTimeout(() => {
       if (bookingSuccess) {
-        router.push(localLinks.customer.bookingAppointment);
+        router.push(localLinks.customer.bookingList);
       }
-    }, 3500);
+    }, 2000);
   }, [bookingSuccess, isCodeSent, router]);
 
   const onSubmit = useCallback(

@@ -24,12 +24,24 @@ const SidebarNavigation = ({
       }
     };
 
+    // Prevent background scrolling when sidebar is open
+    const preventScroll = () => {
+      if (isMenuOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    };
+
+    preventScroll();
+
     if (isMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = ''; // Restore scrolling on unmount
     };
   }, [isMenuOpen, setIsMenuOpen]);
 
@@ -41,7 +53,7 @@ const SidebarNavigation = ({
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-all duration-300">
       <div
         ref={sidebarRef}
-        className="w-80 h-full bg-background text-foreground ml-auto shadow-xl animate-in slide-in-from-right duration-300"
+        className="w-80 h-full bg-background text-foreground ml-auto shadow-xl animate-in slide-in-from-right duration-300 overflow-y-auto"
       >
         <div className="p-4 flex justify-between items-center border-b">
           <Logo />

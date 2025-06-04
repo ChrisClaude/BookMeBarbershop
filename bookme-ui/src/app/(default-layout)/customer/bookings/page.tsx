@@ -3,7 +3,7 @@ import React from "react";
 import { withAuth } from "@/_components/auth/AuthGuard";
 import BookingForm from "@/_components/booking-form/BookingForm";
 import { ROLES } from "@/_lib/enums/constant";
-import Header from "@/_components/Header";
+import Header from "@/_components/header/Header";
 
 const BookingsPage = () => {
   return (

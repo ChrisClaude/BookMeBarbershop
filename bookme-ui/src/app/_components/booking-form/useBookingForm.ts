@@ -16,6 +16,7 @@ import {
   useVerifyPhoneNumberMutation,
 } from "@/_lib/queries";
 import { useRouter } from "next/navigation";
+import { localLinks } from "@/_lib/enums/constant";
 
 const useBookingForm = () => {
   const router = useRouter();
@@ -58,7 +59,7 @@ const useBookingForm = () => {
   useEffect(() => {
     setTimeout(() => {
       if (bookingSuccess) {
-        router.push("/customer/bookings/management");
+        router.push(localLinks.customer.bookingAppointment);
       }
     }, 3500);
   }, [bookingSuccess, isCodeSent, router]);

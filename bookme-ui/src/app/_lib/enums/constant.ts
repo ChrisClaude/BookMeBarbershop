@@ -1,9 +1,9 @@
 import { UserType } from "../types";
 
-export const ROLES : Record<"ADMIN" | "CUSTOMER", UserType> = {
+export const ROLES: Record<"ADMIN" | "CUSTOMER", UserType> = {
   ADMIN: "Admin",
   CUSTOMER: "Customer",
-} ;
+};
 
 export const BOOKING_STATUS = {
   PENDING: "Pending",
@@ -25,4 +25,17 @@ export const bookingStatusToNumber = (status: string) => {
     default:
       throw new Error("Invalid booking status");
   }
+};
+
+export const localLinks = {
+  admin: {
+    dashboard: "/admin",
+    users: "/admin/users",
+    bookings: "/admin/bookings",
+  },
+  customer: {
+    bookingAppointment: "/customer/book-appointment",
+    bookingList: "/customer/booking-list",
+    profile: "/customer/profile",
+  },
 };

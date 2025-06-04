@@ -5,7 +5,7 @@ import BookingForm from "@/_components/booking-form/BookingForm";
 import { ROLES } from "@/_lib/enums/constant";
 import Header from "@/_components/header/Header";
 
-const BookingsPage = () => {
+const BookAppointmentPage = () => {
   return (
     <>
       <Header />
@@ -16,6 +16,6 @@ const BookingsPage = () => {
   );
 };
 
-export default withAuth(BookingsPage, ROLES.CUSTOMER, {
+export default withAuth(BookAppointmentPage, ROLES.CUSTOMER, {
   fallbackPath: "/unauthorized",
 });

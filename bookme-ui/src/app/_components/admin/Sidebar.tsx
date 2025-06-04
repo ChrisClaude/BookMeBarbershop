@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@heroui/react";
 import { CgProfile } from "react-icons/cg";
 import { useAuth } from "@/_hooks/useAuth";
+import { localLinks } from "@/_lib/enums/constant";
 
 const Sidebar = () => {
   const pathName = usePathname();
@@ -20,14 +21,16 @@ const Sidebar = () => {
   return (
     <aside className="h-full w-48 bg-gray-300 flex flex-col">
       <div className="p-4 flex flex-col gap-4">
-        <Link href="/admin">
+        <Link href={localLinks.admin.dashboard}>
           <Logo />
         </Link>
         <div className="flex flex-col gap-2 items-center">
           <CgProfile size={60} className="text-primary" />
           <div className="flex flex-col gap-1">
             <p className="text-sm text-center">Admin</p>
-            <p className="text-xs text-gray-500 text-center">{userProfile?.email}</p>
+            <p className="text-xs text-gray-500 text-center">
+              {userProfile?.email}
+            </p>
           </div>
           <Button
             onPress={() => logout()}
@@ -39,9 +42,9 @@ const Sidebar = () => {
       </div>
       <nav className="flex flex-col">
         <Link
-          href="/admin"
+          href={localLinks.admin.dashboard}
           className={`block p-2 hover:bg-gray-200 ${
-            isActive("/admin") ? "bg-gray-200" : ""
+            isActive(localLinks.admin.dashboard) ? "bg-gray-200" : ""
           }`}
         >
           Dashboard

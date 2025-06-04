@@ -6,6 +6,7 @@ import { RiCloseLine } from "react-icons/ri";
 import { CgProfile } from "react-icons/cg";
 import Logo from "../Logo";
 import { Button } from "@heroui/react";
+import { localLinks } from "@/_lib/enums/constant";
 
 const SidebarNavigation = ({
   isMenuOpen,
@@ -19,7 +20,10 @@ const SidebarNavigation = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
         setIsMenuOpen(false);
       }
     };
@@ -27,9 +31,9 @@ const SidebarNavigation = ({
     // Prevent background scrolling when sidebar is open
     const preventScroll = () => {
       if (isMenuOpen) {
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = '';
+        document.body.style.overflow = "";
       }
     };
 
@@ -41,7 +45,7 @@ const SidebarNavigation = ({
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = ''; // Restore scrolling on unmount
+      document.body.style.overflow = ""; // Restore scrolling on unmount
     };
   }, [isMenuOpen, setIsMenuOpen]);
 
@@ -53,7 +57,7 @@ const SidebarNavigation = ({
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-all duration-300">
       <div
         ref={sidebarRef}
-        className="w-80 h-full bg-background text-foreground ml-auto shadow-xl animate-in slide-in-from-right duration-300 overflow-y-auto"
+        className="w-96 h-full bg-background text-foreground ml-auto shadow-xl animate-in slide-in-from-right duration-300 overflow-y-auto"
       >
         <div className="p-4 flex justify-between items-center border-b">
           <Logo />
@@ -75,16 +79,25 @@ const SidebarNavigation = ({
           <ul className="space-y-2">
             <li>
               <Link
-                href="/customer/bookings"
+                href={localLinks.customer.bookingList}
                 className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Bookings
+                Bookings Management
               </Link>
             </li>
             <li>
               <Link
-                href="/customer/profile"
+                href={localLinks.customer.bookingAppointment}
+                className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Book Appointment
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={localLinks.customer.profile}
                 className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

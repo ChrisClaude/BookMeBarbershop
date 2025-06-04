@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/_hooks/useAuth";
 import { Spinner } from "@heroui/react";
+import { localLinks } from "@/_lib/enums/constant";
 
 const Page = () => {
   const router = useRouter();
@@ -18,10 +19,10 @@ const Page = () => {
 
     if (status === "authenticated") {
       if (isAdmin) {
-        destination = "/admin/bookings";
+        destination = localLinks.admin.dashboard;
         setRedirectMessage("Redirecting you to admin dashboard...");
       } else if (isCustomer) {
-        destination = "/customer/bookings";
+        destination = localLinks.customer.bookingList;
         setRedirectMessage("Redirecting you to your bookings...");
       } else {
         destination = "/unauthorized";

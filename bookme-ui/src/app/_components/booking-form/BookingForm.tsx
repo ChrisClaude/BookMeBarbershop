@@ -30,7 +30,7 @@ const BookingForm = () => {
   return (
     <>
       <h1 className="text-2xl font-bold mb-12 text-center">
-        Book your appointment
+        Book an Appointment
       </h1>
       <Form
         className="w-full justify-center items-center space-y-4"
@@ -49,8 +49,8 @@ const BookingForm = () => {
           {bookingSuccess && (
             <div className="p-4 border rounded-lg bg-green-50 text-center mb-4">
               <p className="text-green-600">
-                Success! You&apos;ll be redirected to the bookings management
-                page in a few seconds.
+                Success! You&apos;ll be redirected to the bookings list page
+                in a few seconds.
               </p>
             </div>
           )}

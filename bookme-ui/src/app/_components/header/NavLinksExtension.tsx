@@ -11,7 +11,7 @@ const NavLinksExtension = ({
 }: {
   handleOpenSidebarNav: () => void;
 }) => {
-  const { status, isAdmin } = useAuth();
+  const { status } = useAuth();
   const { language } = useLanguageState();
 
   return (
@@ -41,9 +41,7 @@ const NavLinksExtension = ({
       </div>
       {status === "authenticated" && (
         <div>
-          <Tooltip
-            content={`Navigate to ${isAdmin ? "admin" : "customer"} dashboard`}
-          >
+          <Tooltip content="Click to open sidebar">
             <button onClick={() => handleOpenSidebarNav()}>
               <CgProfile size={30} className="text-primary" />
             </button>

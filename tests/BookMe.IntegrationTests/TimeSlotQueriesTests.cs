@@ -1,5 +1,3 @@
-using System;
-
 namespace BookMe.IntegrationTests;
 
 public class TimeSlotQueryTests : BaseIntegrationTest

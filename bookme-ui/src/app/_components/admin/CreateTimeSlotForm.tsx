@@ -22,6 +22,7 @@ const CreateTimeSlotForm = ({
     startDateTime: DateValue;
     endDateTime: DateValue;
     isAllDay: boolean;
+    autoConfirmation: boolean;
   }>({
     startDateTime: toCalendarDateTime(
       selectedDate,
@@ -32,6 +33,7 @@ const CreateTimeSlotForm = ({
       now(getLocalTimeZone()).add({ hours: 2 })
     ),
     isAllDay: false,
+    autoConfirmation: true,
   });
 
   const [createTimeSlot, { isLoading, error, isSuccess }] =
@@ -56,6 +58,7 @@ const CreateTimeSlotForm = ({
           startDateTime: formData.startDateTime.toDate(getLocalTimeZone()),
           endDateTime: formData.endDateTime.toDate(getLocalTimeZone()),
           isAllDay: formData.isAllDay,
+          allowAutoConfirmation: formData.autoConfirmation,
         },
       };
 
@@ -67,14 +70,7 @@ const CreateTimeSlotForm = ({
           }
         });
     },
-    [
-      createTimeSlot,
-      errors,
-      formData.endDateTime,
-      formData.startDateTime,
-      formData.isAllDay,
-      onSuccess,
-    ]
+    [createTimeSlot, errors, formData, onSuccess]
   );
 
   useEffect(() => {
@@ -170,6 +166,21 @@ const CreateTimeSlotForm = ({
             variant="bordered"
             isReadOnly={isLoading}
           />
+
+          <Checkbox
+            id="auto-confirmation"
+            name="autoConfirmation"
+            isSelected={formData.autoConfirmation}
+            onValueChange={(isSelected) => {
+              setFormData({
+                ...formData,
+                autoConfirmation: isSelected,
+              });
+            }}
+            isDisabled={isLoading}
+          >
+            Allow auto confirmation
+          </Checkbox>
 
           <Checkbox
             id="isAllDay"

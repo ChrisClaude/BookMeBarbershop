@@ -53,7 +53,10 @@ public class CreateBookingCommandHandler(
         {
             UserId = request.UserDto.Id,
             TimeSlotId = request.TimeSlotId,
-            Status = BookingStatus.Pending,
+            Status =
+                timeSlot.AllowAutoConfirmation.HasValue && timeSlot.AllowAutoConfirmation.Value
+                    ? BookingStatus.Confirmed
+                    : BookingStatus.Pending,
         };
 
         await repository.InsertAsync(booking, false);

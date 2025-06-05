@@ -4,13 +4,16 @@ import { UserService } from "../services/user.service";
 import { CustomBaseQueryType } from "./rtk.types";
 import { transformToRTKResult } from "./rtkHelpers";
 
-export const customBaseQuery = () =>
+export const customBaseQuery =
+  () =>
   async ({ endpoint, params }: CustomBaseQueryType) => {
     switch (endpoint) {
       case "user.getUserProfile":
         return transformToRTKResult(await UserService.getUserProfile());
       case "booking.createTimeSlot":
-        return transformToRTKResult(await BookingService.createTimeSlot(params));
+        return transformToRTKResult(
+          await BookingService.createTimeSlot(params)
+        );
       case "booking.getAvailableTimeSlots":
         return transformToRTKResult(
           await BookingService.getAvailableTimeSlots({
@@ -48,6 +51,8 @@ export const customBaseQuery = () =>
         );
 
       case "booking.getBookings":
+        console.log("booking.getBookings", params.request);
+
         return transformToRTKResult(
           await BookingService.getBookings({
             ...params,
@@ -57,6 +62,7 @@ export const customBaseQuery = () =>
                 fromDateTime: new Date(
                   params.request.getBookingsDto.fromDateTime
                 ),
+                bookingStatus: params.request.getBookingsDto.bookingStatus,
               },
             },
           })

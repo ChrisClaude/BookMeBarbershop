@@ -14,15 +14,28 @@ namespace BookMeAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQueries, IBookingQueries bookingQueries) : BaseController
+public class BookingController(
+    IMediator mediator,
+    ITimeSlotQueries timeSlotQueries,
+    IBookingQueries bookingQueries
+) : BaseController
 {
     #region TimeSlots
     [HttpPost("timeslots/available")]
     [AllowAnonymous]
     [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAvailableTimeSlotsAsync(GetAvailableTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetAvailableTimeSlotsAsync(
+        GetAvailableTimeSlotsDto request,
+        [FromQuery] int pageIndex = 0,
+        [FromQuery] int pageSize = 10
+    )
     {
-        var result = await timeSlotQueries.GetAvailableTimeSlotsAsync(request.Start, request.End, pageIndex, pageSize);
+        var result = await timeSlotQueries.GetAvailableTimeSlotsAsync(
+            request.Start,
+            request.End,
+            pageIndex,
+            pageSize
+        );
 
         return result.ToActionResult();
     }
@@ -30,9 +43,18 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [HttpPost("timeslots/all")]
     [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetPagedTimeSlotsAsync(GetTimeSlotsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetPagedTimeSlotsAsync(
+        GetTimeSlotsDto request,
+        [FromQuery] int pageIndex = 0,
+        [FromQuery] int pageSize = 10
+    )
     {
-        var result = await timeSlotQueries.GetPagedTimeSlotsAsync(request.Start, request.End, pageIndex, pageSize);
+        var result = await timeSlotQueries.GetPagedTimeSlotsAsync(
+            request.Start,
+            request.End,
+            pageIndex,
+            pageSize
+        );
 
         return result.ToActionResult();
     }
@@ -44,7 +66,14 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateTimeSlotsAsync(CreateTimeSlotsDto request)
     {
-        var result = await mediator.Send(new CreateTimeSlotCommand(request.StartDateTime, request.EndDateTime, request.IsAllDay, request.AllowAutoConfirmation));
+        var result = await mediator.Send(
+            new CreateTimeSlotCommand(
+                request.StartDateTime,
+                request.EndDateTime,
+                request.IsAllDay,
+                request.AllowAutoConfirmation
+            )
+        );
 
         return result.ToActionResult();
     }
@@ -75,7 +104,6 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
         return result.ToActionResult();
     }
 
-
     [HttpPost("confirm")]
     [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType<BookingDto>(StatusCodes.Status200OK)]
@@ -93,13 +121,22 @@ public class BookingController(IMediator mediator, ITimeSlotQueries timeSlotQuer
     [ProducesResponseType<PagedListDto<BookingDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetBookingAsync([FromBody] GetBookingsDto request, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetBookingAsync(
+        [FromBody] GetBookingsDto request,
+        [FromQuery] int pageIndex = 0,
+        [FromQuery] int pageSize = 10
+    )
     {
         var user = GetContextUser();
-        var result = await bookingQueries.GetPagedBookingsAsync(user.Id, request.FromDateTime, request.BookingStatus, pageIndex, pageSize);
+        var result = await bookingQueries.GetPagedBookingsAsync(
+            user.Id,
+            request.FromDateTime,
+            request.BookingStatus,
+            pageIndex,
+            pageSize
+        );
 
         return result.ToActionResult();
     }
     #endregion
 }
-

@@ -33,7 +33,12 @@ public class BookingQueries(IRepository<Booking> repository) : IBookingQueries
         }
 
         bookings = await repository.GetAllPagedAsync(
-            query => query.Where(x => x.TimeSlot.Start >= fromDateTime && x.Status == bookingStatus && x.User.Id == userId),
+            query =>
+                query.Where(x =>
+                    x.TimeSlot.Start >= fromDateTime
+                    && x.Status == bookingStatus
+                    && x.User.Id == userId
+                ),
             includes: new[] { nameof(Booking.User), nameof(Booking.TimeSlot) },
             pageIndex: pageIndex,
             pageSize: pageSize

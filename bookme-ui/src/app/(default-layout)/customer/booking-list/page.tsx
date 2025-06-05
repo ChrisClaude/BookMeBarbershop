@@ -1,6 +1,5 @@
 "use client";
 import { withAuth } from "@/_components/auth/AuthGuard";
-import Header from "@/_components/header/Header";
 import {
   ApiBookingCancelBookingPostRequest,
   BookingDto,
@@ -9,13 +8,15 @@ import {
 import {
   BOOKING_STATUS,
   bookingStatusToNumber,
+  bookingStatusToString,
   localLinks,
   ROLES,
 } from "@/_lib/enums/constant";
 import { useCancelBookingMutation, useGetBookingsQuery } from "@/_lib/queries";
 import { GetBookingsQueryType, QueryResult } from "@/_lib/queries/rtk.types";
+import { BookingStatusType } from "@/_lib/types/common.types";
 import { Button, Chip, Pagination, Spinner, addToast } from "@heroui/react";
-import { getLocalTimeZone, now } from "@internationalized/date";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -23,9 +24,8 @@ import React, { useCallback, useEffect, useMemo } from "react";
 
 const BookingListPage = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
-  const [selectedStatus, setSelectedStatus] = React.useState<string | null>(
-    null
-  );
+  const [selectedStatus, setSelectedStatus] =
+    React.useState<BookingStatusType | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [
@@ -33,11 +33,34 @@ const BookingListPage = () => {
     { isLoading: isCancellingBooking, isSuccess: isBookingCancelled },
   ] = useCancelBookingMutation();
 
+  const getBookingsRequest = useMemo<GetBookingsQueryType>(() => {
+    const fromDateTime = today(getLocalTimeZone()).toDate(getLocalTimeZone());
+
+    return {
+      getBookingsDto: {
+        fromDateTime: fromDateTime.toISOString(),
+        bookingStatus: selectedStatus
+          ? bookingStatusToNumber(selectedStatus)
+          : null,
+      },
+      pageIndex,
+      pageSize: 10,
+    };
+  }, [pageIndex, selectedStatus]);
+
+  const {
+    data: pagedBookings,
+    isFetching,
+    error,
+  } = useGetBookingsQuery<QueryResult<PagedListDtoOfBookingDto>>(
+    getBookingsRequest
+  );
+
   useEffect(() => {
     const page = searchParams.get("page");
     if (page) setPageIndex(parseInt(page) - 1);
 
-    const status = searchParams.get("status");
+    const status = searchParams.get("status") as BookingStatusType;
     if (status) setSelectedStatus(status);
   }, [searchParams]);
 
@@ -64,24 +87,6 @@ const BookingListPage = () => {
     [router, searchParams]
   );
 
-  const request = useMemo<GetBookingsQueryType>(() => {
-    const fromDateTime = now(getLocalTimeZone()).toDate();
-
-    return {
-      getBookingsDto: {
-        fromDateTime: fromDateTime.toISOString(),
-        bookingStatus: selectedStatus
-          ? bookingStatusToNumber(selectedStatus)
-          : null,
-      },
-      pageIndex,
-      pageSize: 10,
-    };
-  }, [pageIndex, selectedStatus]);
-
-  const { data, isFetching, error } =
-    useGetBookingsQuery<QueryResult<PagedListDtoOfBookingDto>>(request);
-
   const handlePageChange = (page: number) => {
     updateQueryParams({ page: page + 1 });
     setPageIndex(page);
@@ -91,7 +96,7 @@ const BookingListPage = () => {
     (status: string | null) => {
       updateQueryParams({ status, page: 1 });
       setPageIndex(0);
-      setSelectedStatus(status);
+      setSelectedStatus(status as BookingStatusType);
     },
     [updateQueryParams]
   );
@@ -104,12 +109,12 @@ const BookingListPage = () => {
         },
       };
 
+      const cancelBookingPromise = cancelBooking(cancellationRequest);
+
       addToast({
         title: "Cancelling Booking",
         description: "Your booking is being cancelled.",
-        promise: cancelBooking({
-          request: cancellationRequest,
-        }),
+        promise: cancelBookingPromise,
       });
     },
     [cancelBooking]
@@ -117,7 +122,6 @@ const BookingListPage = () => {
 
   return (
     <>
-      <Header />
       <div className="p-4 max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">My Bookings</h1>
 
@@ -168,7 +172,7 @@ const BookingListPage = () => {
           <div className="p-4 border rounded-lg bg-red-50 text-center">
             <p className="text-red-500">Error loading bookings</p>
           </div>
-        ) : !data?.items?.length ? (
+        ) : !pagedBookings?.items?.length ? (
           <div className="p-8 border rounded-lg bg-gray-50 text-center">
             <p className="text-gray-600">No bookings found</p>
             <Button
@@ -183,7 +187,7 @@ const BookingListPage = () => {
         ) : (
           <>
             <div className="grid gap-4">
-              {data.items.map((booking) => (
+              {pagedBookings.items.map((booking) => (
                 <div
                   key={booking.id}
                   className="border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
@@ -222,7 +226,7 @@ const BookingListPage = () => {
                           : "danger"
                       }
                     >
-                      {booking.status}
+                      {bookingStatusToString(booking.status)}
                     </Chip>
                   </div>
 
@@ -253,10 +257,10 @@ const BookingListPage = () => {
               ))}
             </div>
 
-            {data.totalPages && data.totalPages > 1 && (
+            {pagedBookings.totalPages && pagedBookings.totalPages > 1 && (
               <div className="mt-6 flex justify-center">
                 <Pagination
-                  total={data.totalPages}
+                  total={pagedBookings.totalPages}
                   initialPage={pageIndex}
                   page={pageIndex + 1}
                   onChange={(page) => handlePageChange(page - 1)}

@@ -19,3 +19,5 @@ export type UserSession = Session & {
 
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
+
+export type BookingStatusType = "Pending" | "Confirmed" | "Cancelled" | "Completed";

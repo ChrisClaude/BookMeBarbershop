@@ -7,11 +7,18 @@ using MediatR;
 
 namespace BookMe.Application.Handlers;
 
-public class CancelBookingCommandHandler(IRepository<Booking> bookingRepository) : IRequestHandler<CancelBookingCommand, Result>
+public class CancelBookingCommandHandler(IRepository<Booking> bookingRepository)
+    : IRequestHandler<CancelBookingCommand, Result>
 {
-    public async Task<Result> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        CancelBookingCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var booking = await bookingRepository.GetByIdAsync(request.BookingId, new[] { nameof(Booking.User) });
+        var booking = await bookingRepository.GetByIdAsync(
+            request.BookingId,
+            new[] { nameof(Booking.User) }
+        );
 
         var errors = new List<Error>();
         if (booking == null)
@@ -21,12 +28,17 @@ public class CancelBookingCommandHandler(IRepository<Booking> bookingRepository)
 
         if (booking != null)
         {
-
             if (booking.User.Id != request.UserDto.Id)
-                errors.Add(Error.NotAuthorized($"User {request.UserDto.Id} is not authorized to cancel booking {request.BookingId}"));
+                errors.Add(
+                    Error.NotAuthorized(
+                        $"User {request.UserDto.Id} is not authorized to cancel booking {request.BookingId}"
+                    )
+                );
 
             if (booking.Status == BookingStatus.Cancelled)
-                errors.Add(Error.InvalidArgument($"Booking {request.BookingId} is already cancelled"));
+                errors.Add(
+                    Error.InvalidArgument($"Booking {request.BookingId} is already cancelled")
+                );
         }
 
         if (errors.Any())

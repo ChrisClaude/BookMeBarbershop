@@ -15,6 +15,7 @@ const SidebarNavigation = ({
   isMenuOpen: boolean;
   setIsMenuOpen: (value: boolean) => void;
 }) => {
+  const { isAdmin, isCustomer } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const { logout, userProfile } = useAuth();
 
@@ -77,33 +78,68 @@ const SidebarNavigation = ({
 
         <nav className="p-4">
           <ul className="space-y-2">
-            <li>
-              <Link
-                href={localLinks.customer.bookingList}
-                className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Bookings Management
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={localLinks.customer.bookingAppointment}
-                className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Book Appointment
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={localLinks.customer.profile}
-                className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Profile
-              </Link>
-            </li>
+            {isAdmin && (
+              <>
+                <li>
+                  <Link
+                    href={localLinks.admin.dashboard}
+                    className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={localLinks.admin.users}
+                    className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Manage users
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={localLinks.admin.bookings}
+                    className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Manage availability
+                  </Link>
+                </li>
+              </>
+            )}
+            {isCustomer && (
+              <>
+                <li>
+                  <Link
+                    href={localLinks.customer.bookingList}
+                    className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Bookings Management
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={localLinks.customer.bookingAppointment}
+                    className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Book Appointment
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={localLinks.customer.profile}
+                    className="block p-3 rounded-lg hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                </li>
+              </>
+            )}
             <li className="pt-4 mt-4 border-t">
               <Button
                 onPress={() => logout()}

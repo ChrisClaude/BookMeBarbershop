@@ -219,10 +219,10 @@ const BookingListPage = () => {
                           ? "warning"
                           : booking.status ===
                             bookingStatusToNumber(BOOKING_STATUS.CONFIRMED)
-                          ? "primary"
+                          ? "success"
                           : booking.status ===
                             bookingStatusToNumber(BOOKING_STATUS.COMPLETED)
-                          ? "success"
+                          ? "primary"
                           : "danger"
                       }
                     >

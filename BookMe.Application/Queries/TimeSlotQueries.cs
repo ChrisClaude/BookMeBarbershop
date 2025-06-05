@@ -17,7 +17,16 @@ public class TimeSlotQueries(IRepository<TimeSlot> repository) : ITimeSlotQuerie
     )
     {
         var timeSlots = await repository.GetAllPagedAsync(
-            query => query.Where(x => x.Start >= start && x.End <= end && !x.Bookings.Any(x => x.Status == BookingStatus.Pending || x.Status == BookingStatus.Confirmed)),
+            query =>
+                query
+                    .Where(x =>
+                        x.Start >= start
+                        && x.End <= end
+                        && !x.Bookings.Any(x =>
+                            x.Status == BookingStatus.Pending || x.Status == BookingStatus.Confirmed
+                        )
+                    )
+                    .OrderBy(x => x.Start),
             pageIndex: pageIndex,
             pageSize: pageSize
         );
@@ -33,7 +42,7 @@ public class TimeSlotQueries(IRepository<TimeSlot> repository) : ITimeSlotQuerie
     )
     {
         var timeSlots = await repository.GetAllPagedAsync(
-            query => query.Where(x => x.Start >= start && x.End <= end),
+            query => query.Where(x => x.Start >= start && x.End <= end).OrderBy(x => x.Start),
             includes: new[] { nameof(TimeSlot.Bookings) },
             pageIndex: pageIndex,
             pageSize: pageSize

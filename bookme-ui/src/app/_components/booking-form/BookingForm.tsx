@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Button, DatePicker, DateValue, Form } from "@heroui/react";
+import { Button, Calendar, DatePicker, DateValue, Form } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import PhoneInput from "react-phone-number-input";
 import TimeSlotListSlider from "../customer/TimeSlotListSlider";
@@ -49,8 +49,8 @@ const BookingForm = () => {
           {bookingSuccess && (
             <div className="p-4 border rounded-lg bg-green-50 text-center mb-4">
               <p className="text-green-600">
-                Success! You&apos;ll be redirected to the bookings list page
-                in a few seconds.
+                Success! You&apos;ll be redirected to the bookings list page in
+                a few seconds.
               </p>
             </div>
           )}
@@ -97,8 +97,8 @@ const BookingForm = () => {
 
           {!isPhoneNumberVerificationProcess && (
             <>
-              <DatePicker
-                aria-label="Date (Min Date Value)"
+              <Calendar
+                aria-label="appointment-date"
                 //@ts-expect-error there seems to be a type issue
                 defaultValue={today(getLocalTimeZone())}
                 minValue={today(getLocalTimeZone())}
@@ -115,6 +115,7 @@ const BookingForm = () => {
                     bookingDate: value,
                   });
                 }}
+                visibleMonths={2}
               />
 
               <TimeSlotListSlider
@@ -127,7 +128,6 @@ const BookingForm = () => {
                 }}
                 selectedTimeSlot={formData.selectedTimeSlot}
               />
-
               <Button
                 className="w-full"
                 color="primary"

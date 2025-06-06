@@ -6,7 +6,7 @@ export const ROLES: Record<"ADMIN" | "CUSTOMER", UserType> = {
   CUSTOMER: "Customer",
 };
 
-export const BOOKING_STATUS = {
+export const BOOKING_STATUS : Record<string, BookingStatusType> = {
   PENDING: "Pending",
   CONFIRMED: "Confirmed",
   CANCELLED: "Cancelled",

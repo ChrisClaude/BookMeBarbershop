@@ -25,7 +25,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 const BookingListPage = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
   const [selectedStatus, setSelectedStatus] =
-    React.useState<BookingStatusType | null>(null);
+    React.useState<BookingStatusType | null>(BOOKING_STATUS.CONFIRMED);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [

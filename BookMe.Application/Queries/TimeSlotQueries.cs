@@ -50,4 +50,19 @@ public class TimeSlotQueries(IRepository<TimeSlot> repository) : ITimeSlotQuerie
 
         return Result.Success(timeSlots.MapToDto());
     }
+
+    public async Task<Result<GetAvailableDatesResponseDto>> GetAvailableDatesAsync(
+        DateTimeOffset start,
+        DateTimeOffset end
+    )
+    {
+        var timeSlots = await repository.GetAllWithSelectorAsync(
+            x => x.Start.Date,
+            query => query.Where(x => x.Start >= start && x.End <= end).OrderBy(x => x.Start)
+        );
+
+        var dates = timeSlots.Distinct();
+
+        return Result.Success(new GetAvailableDatesResponseDto { Dates = dates });
+    }
 }

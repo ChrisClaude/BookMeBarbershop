@@ -41,7 +41,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         {
             CacheType.Redis => true,
             CacheType.SqlServer => true,
-            _ => false
+            _ => false,
         };
     }
 
@@ -136,6 +136,37 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
             return await getEntitiesAsync();
 
         if (await _cacheManager.GetAsync(cacheKey, out IList<TEntity> entities))
+            return entities;
+
+        return await getEntitiesAsync();
+    }
+
+    public virtual async Task<IList<TResult>> GetAllWithSelectorAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    )
+    {
+        async Task<IList<TResult>> getEntitiesAsync()
+        {
+            var query = Table;
+            if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
+            }
+
+            query = func != null ? func(query) : query;
+            query = Include(query, includes);
+
+            return await query.Select(selector).ToListAsync();
+        }
+
+        if (cacheKey == null)
+            return await getEntitiesAsync();
+
+        if (await _cacheManager.GetAsync(cacheKey, out IList<TResult> entities))
             return entities;
 
         return await getEntitiesAsync();

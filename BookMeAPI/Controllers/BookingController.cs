@@ -40,6 +40,16 @@ public class BookingController(
         return result.ToActionResult();
     }
 
+    [HttpPost("timeslots/available/dates")]
+    [AllowAnonymous]
+    [ProducesResponseType<GetAvailableDatesResponseDto>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAvailableDatesAsync(GetAvailableDatesDto request)
+    {
+        var result = await timeSlotQueries.GetAvailableDatesAsync(request.Start, request.End);
+
+        return result.ToActionResult();
+    }
+
     [HttpPost("timeslots/all")]
     [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType<PagedListDto<TimeSlotDto>>(StatusCodes.Status200OK)]

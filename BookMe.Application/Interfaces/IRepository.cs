@@ -33,6 +33,14 @@ public interface IRepository<TEntity>
         bool includeDeleted = true
     );
 
+    Task<IList<TResult>> GetAllWithSelectorAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    );
+
     Task<IPagedList<TEntity>> GetAllPagedAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
         string[] includes = null,

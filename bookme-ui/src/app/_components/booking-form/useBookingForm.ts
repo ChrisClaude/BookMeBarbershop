@@ -4,6 +4,8 @@ import {
   isNullOrWhiteSpace,
   toE164,
   validatePhoneNumber,
+  isNotNullOrUndefined,
+  isNullOrUndefined,
 } from "@/_lib/utils/common.utils";
 import { DateValue } from "@heroui/react";
 import { getLocalTimeZone, now, parseDate } from "@internationalized/date";
@@ -194,12 +196,12 @@ const useBookingForm = () => {
     [createBooking]
   );
 
-  const canShowCalendar = useMemo(() => {
+  const canShowCalendar = useMemo<boolean>(() => {
     return (
       !isFetchingAvailableDates &&
-      !errorFetchingAvailableDates &&
-      availableDates &&
-      availableDates.dates
+      isNullOrUndefined(errorFetchingAvailableDates) &&
+      isNotNullOrUndefined(availableDates) &&
+      isNotNullOrUndefined(availableDates.dates)
     );
   }, [isFetchingAvailableDates, errorFetchingAvailableDates, availableDates]);
 

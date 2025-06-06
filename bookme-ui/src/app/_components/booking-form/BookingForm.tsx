@@ -20,6 +20,10 @@ const BookingForm = () => {
     isCreatingBooking,
     bookingSuccess,
     showConfirmation,
+    mappedAvailableDates,
+    isFetchingAvailableDates,
+    errorFetchingAvailableDates,
+    canShowCalendar,
     onSubmit,
     handleCreateBooking,
     setShowConfirmation,
@@ -92,7 +96,18 @@ console.log("formData", formData);
 
           {!isPhoneNumberVerificationProcess && (
             <>
-              <CalendarContainer />
+              <CalendarContainer
+                mappedAvailableDates={mappedAvailableDates}
+                updateBookingDate={(date) => {
+                  setFormData({
+                    ...formData,
+                    bookingDate: date,
+                  });
+                }}
+                canShowCalendar={canShowCalendar}
+                isFetchingAvailableDates={isFetchingAvailableDates}
+                errorFetchingAvailableDates={errorFetchingAvailableDates}
+              />
 
               <TimeSlotListSlider
                 selectedDate={formData.bookingDate}

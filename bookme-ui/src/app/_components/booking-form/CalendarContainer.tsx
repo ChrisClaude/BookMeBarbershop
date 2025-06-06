@@ -1,18 +1,21 @@
 import { Calendar } from "@heroui/react";
 import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 import React from "react";
-import useBookingForm from "./useBookingForm";
 import { binarySearch } from "@/_lib/utils/common.utils";
 
-const CalendarContainer = () => {
-  const {
-    formData,
-    setFormData,
-    mappedAvailableDates,
-    canShowCalendar,
-    isFetchingAvailableDates,
-    errorFetchingAvailableDates,
-  } = useBookingForm();
+const CalendarContainer = ({
+  mappedAvailableDates,
+  updateBookingDate,
+  canShowCalendar,
+  isFetchingAvailableDates,
+  errorFetchingAvailableDates,
+}: {
+  mappedAvailableDates: DateValue[];
+  updateBookingDate: (date: DateValue) => void;
+  canShowCalendar: boolean;
+  isFetchingAvailableDates: boolean;
+  errorFetchingAvailableDates: string[] | undefined;
+}) => {
 
   if (errorFetchingAvailableDates) {
     return (
@@ -35,16 +38,6 @@ const CalendarContainer = () => {
       label="Choose a date to see available time slots"
       labelPlacement="outside"
       name="bookingDate"
-      onFocusChange={(value: DateValue | null) => {
-        if (!value) {
-          return;
-        }
-
-        setFormData({
-          ...formData,
-          focusedDate: value,
-        });
-      }}
       isDateUnavailable={(date) => {
         return !binarySearch(mappedAvailableDates, date);
       }}
@@ -53,10 +46,7 @@ const CalendarContainer = () => {
           return;
         }
 
-        setFormData({
-          ...formData,
-          bookingDate: value,
-        });
+        updateBookingDate(value);
       }}
       visibleMonths={2}
     />

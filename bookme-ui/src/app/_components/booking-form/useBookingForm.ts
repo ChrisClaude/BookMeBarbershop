@@ -70,7 +70,7 @@ const useBookingForm = () => {
     useMemo<GetAllAvailableDatesQueryType>(() => {
       const date = formData.focusedDate.toDate(getLocalTimeZone());
       const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
-      const endDate = new Date(date.getFullYear(), date.getMonth() + 4, 0);
+      const endDate = new Date(date.getFullYear(), date.getMonth() + 6, 0);
 
       return {
         getAvailableDatesDto: {

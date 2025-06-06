@@ -20,6 +20,8 @@ import type {
   CancelBookingDto,
   ConfirmBookingDto,
   CreateTimeSlotsDto,
+  GetAvailableDatesDto,
+  GetAvailableDatesResponseDto,
   GetAvailableTimeSlotsDto,
   GetBookingsDto,
   GetTimeSlotsDto,
@@ -39,6 +41,10 @@ import {
     ConfirmBookingDtoToJSON,
     CreateTimeSlotsDtoFromJSON,
     CreateTimeSlotsDtoToJSON,
+    GetAvailableDatesDtoFromJSON,
+    GetAvailableDatesDtoToJSON,
+    GetAvailableDatesResponseDtoFromJSON,
+    GetAvailableDatesResponseDtoToJSON,
     GetAvailableTimeSlotsDtoFromJSON,
     GetAvailableTimeSlotsDtoToJSON,
     GetBookingsDtoFromJSON,
@@ -77,6 +83,10 @@ export interface ApiBookingTimeslotsAllPostRequest {
     getTimeSlotsDto: GetTimeSlotsDto;
     pageIndex?: number;
     pageSize?: number;
+}
+
+export interface ApiBookingTimeslotsAvailableDatesPostRequest {
+    getAvailableDatesDto: GetAvailableDatesDto;
 }
 
 export interface ApiBookingTimeslotsAvailablePostRequest {
@@ -277,6 +287,40 @@ export class BookingApi extends runtime.BaseAPI {
      */
     async apiBookingTimeslotsAllPost(requestParameters: ApiBookingTimeslotsAllPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagedListDtoOfTimeSlotDto> {
         const response = await this.apiBookingTimeslotsAllPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiBookingTimeslotsAvailableDatesPostRaw(requestParameters: ApiBookingTimeslotsAvailableDatesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetAvailableDatesResponseDto>> {
+        if (requestParameters['getAvailableDatesDto'] == null) {
+            throw new runtime.RequiredError(
+                'getAvailableDatesDto',
+                'Required parameter "getAvailableDatesDto" was null or undefined when calling apiBookingTimeslotsAvailableDatesPost().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/api/Booking/timeslots/available/dates`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GetAvailableDatesDtoToJSON(requestParameters['getAvailableDatesDto']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetAvailableDatesResponseDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiBookingTimeslotsAvailableDatesPost(requestParameters: ApiBookingTimeslotsAvailableDatesPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetAvailableDatesResponseDto> {
+        const response = await this.apiBookingTimeslotsAvailableDatesPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

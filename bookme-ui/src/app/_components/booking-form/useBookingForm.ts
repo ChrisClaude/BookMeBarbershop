@@ -6,17 +6,26 @@ import {
   validatePhoneNumber,
 } from "@/_lib/utils/common.utils";
 import { DateValue } from "@heroui/react";
-import { getLocalTimeZone, now } from "@internationalized/date";
+import { getLocalTimeZone, now, parseDate } from "@internationalized/date";
 import { E164Number } from "libphonenumber-js";
-import React, { useCallback, useEffect, useState } from "react";
-import { ApiBookingBookTimeslotPostRequest, TimeSlotDto } from "@/_lib/codegen";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ApiBookingBookTimeslotPostRequest,
+  GetAvailableDatesResponseDto,
+  TimeSlotDto,
+} from "@/_lib/codegen";
 import {
   useCreateBookingMutation,
+  useGetAvailableDatesQuery,
   useVerifyCodeNumberMutation,
   useVerifyPhoneNumberMutation,
 } from "@/_lib/queries";
 import { useRouter } from "next/navigation";
 import { localLinks } from "@/_lib/enums/constant";
+import {
+  GetAllAvailableDatesQueryType,
+  QueryResult,
+} from "@/_lib/queries/rtk.types";
 
 const useBookingForm = () => {
   const router = useRouter();
@@ -29,11 +38,13 @@ const useBookingForm = () => {
     phoneNumber: E164Number | undefined;
     bookingDate: DateValue;
     selectedTimeSlot: TimeSlotDto | undefined;
+    focusedDate: DateValue;
     verificationCode: string | undefined;
   }>({
     phoneNumber: toE164(userProfile?.phoneNumber ?? ""),
     bookingDate: now(getLocalTimeZone()),
     selectedTimeSlot: undefined,
+    focusedDate: now(getLocalTimeZone()),
     verificationCode: undefined,
   });
 
@@ -52,6 +63,28 @@ const useBookingForm = () => {
 
   const [createBooking, { isLoading: isCreatingBooking }] =
     useCreateBookingMutation();
+
+  const getAvailableDatesRequest =
+    useMemo<GetAllAvailableDatesQueryType>(() => {
+      const date = formData.focusedDate.toDate(getLocalTimeZone());
+      const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+      const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+      return {
+        getAvailableDatesDto: {
+          start: startDate.toISOString(),
+          end: endDate.toISOString(),
+        },
+      };
+    }, [formData.focusedDate]);
+
+  const {
+    data: availableDates,
+    isFetching: isFetchingAvailableDates,
+    error: errorFetchingAvailableDates,
+  } = useGetAvailableDatesQuery<QueryResult<GetAvailableDatesResponseDto>>(
+    getAvailableDatesRequest
+  );
 
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -161,6 +194,24 @@ const useBookingForm = () => {
     [createBooking]
   );
 
+  const canShowCalendar = useMemo(() => {
+    return (
+      !isFetchingAvailableDates &&
+      !errorFetchingAvailableDates &&
+      availableDates &&
+      availableDates.dates
+    );
+  }, [isFetchingAvailableDates, errorFetchingAvailableDates, availableDates]);
+
+  const mappedAvailableDates = useMemo<DateValue[]>(() => {
+    return (
+      availableDates?.dates?.map((x) => {
+        const date = new Date(x);
+        return parseDate(date.toISOString().split("T")[0]);
+      }) ?? []
+    );
+  }, [availableDates]);
+
   return {
     errors,
     formData,
@@ -172,6 +223,10 @@ const useBookingForm = () => {
     isCreatingBooking,
     bookingSuccess,
     showConfirmation,
+    mappedAvailableDates,
+    isFetchingAvailableDates,
+    errorFetchingAvailableDates,
+    canShowCalendar,
     setFormData,
     onSubmit,
     handleVerifyCode,

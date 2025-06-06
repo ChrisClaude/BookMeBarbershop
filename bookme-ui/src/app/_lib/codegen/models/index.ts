@@ -5,6 +5,8 @@ export * from './BookingDto';
 export * from './CancelBookingDto';
 export * from './ConfirmBookingDto';
 export * from './CreateTimeSlotsDto';
+export * from './GetAvailableDatesDto';
+export * from './GetAvailableDatesResponseDto';
 export * from './GetAvailableTimeSlotsDto';
 export * from './GetBookingsDto';
 export * from './GetTimeSlotsDto';

@@ -3,9 +3,11 @@ import {
   ApiBookingCancelBookingPostRequest,
   ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
+  ApiBookingTimeslotsAvailableDatesPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
   BookingDto,
+  GetAvailableDatesResponseDto,
   PagedListDtoOfBookingDto,
   PagedListDtoOfTimeSlotDto,
   TimeSlotDto,
@@ -124,6 +126,40 @@ export class BookingService {
     }
   }
 
+  public static async getAvailableDates({
+    request,
+  }: {
+    request: ApiBookingTimeslotsAvailableDatesPostRequest;
+  }): Promise<Result<GetAvailableDatesResponseDto>> {
+    try {
+      const response =
+        await this.bookMeApi.apiBookingTimeslotsAvailableDatesPostRaw(request);
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as GetAvailableDatesResponseDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching available dates",
+        "GetAvailableDatesError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching available dates"],
+      };
+    }
+  }
+
   public static async getAllTimeSlots({
     request,
   }: {
@@ -200,7 +236,9 @@ export class BookingService {
     request: ApiBookingCancelBookingPostRequest;
   }): Promise<Result<boolean>> {
     try {
-      const response = await this.bookMeApi.apiBookingCancelBookingPostRaw(request);
+      const response = await this.bookMeApi.apiBookingCancelBookingPostRaw(
+        request
+      );
 
       if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();

@@ -92,6 +92,20 @@ export const customBaseQuery =
           })
         );
 
+      case "booking.getAvailableDates":
+        return transformToRTKResult(
+          await BookingService.getAvailableDates({
+            ...params,
+            request: {
+              ...params.request,
+              getAvailableDatesDto: {
+                start: new Date(params.request.getAvailableDatesDto.start),
+                end: new Date(params.request.getAvailableDatesDto.end),
+              },
+            },
+          })
+        );
+
       default:
         throw new Error(`Unknown endpoint: ${endpoint}`);
     }

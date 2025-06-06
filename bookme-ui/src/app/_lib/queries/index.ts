@@ -38,6 +38,13 @@ export const api = createApi({
       }),
       providesTags: ["TimeSlots"],
     }),
+    getAvailableDates: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getAvailableDates",
+        params: { request },
+      }),
+      providesTags: ["TimeSlots"],
+    }),
 
     createBooking: builder.mutation({
       query: (request) => ({
@@ -92,4 +99,5 @@ export const {
   useCreateBookingMutation,
   useCancelBookingMutation,
   useGetBookingsQuery,
+  useGetAvailableDatesQuery,
 } = api;

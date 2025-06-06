@@ -8,6 +8,8 @@ models/BookingDto.ts
 models/CancelBookingDto.ts
 models/ConfirmBookingDto.ts
 models/CreateTimeSlotsDto.ts
+models/GetAvailableDatesDto.ts
+models/GetAvailableDatesResponseDto.ts
 models/GetAvailableTimeSlotsDto.ts
 models/GetBookingsDto.ts
 models/GetTimeSlotsDto.ts

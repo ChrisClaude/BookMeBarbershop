@@ -1,33 +1,17 @@
-import { TimeSlotDto } from "@/_lib/codegen";
-import { Button, DateValue } from "@heroui/react";
-import { E164Number } from "libphonenumber-js";
+import { Button } from "@heroui/react";
 import React from "react";
+import useBookingForm from "./useBookingForm";
 
-const PhoneVerificationFormFragment = ({
-  errors,
-  formData,
-  setFormData,
-  handleVerifyCode,
-  isVerifyingCode,
-}: {
-  errors: { field: string; message: string }[];
-  formData: {
-    phoneNumber: E164Number | undefined;
-    bookingDate: DateValue;
-    selectedTimeSlot: TimeSlotDto | undefined;
-    verificationCode: string | undefined;
-  };
-  setFormData: React.Dispatch<
-    React.SetStateAction<{
-      phoneNumber: E164Number | undefined;
-      bookingDate: DateValue;
-      selectedTimeSlot: TimeSlotDto | undefined;
-      verificationCode: string | undefined;
-    }>
-  >;
-  handleVerifyCode: () => void;
-  isVerifyingCode: boolean;
-}) => {
+const PhoneVerificationFormFragment = () => {
+
+  const {
+    errors,
+    formData,
+    setFormData,
+    handleVerifyCode,
+    isVerifyingCode,
+  } = useBookingForm();
+
   return (
     <>
       <div className="flex flex-col gap-2">

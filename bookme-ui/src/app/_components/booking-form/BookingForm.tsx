@@ -1,17 +1,12 @@
 "use client";
-import React, { useMemo } from "react";
-import { Button, Calendar, Form } from "@heroui/react";
-import {
-  getLocalTimeZone,
-  today,
-  DateValue,
-  parseDate,
-} from "@internationalized/date";
+import React from "react";
+import { Button, Form } from "@heroui/react";
 import PhoneInput from "react-phone-number-input";
 import TimeSlotListSlider from "../customer/TimeSlotListSlider";
 import useBookingForm from "./useBookingForm";
 import BookingConfirmationDialog from "./BookingConfirmationDialog";
 import PhoneVerificationFormFragment from "./PhoneVerificationFragment";
+import CalendarContainer from "./CalendarContainer";
 
 const BookingForm = () => {
   const {
@@ -22,31 +17,13 @@ const BookingForm = () => {
     isPhoneNumberVerificationProcess,
     isVerifyingPhoneNumber,
     isCodeSent,
-    isVerifyingCode,
     isCreatingBooking,
     bookingSuccess,
     showConfirmation,
     onSubmit,
-    handleVerifyCode,
     handleCreateBooking,
     setShowConfirmation,
   } = useBookingForm();
-
-  const mockAvailableDates = useMemo<DateValue[]>(() => {
-    const today = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
-    const nextWeek = new Date();
-    nextWeek.setDate(today.getDate() + 7);
-
-    const dates: DateValue[] = [];
-
-    dates.push(parseDate(today.toISOString().split("T")[0]));
-    dates.push(parseDate(tomorrow.toISOString().split("T")[0]));
-    dates.push(parseDate(nextWeek.toISOString().split("T")[0]));
-
-    return dates;
-  }, []);
 
   return (
     <>
@@ -107,40 +84,12 @@ const BookingForm = () => {
             )}
           </div>
           {isPhoneNumberVerificationProcess && (
-            <PhoneVerificationFormFragment
-              errors={errors}
-              formData={formData}
-              setFormData={setFormData}
-              handleVerifyCode={handleVerifyCode}
-              isVerifyingCode={isVerifyingCode}
-            />
+            <PhoneVerificationFormFragment />
           )}
 
           {!isPhoneNumberVerificationProcess && (
             <>
-              <Calendar
-                aria-label="appointment-date"
-                //@ts-expect-error there seems to be a type issue
-                defaultValue={today(getLocalTimeZone())}
-                minValue={today(getLocalTimeZone())}
-                label="Choose a date to see available time slots"
-                labelPlacement="outside"
-                name="bookingDate"
-                isDateUnavailable={(date) => {
-                  return !mockAvailableDates.some((x) => x.compare(date) === 0);
-                }}
-                onChange={(value: DateValue | null) => {
-                  if (!value) {
-                    return;
-                  }
-
-                  setFormData({
-                    ...formData,
-                    bookingDate: value,
-                  });
-                }}
-                visibleMonths={2}
-              />
+              <CalendarContainer />
 
               <TimeSlotListSlider
                 selectedDate={formData.bookingDate}

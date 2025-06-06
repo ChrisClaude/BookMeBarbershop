@@ -3,6 +3,7 @@ import {
   ApiBookingCancelBookingPostRequest,
   ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
+  ApiBookingTimeslotsAvailableDatesPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
   ApiPhoneVerificationSendCodePostRequest,
@@ -70,6 +71,12 @@ export type CustomBaseQueryType =
       params: {
         request: ApiBookingCancelBookingPostRequest;
       };
+    }
+  | {
+      endpoint: "booking.getAvailableDates";
+      params: {
+        request: GetAllAvailableDatesQueryType;
+      };
     };
 
 export type QueryResult<T> = {
@@ -96,6 +103,19 @@ export type GetAllTimeSlotsQueryType = Omit<
 > & {
   getTimeSlotsDto: Omit<
     ApiBookingTimeslotsAllPostRequest["getTimeSlotsDto"],
+    "start" | "end"
+  > & {
+    start: string; // ISO string - redux cannot serialize date objects
+    end: string; // ISO string
+  };
+};
+
+export type GetAllAvailableDatesQueryType = Omit<
+  ApiBookingTimeslotsAvailableDatesPostRequest,
+  "getAvailableDatesDto"
+> & {
+  getAvailableDatesDto: Omit<
+    ApiBookingTimeslotsAvailableDatesPostRequest["getAvailableDatesDto"],
     "start" | "end"
   > & {
     start: string; // ISO string - redux cannot serialize date objects

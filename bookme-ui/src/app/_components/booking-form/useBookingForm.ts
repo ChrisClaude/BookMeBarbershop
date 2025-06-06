@@ -208,8 +208,7 @@ const useBookingForm = () => {
   const mappedAvailableDates = useMemo<DateValue[]>(() => {
     return (
       availableDates?.dates?.map((x) => {
-        const date = new Date(x);
-        return parseDate(date.toISOString().split("T")[0]);
+        return parseDate(x.toString().split("T")[0]);
       }) ?? []
     );
   }, [availableDates]);

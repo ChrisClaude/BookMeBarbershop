@@ -6,6 +6,7 @@ import {
   isValidPhoneNumber,
   parsePhoneNumberWithError,
 } from "libphonenumber-js";
+import { DateValue } from "@heroui/react";
 
 export const isNullOrUndefined = <T>(
   value: T | null | undefined
@@ -105,4 +106,22 @@ export const toE164 = (phone: string): E164Number | undefined => {
     logWarning("Invalid phone number", "toE164", error);
   }
   return undefined;
+};
+
+export const binarySearch = (arr: DateValue[], target: DateValue): boolean => {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (arr[mid].compare(target) === 0) {
+      return true;
+    } else if (arr[mid].compare(target) < 0) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return false;
 };

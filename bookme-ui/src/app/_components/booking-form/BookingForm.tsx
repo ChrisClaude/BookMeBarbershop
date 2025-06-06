@@ -25,6 +25,9 @@ const BookingForm = () => {
     setShowConfirmation,
   } = useBookingForm();
 
+console.log("formData", formData);
+
+
   return (
     <>
       <h1 className="text-2xl font-bold mb-12 text-center">

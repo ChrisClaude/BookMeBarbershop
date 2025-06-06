@@ -5,9 +5,11 @@ import {
   isNullOrWhiteSpace,
   isNotNullOrWhiteSpace,
   getErrorsFromApiResult,
+  binarySearch,
 } from "../common.utils";
 
 import { ModelError as ApiError } from "@/_lib/codegen";
+import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 
 describe("common.utils", () => {
   describe("isNullOrUndefined", () => {
@@ -138,6 +140,34 @@ describe("common.utils", () => {
       expect(getErrorsFromApiResult(result)).toEqual([
         "An unknown error occurred.",
       ]);
+    });
+  });
+
+  describe("binarySearch", () => {
+    it("should return true if target is found", () => {
+      const arr: DateValue[] = [];
+      const date1 = today(getLocalTimeZone()).add({ days: 5 });
+      const date2 = today(getLocalTimeZone()).add({ days: 10 });
+      const date3 = today(getLocalTimeZone()).add({ days: 17 });
+      const date4 = today(getLocalTimeZone()).add({ days: 19 });
+      const date5 = today(getLocalTimeZone()).add({ days: 21 });
+      const date6 = today(getLocalTimeZone()).add({ days: 26 });
+      arr.push(date1, date2, date3, date4, date5, date6);
+      const target = today(getLocalTimeZone()).add({ days: 17 });
+      expect(binarySearch(arr, target)).toBe(true);
+    });
+
+    it("should return false if target is not found", () => {
+      const arr: DateValue[] = [];
+      const date1 = today(getLocalTimeZone()).add({ days: 5 });
+      const date2 = today(getLocalTimeZone()).add({ days: 10 });
+      const date3 = today(getLocalTimeZone()).add({ days: 17 });
+      const date4 = today(getLocalTimeZone()).add({ days: 19 });
+      const date5 = today(getLocalTimeZone()).add({ days: 21 });
+      const date6 = today(getLocalTimeZone()).add({ days: 26 });
+      arr.push(date1, date2, date3, date4, date5, date6);
+      const target = today(getLocalTimeZone()).add({ days: 20 });
+      expect(binarySearch(arr, target)).toBe(false);
     });
   });
 });

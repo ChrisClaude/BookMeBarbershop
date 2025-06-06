@@ -2,6 +2,7 @@ import { Calendar } from "@heroui/react";
 import { DateValue, getLocalTimeZone, today } from "@internationalized/date";
 import React from "react";
 import useBookingForm from "./useBookingForm";
+import { binarySearch } from "@/_lib/utils/common.utils";
 
 const CalendarContainer = () => {
   const {
@@ -45,7 +46,7 @@ const CalendarContainer = () => {
         });
       }}
       isDateUnavailable={(date) => {
-        return mappedAvailableDates.some((x) => x.compare(date) === 0);
+        return !binarySearch(mappedAvailableDates, date);
       }}
       onChange={(value: DateValue | null) => {
         if (!value) {

@@ -24,13 +24,12 @@ const BookingForm = () => {
     isFetchingAvailableDates,
     errorFetchingAvailableDates,
     canShowCalendar,
+    isVerifyingCode,
     onSubmit,
+    handleVerifyCode,
     handleCreateBooking,
     setShowConfirmation,
   } = useBookingForm();
-
-console.log("formData", formData);
-
 
   return (
     <>
@@ -91,7 +90,20 @@ console.log("formData", formData);
             )}
           </div>
           {isPhoneNumberVerificationProcess && (
-            <PhoneVerificationFormFragment />
+            <PhoneVerificationFormFragment
+              errors={errors}
+              formData={formData}
+              updateVerificationCode={(verificationCode) => {
+                setFormData((prevState) => {
+                  return {
+                    ...prevState,
+                    verificationCode: verificationCode,
+                  };
+                });
+              }}
+              handleVerifyCode={handleVerifyCode}
+              isVerifyingCode={isVerifyingCode}
+            />
           )}
 
           {!isPhoneNumberVerificationProcess && (

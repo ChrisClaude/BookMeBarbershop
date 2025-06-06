@@ -1,17 +1,19 @@
 import { Button } from "@heroui/react";
 import React from "react";
-import useBookingForm from "./useBookingForm";
 
-const PhoneVerificationFormFragment = () => {
-
-  const {
-    errors,
-    formData,
-    setFormData,
-    handleVerifyCode,
-    isVerifyingCode,
-  } = useBookingForm();
-
+const PhoneVerificationFormFragment = ({
+  errors,
+  formData,
+  updateVerificationCode,
+  handleVerifyCode,
+  isVerifyingCode,
+}: {
+  errors: { field: string; message: string }[];
+  formData: { verificationCode: string | undefined };
+  updateVerificationCode: (verificationCode: string) => void;
+  handleVerifyCode: () => void;
+  isVerifyingCode: boolean;
+}) => {
   return (
     <>
       <div className="flex flex-col gap-2">
@@ -23,10 +25,7 @@ const PhoneVerificationFormFragment = () => {
           placeholder="Enter verification code"
           value={formData.verificationCode || ""}
           onChange={(e) => {
-            setFormData((prevState) => ({
-              ...prevState,
-              verificationCode: e.target.value,
-            }));
+            updateVerificationCode(e.target.value);
           }}
         />
         {errors.find((error) => error.field === "verification-code") && (

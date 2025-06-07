@@ -91,6 +91,10 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(1);
+
+        // clean up
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -238,6 +242,10 @@ public class BookingTests : BaseIntegrationTest
         bookings.Should().HaveCount(2);
         bookings.Where(booking => booking.Status == BookingStatus.Cancelled).Should().HaveCount(1);
         bookings.Where(booking => booking.Status == BookingStatus.Pending).Should().HaveCount(1);
+
+        // clean up
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -280,6 +288,10 @@ public class BookingTests : BaseIntegrationTest
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(1);
+
+        // clean up
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]

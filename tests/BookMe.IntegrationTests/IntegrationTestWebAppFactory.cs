@@ -77,10 +77,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<BookMeContext>();
 
-            // Use EnsureCreated only if needed
-            if (!await dbContext.Database.CanConnectAsync())
+            await dbContext.Database.EnsureCreatedAsync();
+
+            if (!await dbContext.Users.AnyAsync())
             {
-                dbContext.Database.EnsureCreated();
                 SeedData.SeedUsers(dbContext);
             }
         }

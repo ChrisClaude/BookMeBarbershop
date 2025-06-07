@@ -31,7 +31,7 @@ public class UserTests : BaseIntegrationTest
     public async Task GetOrCreateUserCommandHandler_ShouldCreateACustomerUser_WhenUserDoesNotExistAsync()
     {
         // Arrange
-        var email = "test.user@example.com";
+        var email = "test.user@eagle.com";
         await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
 
         // Act
@@ -52,7 +52,7 @@ public class UserTests : BaseIntegrationTest
     public async Task GetOrCreateUserCommandHandler_ShouldReturnUser_WhenUserExistsAsync()
     {
         // Arrange
-        var email = "test.user@example.com";
+        var email = "test.user@eagle.com";
         await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
 
         var user = new User
@@ -84,7 +84,7 @@ public class UserTests : BaseIntegrationTest
     public async Task UpdateUserCommandHandler_ShouldUpdateUser_WhenUserExistsAsync()
     {
         // Arrange
-        var email = "test.update.user@example.com";
+        var email = "test.update.user@eagle.com";
         await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
 
         var createResult = await _mediator.Send(new GetOrCreateUserCommand(email));
@@ -106,5 +106,8 @@ public class UserTests : BaseIntegrationTest
         var updatedUser = await _bookMeContext.Users.FirstAsync(x => x.Id == userDto.Id);
         updatedUser.Name.Should().Be("Chris");
         updatedUser.Surname.Should().Be("Claude");
+
+        // Clean up
+        await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
     }
 }

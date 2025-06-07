@@ -74,6 +74,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
 
         timeSlots.Should().HaveCount(1);
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -119,6 +122,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
 
         timeSlots.Should().HaveCount(1);
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -184,6 +190,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             timeSlot.AllowAutoConfirmation.Should().BeFalse();
             timeSlot.Id.Should().NotBeEmpty();
         });
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Theory]
@@ -219,6 +228,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             timeSlot.Id.Should().NotBeEmpty();
             timeSlot.AllowAutoConfirmation.Should().BeTrue();
         });
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
     #endregion
 
@@ -263,6 +275,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             orderedTimeSlots.First().Start.Should().Be(createTimeSlotsRequest.StartDateTime);
             orderedTimeSlots.Last().End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -307,6 +322,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             orderedTimeSlots.First().Start.Should().Be(createTimeSlotsRequest.StartDateTime);
             orderedTimeSlots.Last().End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -337,6 +355,9 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
 
         timeSlots.Should().HaveCount(0);
+
+        // clean up
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
     #endregion
 }

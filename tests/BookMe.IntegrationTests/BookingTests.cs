@@ -30,14 +30,14 @@ public class BookingTests : BaseIntegrationTest
     public BookingTests(IntegrationTestWebAppFactory factory)
         : base(factory)
     {
-        _adminUser = _bookMeContext.Users
-            .Include(x => x.UserRoles)
+        _adminUser = _bookMeContext
+            .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId))
             .MapToDto();
 
-        _customerUser = _bookMeContext.Users
-            .Include(x => x.UserRoles)
+        _customerUser = _bookMeContext
+            .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId))
             .MapToDto();
@@ -49,7 +49,7 @@ public class BookingTests : BaseIntegrationTest
 
         _bookingController.ControllerContext = new ControllerContext
         {
-            HttpContext = _mockHttpContext.HttpContext!
+            HttpContext = _mockHttpContext.HttpContext!,
         };
     }
 
@@ -130,12 +130,12 @@ public class BookingTests : BaseIntegrationTest
         _mockHttpContext.SetUser(customerWithNonVerifiedPhoneNumber.MapToDto());
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(
-            () => _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand)
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand)
         );
 
-        exception.Message
-            .Should()
+        exception
+            .Message.Should()
             .Be(
                 $"Validation failed: \n -- UserDto: User {customerWithNonVerifiedPhoneNumber.Id} has not verified their phone number"
             );
@@ -167,12 +167,12 @@ public class BookingTests : BaseIntegrationTest
         var bookTimeSlotCommand = new BookTimeSlotsDto { TimeSlotId = timeSlotId };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(
-            () => _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand)
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            _bookingController.BookTimeSlotsAsync(bookTimeSlotCommand)
         );
 
-        exception.Message
-            .Should()
+        exception
+            .Message.Should()
             .Be($"Validation failed: \n -- UserDto: User {_adminUser.Id} is not a customer");
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
@@ -202,8 +202,8 @@ public class BookingTests : BaseIntegrationTest
         );
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var bookingId = ((OkObjectResult)bookResult).Value
-            .GetType()
+        var bookingId = ((OkObjectResult)bookResult)
+            .Value.GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -230,8 +230,8 @@ public class BookingTests : BaseIntegrationTest
             booking.TimeSlot.Id.Should().Be(timeSlotId);
         });
 
-        var bookings = await _bookMeContext.Bookings
-            .Include(book => book.TimeSlot)
+        var bookings = await _bookMeContext
+            .Bookings.Include(book => book.TimeSlot)
             .Where(booking => booking.TimeSlotId.Equals(timeSlotId))
             .ToListAsync();
 
@@ -271,11 +271,8 @@ public class BookingTests : BaseIntegrationTest
         {
             errors.Should().HaveCount(1);
             errors
-                .Any(
-                    error =>
-                        error.Description.Contains(
-                            $"Time slot with id {timeSlotId} is not available"
-                        )
+                .Any(error =>
+                    error.Description.Contains($"Time slot with id {timeSlotId} is not available")
                 )
                 .Should()
                 .BeTrue();
@@ -296,7 +293,7 @@ public class BookingTests : BaseIntegrationTest
         _mockHttpContext.SetUser(_customerUser);
         var bookTimeSlotCommand = new BookTimeSlotsDto
         {
-            TimeSlotId = timeSlotId // Non-existent ID
+            TimeSlotId = timeSlotId, // Non-existent ID
         };
 
         // Act
@@ -307,11 +304,10 @@ public class BookingTests : BaseIntegrationTest
         {
             errors.Should().HaveCount(1);
             errors
-                .Any(
-                    error =>
-                        error.Description.Contains(
-                            $"Time slot with id {timeSlotId} not found by user {_customerUser.Id}"
-                        )
+                .Any(error =>
+                    error.Description.Contains(
+                        $"Time slot with id {timeSlotId} not found by user {_customerUser.Id}"
+                    )
                 )
                 .Should()
                 .BeTrue();
@@ -344,8 +340,8 @@ public class BookingTests : BaseIntegrationTest
         );
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var bookingId = ((OkObjectResult)bookResult).Value
-            .GetType()
+        var bookingId = ((OkObjectResult)bookResult)
+            .Value.GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -394,8 +390,8 @@ public class BookingTests : BaseIntegrationTest
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var bookingId = ((OkObjectResult)bookResult).Value
-            .GetType()
+        var bookingId = ((OkObjectResult)bookResult)
+            .Value.GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
@@ -443,24 +439,23 @@ public class BookingTests : BaseIntegrationTest
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var bookingId = ((OkObjectResult)bookResult).Value
-            .GetType()
+        var bookingId = ((OkObjectResult)bookResult)
+            .Value.GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Act & Assert - Try to confirm as customer
 #pragma warning disable CS8605 // Unboxing a possibly null value.
-        var exception = await Assert.ThrowsAsync<ValidationException>(
-            () =>
-                _bookingController.ConfirmBookingAsync(
-                    new ConfirmBookingDto { BookingId = (Guid)bookingId }
-                )
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            _bookingController.ConfirmBookingAsync(
+                new ConfirmBookingDto { BookingId = (Guid)bookingId }
+            )
         );
 #pragma warning restore CS8605 // Unboxing a possibly null value.
 
-        exception.Message
-            .Should()
+        exception
+            .Message.Should()
             .Be($"Validation failed: \n -- UserDto: User {_customerUser.Id} is not an admin");
 
 #pragma warning disable CS8605 // Unboxing a possibly null value.
@@ -487,11 +482,8 @@ public class BookingTests : BaseIntegrationTest
         {
             errors.Should().HaveCount(1);
             errors
-                .Any(
-                    error =>
-                        error.Description.Contains(
-                            $"Booking with id {nonExistentBookingId} not found"
-                        )
+                .Any(error =>
+                    error.Description.Contains($"Booking with id {nonExistentBookingId} not found")
                 )
                 .Should()
                 .BeTrue();
@@ -518,7 +510,7 @@ public class BookingTests : BaseIntegrationTest
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
 
-        var request = new GetBookingsDto { FromDateTime = DateTime.Today, };
+        var request = new GetBookingsDto { FromDateTime = DateTime.Today };
 
         // Act
         var result = await _bookingController.GetBookingAsync(request);

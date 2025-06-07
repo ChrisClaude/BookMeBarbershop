@@ -37,7 +37,7 @@ const BookingForm = () => {
         Book an Appointment
       </h1>
       <Form
-        className="w-full justify-center items-center space-y-4"
+        className="flex w-full justify-center items-center space-y-4"
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-full px-4 sm:px-0 sm:max-w-md">

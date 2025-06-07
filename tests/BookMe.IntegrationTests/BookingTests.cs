@@ -39,7 +39,7 @@ public class BookingTests : BaseIntegrationTest
         _customerUser = _bookMeContext
             .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
-            .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId))
+            .First(x => x.Email == "jane.doe.customer@test.com")
             .MapToDto();
 
         _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
@@ -205,12 +205,10 @@ public class BookingTests : BaseIntegrationTest
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var bookingId = ((OkObjectResult)bookResult)
             .Value.GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Cancel the booking
@@ -535,6 +533,10 @@ public class BookingTests : BaseIntegrationTest
             bookings.Items.First().User.Id.Should().Be(_customerUser.Id);
             bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
         });
+
+        // clean up
+        await _bookMeContext.Bookings.ExecuteDeleteAsync();
+        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     #endregion

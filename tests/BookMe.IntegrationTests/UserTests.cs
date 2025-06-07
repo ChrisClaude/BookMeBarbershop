@@ -46,6 +46,9 @@ public class UserTests : BaseIntegrationTest
         result.Value.Roles.ToList()[0].Role.Name.Should().Be(RoleName.CUSTOMER);
 
         _bookMeContext.Users.Where(x => x.Email == email).Should().HaveCount(1);
+
+        // Clean up
+        await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
     }
 
     [Fact]
@@ -78,6 +81,9 @@ public class UserTests : BaseIntegrationTest
         result.Value.Roles.ToList()[0].Role.Name.Should().Be(RoleName.CUSTOMER);
 
         _bookMeContext.Users.Where(x => x.Email == email).Should().HaveCount(1);
+
+        // Clean up
+        await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
     }
 
     [Fact]

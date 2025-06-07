@@ -25,14 +25,14 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public CreateTimeSlotTests(IntegrationTestWebAppFactory factory)
         : base(factory)
     {
-        _adminUser = _bookMeContext.Users
-            .Include(x => x.UserRoles)
+        _adminUser = _bookMeContext
+            .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId))
             .MapToDto();
 
-        _customerUser = _bookMeContext.Users
-            .Include(x => x.UserRoles)
+        _customerUser = _bookMeContext
+            .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId))
             .MapToDto();
@@ -111,8 +111,8 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             var firstError = errors.First();
             firstError.Should().NotBeNull();
             firstError.Code.Should().Be("conflict");
-            firstError.Description
-                .Should()
+            firstError
+                .Description.Should()
                 .Be("The requested time slot overlaps with existing time slots");
         });
 
@@ -126,8 +126,8 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     {
         // Arrange
         await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
-        var customerUser = await _bookMeContext.Users
-            .Include(x => x.UserRoles)
+        var customerUser = await _bookMeContext
+            .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .FirstAsync(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.CustomerId));
 
@@ -141,12 +141,12 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(
-            () => _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest)
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest)
         );
 
-        exception.Message
-            .Should()
+        exception
+            .Message.Should()
             .Be($"Validation failed: \n -- UserDto: User {customerUser.Id} is not an admin");
 
         var timeSlots = await _bookMeContext.TimeSlots.ToListAsync();
@@ -202,7 +202,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         {
             StartDateTime = DateTime.UtcNow.AddDays(daysInFuture).AddHours(1),
             EndDateTime = DateTime.UtcNow.AddDays(daysInFuture).AddHours(2),
-            AllowAutoConfirmation = true
+            AllowAutoConfirmation = true,
         };
 
         // Act
@@ -277,7 +277,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             StartDateTime = DateTime.Today.AddDays(1),
             EndDateTime = DateTime.Today.AddDays(1).AddHours(23),
             IsAllDay = true,
-            AllowAutoConfirmation = true
+            AllowAutoConfirmation = true,
         };
 
         // Act
@@ -324,12 +324,12 @@ public class CreateTimeSlotTests : BaseIntegrationTest
         };
 
         // Act & Assert
-        var exception = await Assert.ThrowsAsync<ValidationException>(
-            () => _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest)
+        var exception = await Assert.ThrowsAsync<ValidationException>(() =>
+            _bookingController.CreateTimeSlotsAsync(createTimeSlotsRequest)
         );
 
-        exception.Message
-            .Should()
+        exception
+            .Message.Should()
             .Be(
                 "Validation failed: \n -- : All-day time slots must not be apart by more than 24 hours"
             );

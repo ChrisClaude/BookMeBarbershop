@@ -31,4 +31,16 @@ public class UserController : BaseController
 
         return result.ToActionResult();
     }
+
+    [HttpPut("profile")]
+    [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdateProfileAsync()
+    {
+        var userDto = GetContextUser();
+        var result = await _userQueries.GetUserAsync(userDto.Id);
+
+        return result.ToActionResult();
+    }
 }

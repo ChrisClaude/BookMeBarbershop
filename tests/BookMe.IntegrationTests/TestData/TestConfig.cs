@@ -6,6 +6,8 @@ public static class TestConfig
     {
         return new Dictionary<string, string?>
         {
+            {"Logging:LogLevel:Default", "Warning" },
+            {"AppSettings:Serilog:MinimumLevel:Default", "Warning" },
             { "ConnectionStrings:BookMeDb", "TestConnectionString" },
             { "AppSettings:AllowedCorsOrigins:0", "http://localhost:3000" },
             { "AppSettings:CacheConfig:CacheType", "memory" },

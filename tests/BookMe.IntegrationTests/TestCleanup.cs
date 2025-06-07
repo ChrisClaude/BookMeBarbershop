@@ -1,6 +1,3 @@
-using System.Threading.Tasks;
-using Xunit;
-
 namespace BookMe.IntegrationTests;
 
 public class TestCleanup : IAsyncLifetime

@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace BookMe.IntegrationTests;
 
 [CollectionDefinition("Database collection")]

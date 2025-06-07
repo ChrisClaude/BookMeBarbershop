@@ -1,11 +1,9 @@
 using BookMe.Application.Commands;
-using BookMe.Application.Commands.Users;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Common.Dtos.Users;
 using BookMe.Application.Entities;
 using BookMe.Application.Enums;
 using BookMe.Application.Interfaces.Queries;
-using BookMe.Application.Mappings;
 using BookMeAPI.Apis;
 using FluentAssertions;
 using MediatR;

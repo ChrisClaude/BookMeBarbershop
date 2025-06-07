@@ -73,16 +73,14 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
             _semaphore.Release();
         }
 
-        using (var scope = Services.CreateScope())
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<BookMeContext>();
+
+        await dbContext.Database.EnsureCreatedAsync();
+
+        if (!await dbContext.Users.AnyAsync())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<BookMeContext>();
-
-            await dbContext.Database.EnsureCreatedAsync();
-
-            if (!await dbContext.Users.AnyAsync())
-            {
-                SeedData.SeedUsers(dbContext);
-            }
+            SeedData.SeedUsers(dbContext);
         }
     }
 

@@ -1,11 +1,14 @@
 using BookMe.Infrastructure.Data;
 using BookMe.IntegrationTests.Mocks;
+using BookMe.IntegrationTests.TestData;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BookMe.IntegrationTests;
 
 [Collection("Database collection")]
-public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>, IDisposable
+public abstract class BaseIntegrationTest
+    : IClassFixture<IntegrationTestWebAppFactory>,
+        IAsyncDisposable
 {
     protected readonly IntegrationTestWebAppFactory _factory;
     protected readonly IServiceScope _scope;
@@ -20,8 +23,12 @@ public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppF
         _mockHttpContext = _factory.MockHttpContext;
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
+        // Clean up database after each test
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+
+        // Dispose resources
         _scope.Dispose();
         _bookMeContext.Dispose();
         GC.SuppressFinalize(this);

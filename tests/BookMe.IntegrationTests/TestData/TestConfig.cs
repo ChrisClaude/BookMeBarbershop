@@ -6,8 +6,8 @@ public static class TestConfig
     {
         return new Dictionary<string, string?>
         {
-            {"Logging:LogLevel:Default", "Warning" },
-            {"AppSettings:Serilog:MinimumLevel:Default", "Warning" },
+            { "Logging:LogLevel:Default", "Warning" },
+            { "AppSettings:Serilog:MinimumLevel:Default", "Warning" },
             { "ConnectionStrings:BookMeDb", "TestConnectionString" },
             { "AppSettings:AllowedCorsOrigins:0", "http://localhost:3000" },
             { "AppSettings:CacheConfig:CacheType", "memory" },
@@ -34,7 +34,7 @@ public static class TestConfig
             { "AppSettings:Elasticsearch:Username", "test-username" },
             { "AppSettings:Elasticsearch:Password", "test-password" },
             { "AppSettings:OpenTelemetry:Seq:ApiKey", "test-seq-api-key" },
-            { "AppSettings:TwilioConfig:MinSecondsBetweenRequests", "60" }
+            { "AppSettings:TwilioConfig:MinSecondsBetweenRequests", "60" },
         };
     }
 }

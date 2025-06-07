@@ -15,12 +15,15 @@ public abstract class BaseIntegrationTest
     protected readonly BookMeContext _bookMeContext;
     protected readonly MockHttpContextAccessor _mockHttpContext;
 
+    private SemaphoreSlim _semaphore = new(1, 1);
+
     protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
     {
         _factory = factory;
         _scope = _factory.Services.CreateScope();
         _bookMeContext = _scope.ServiceProvider.GetRequiredService<BookMeContext>();
         _mockHttpContext = _factory.MockHttpContext;
+        _semaphore.Wait();
     }
 
     public async ValueTask DisposeAsync()
@@ -29,5 +32,9 @@ public abstract class BaseIntegrationTest
         _scope.Dispose();
         _bookMeContext.Dispose();
         GC.SuppressFinalize(this);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+
+        _semaphore.Release();
     }
 }

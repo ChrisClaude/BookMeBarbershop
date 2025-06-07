@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BookMe.IntegrationTests;
 
+[Collection("Database collection")]
 public abstract class BaseIntegrationTest : IClassFixture<IntegrationTestWebAppFactory>, IDisposable
 {
     protected readonly IntegrationTestWebAppFactory _factory;

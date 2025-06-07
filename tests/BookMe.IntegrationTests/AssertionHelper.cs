@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookMe.IntegrationTests;
 

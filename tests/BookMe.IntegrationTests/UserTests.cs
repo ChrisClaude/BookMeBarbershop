@@ -4,6 +4,7 @@ using BookMe.Application.Common.Dtos.Users;
 using BookMe.Application.Entities;
 using BookMe.Application.Enums;
 using BookMe.Application.Interfaces.Queries;
+using BookMe.IntegrationTests.TestData;
 using BookMeAPI.Apis;
 using FluentAssertions;
 using MediatR;
@@ -45,8 +46,7 @@ public class UserTests : BaseIntegrationTest
 
         _bookMeContext.Users.Where(x => x.Email == email).Should().HaveCount(1);
 
-        // Clean up
-        await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -80,8 +80,7 @@ public class UserTests : BaseIntegrationTest
 
         _bookMeContext.Users.Where(x => x.Email == email).Should().HaveCount(1);
 
-        // Clean up
-        await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -111,7 +110,6 @@ public class UserTests : BaseIntegrationTest
         updatedUser.Name.Should().Be("Chris");
         updatedUser.Surname.Should().Be("Claude");
 
-        // Clean up
-        await _bookMeContext.Users.Where(x => x.Email == email).ExecuteDeleteAsync();
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 }

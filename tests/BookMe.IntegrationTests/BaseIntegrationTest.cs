@@ -25,9 +25,6 @@ public abstract class BaseIntegrationTest
 
     public async ValueTask DisposeAsync()
     {
-        // Clean up database after each test
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
-
         // Dispose resources
         _scope.Dispose();
         _bookMeContext.Dispose();

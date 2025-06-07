@@ -1,6 +1,6 @@
+using BookMe.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using BookMe.Application.Entities;
 
 namespace BookMe.Infrastructure.Data.Configurations;
 
@@ -14,5 +14,11 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Name).IsRequired();
         builder.Property(x => x.Surname).IsRequired();
         builder.Property(x => x.Email).IsRequired();
+
+        builder
+            .HasMany(x => x.UserRoles)
+            .WithOne(x => x.User)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

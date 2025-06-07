@@ -7,6 +7,7 @@ using BookMe.Application.Entities;
 using BookMe.Application.Enums;
 using BookMe.Application.Interfaces.Queries;
 using BookMe.Application.Mappings;
+using BookMe.IntegrationTests.TestData;
 using BookMeAPI.Controllers;
 using FluentAssertions;
 using FluentValidation;
@@ -88,6 +89,8 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(1);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -136,6 +139,8 @@ public class BookingTests : BaseIntegrationTest
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(0);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -167,6 +172,7 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(0);
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -223,6 +229,8 @@ public class BookingTests : BaseIntegrationTest
         bookings.Should().HaveCount(2);
         bookings.Where(booking => booking.Status == BookingStatus.Cancelled).Should().HaveCount(1);
         bookings.Where(booking => booking.Status == BookingStatus.Pending).Should().HaveCount(1);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -263,6 +271,8 @@ public class BookingTests : BaseIntegrationTest
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(1);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -295,6 +305,8 @@ public class BookingTests : BaseIntegrationTest
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(0);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
     #endregion
 
@@ -437,6 +449,8 @@ public class BookingTests : BaseIntegrationTest
 #pragma warning restore CS8605 // Unboxing a possibly null value.
 
         booking.Status.Should().Be(BookingStatus.Pending);
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -462,6 +476,8 @@ public class BookingTests : BaseIntegrationTest
                 .Should()
                 .BeTrue();
         });
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -495,6 +511,8 @@ public class BookingTests : BaseIntegrationTest
             bookings.Items.First().User.Id.Should().Be(_customerUser.Id);
             bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
         });
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
     #endregion
 }

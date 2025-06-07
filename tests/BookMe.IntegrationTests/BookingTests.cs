@@ -58,9 +58,6 @@ public class BookingTests : BaseIntegrationTest
     public async Task BookTimeSlotWithCustomerUser_ShouldSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
-
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
@@ -91,19 +88,12 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(1);
-
-        // clean up
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
     public async Task BookTimeSlotWithNonVerifiedPhoneNumber_ShouldFailAsync()
     {
         // Arrange
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
-
         var customerWithNonVerifiedPhoneNumber = new User
         {
             Id = Guid.NewGuid(),
@@ -146,10 +136,6 @@ public class BookingTests : BaseIntegrationTest
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(0);
-
-        // clean up
-        _bookMeContext.Users.Remove(customerWithNonVerifiedPhoneNumber);
-        await _bookMeContext.SaveChangesAsync();
     }
 
     [Fact]
@@ -157,7 +143,6 @@ public class BookingTests : BaseIntegrationTest
     {
         // Arrange
         _mockHttpContext.SetUser(_adminUser);
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
 
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
             DateTime.UtcNow.AddDays(10).AddHours(1),
@@ -188,8 +173,6 @@ public class BookingTests : BaseIntegrationTest
     public async Task BookTimeSlotThatIsPartOfCancelledBooking_ShouldSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
 
         _mockHttpContext.SetUser(_adminUser);
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
@@ -240,18 +223,12 @@ public class BookingTests : BaseIntegrationTest
         bookings.Should().HaveCount(2);
         bookings.Where(booking => booking.Status == BookingStatus.Cancelled).Should().HaveCount(1);
         bookings.Where(booking => booking.Status == BookingStatus.Pending).Should().HaveCount(1);
-
-        // clean up
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
     public async Task BookAlreadyBookedTimeSlot_ShouldFailAsync()
     {
         // Arrange
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
 
         _mockHttpContext.SetUser(_adminUser);
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
@@ -286,19 +263,12 @@ public class BookingTests : BaseIntegrationTest
 
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(1);
-
-        // clean up
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
 
     [Fact]
     public async Task BookTimeSlotWithInvalidId_ShouldFailAsync()
     {
         // Arrange
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
-
         var timeSlotId = Guid.NewGuid();
         _mockHttpContext.SetUser(_customerUser);
         var bookTimeSlotCommand = new BookTimeSlotsDto
@@ -333,8 +303,6 @@ public class BookingTests : BaseIntegrationTest
     public async Task CancelBookingShouldSucceedAsync()
     {
         // Arrange - Create a booking first
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
 
         _mockHttpContext.SetUser(_adminUser);
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
@@ -381,9 +349,7 @@ public class BookingTests : BaseIntegrationTest
     [Fact]
     public async Task ConfirmBookingShouldSucceedAsync()
     {
-        // Arrange - Create a booking first
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        // Arrange
 
         // Create time slot as admin
         _mockHttpContext.SetUser(_adminUser);
@@ -430,9 +396,7 @@ public class BookingTests : BaseIntegrationTest
     [Fact]
     public async Task ConfirmBookingWithNonAdminUser_ShouldFailAsync()
     {
-        // Arrange - Create a booking first
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
+        // Arrange
 
         // Create time slot as admin
         _mockHttpContext.SetUser(_adminUser);
@@ -504,8 +468,6 @@ public class BookingTests : BaseIntegrationTest
     public async Task GetBookings_ShouldSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
 
         _mockHttpContext.SetUser(_adminUser);
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
@@ -533,11 +495,6 @@ public class BookingTests : BaseIntegrationTest
             bookings.Items.First().User.Id.Should().Be(_customerUser.Id);
             bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
         });
-
-        // clean up
-        await _bookMeContext.Bookings.ExecuteDeleteAsync();
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
     }
-
     #endregion
 }

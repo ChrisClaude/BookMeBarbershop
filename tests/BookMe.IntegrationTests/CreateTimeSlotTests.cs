@@ -48,7 +48,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateTimeSlotsShouldSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
@@ -80,7 +79,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateOverlappingTimeSlotsShouldNotSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var firstCreateTimeSlotsRequest = new CreateTimeSlotsDto
@@ -125,7 +123,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateTimeSlotsWithNonAdminUser_ShouldNotSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         var customerUser = await _bookMeContext
             .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
@@ -161,7 +158,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateTimeSlotWithDifferentDays_ShouldSucceedAsync(int daysInFuture)
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
@@ -195,7 +191,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     )
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
@@ -227,7 +222,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateAllDayTimeSlot_ShouldSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
@@ -269,7 +263,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateAllDayTimeSlotWithAutoConfirmation_ShouldSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto
@@ -313,7 +306,6 @@ public class CreateTimeSlotTests : BaseIntegrationTest
     public async Task CreateAllDayTimeSlotWithMoreThan24Hours_ShouldNotSucceedAsync()
     {
         // Arrange
-        await _bookMeContext.TimeSlots.ExecuteDeleteAsync();
         _mockHttpContext.SetUser(_adminUser);
 
         var createTimeSlotsRequest = new CreateTimeSlotsDto

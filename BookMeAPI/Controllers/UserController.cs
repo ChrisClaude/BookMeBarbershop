@@ -1,5 +1,7 @@
+using BookMe.Application.Commands.Users;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos;
+using BookMe.Application.Common.Dtos.Users;
 using BookMe.Application.Interfaces.Queries;
 using BookMeAPI.Controllers;
 using BookMeAPI.Extensions;
@@ -13,10 +15,12 @@ namespace BookMeAPI.Apis;
 [Produces("application/json")]
 public class UserController : BaseController
 {
+    private readonly IMediator _mediator;
     private readonly IUserQueries _userQueries;
 
     public UserController(IMediator mediator, IUserQueries userQueries)
     {
+        _mediator = mediator;
         _userQueries = userQueries;
     }
 
@@ -36,10 +40,9 @@ public class UserController : BaseController
     [ProducesResponseType<UserDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> UpdateProfileAsync()
+    public async Task<IActionResult> UpdateProfileAsync([FromBody] UserUpdateDto request)
     {
-        var userDto = GetContextUser();
-        var result = await _userQueries.GetUserAsync(userDto.Id);
+        var result = await _mediator.Send(new UpdateUserCommand(request.Name, request.Surname));
 
         return result.ToActionResult();
     }

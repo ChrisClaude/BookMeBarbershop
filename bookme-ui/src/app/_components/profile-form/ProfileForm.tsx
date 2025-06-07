@@ -3,7 +3,7 @@ import React from "react";
 import useProfileForm from "./useProfileForm";
 import { CgProfile } from "react-icons/cg";
 import { Button, Form, Input } from "@heroui/react";
-import PhoneInput from "react-phone-number-input/input";
+import PhoneInput from "react-phone-number-input";
 import PhoneVerificationFormFragment from "../booking-form/PhoneVerificationFragment";
 
 const ProfileForm = () => {

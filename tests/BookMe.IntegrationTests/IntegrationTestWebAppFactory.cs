@@ -84,7 +84,9 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         }
     }
 
+#pragma warning disable 1998
     public new async Task DisposeAsync()
+#pragma warning restore
     {
         // Don't stop the container after each test class
         // Only clean up resources specific to this instance

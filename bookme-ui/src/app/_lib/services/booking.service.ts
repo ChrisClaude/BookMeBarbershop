@@ -1,6 +1,7 @@
 import {
   ApiBookingBookTimeslotPostRequest,
   ApiBookingCancelBookingPostRequest,
+  ApiBookingGetBookingsAllPostRequest,
   ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailableDatesPostRequest,
@@ -195,7 +196,7 @@ export class BookingService {
     }
   }
 
-  public static async getBookings({
+  public static async getUserBookings({
     request,
   }: {
     request: ApiBookingGetBookingsPostRequest;
@@ -221,6 +222,41 @@ export class BookingService {
       logError(
         error?.toString() || "Error fetching bookings",
         "GetBookingsError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching bookings"],
+      };
+    }
+  }
+
+  public static async getAllBookings({
+    request,
+  }: {
+    request: ApiBookingGetBookingsAllPostRequest;
+  }): Promise<Result<PagedListDtoOfBookingDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingGetBookingsAllPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as PagedListDtoOfBookingDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching bookings",
+        "GetAllBookingsError",
         error
       );
       return {

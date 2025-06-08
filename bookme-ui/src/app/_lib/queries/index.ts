@@ -15,6 +15,14 @@ export const api = createApi({
       providesTags: ["User"],
     }),
 
+    getAllUsers: builder.query({
+      query: (request) => ({
+        endpoint: "user.getAllUsers",
+        params: { request },
+      }),
+      providesTags: ["User"],
+    }),
+
     updateUserProfile: builder.mutation({
       query: (request) => ({
         endpoint: "user.updateUserProfile",
@@ -78,6 +86,14 @@ export const api = createApi({
       providesTags: ["Booking"],
     }),
 
+    getAllBookings: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getAllBookings",
+        params: { request },
+      }),
+      providesTags: ["Booking"],
+    }),
+
     //#endregion
 
     //#region PhoneVerification
@@ -100,6 +116,7 @@ export const api = createApi({
 
 export const {
   useGetUserProfileQuery,
+  useGetAllUsersQuery,
   useUpdateUserProfileMutation,
   useGetAvailableTimeSlotsQuery,
   useGetAllTimeSlotsQuery,
@@ -109,5 +126,6 @@ export const {
   useCreateBookingMutation,
   useCancelBookingMutation,
   useGetBookingsQuery,
+  useGetAllBookingsQuery,
   useGetAvailableDatesQuery,
 } = api;

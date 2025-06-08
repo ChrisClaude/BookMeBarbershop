@@ -1,6 +1,7 @@
 import {
   ApiBookingBookTimeslotPostRequest,
   ApiBookingCancelBookingPostRequest,
+  ApiBookingGetBookingsAllPostRequest,
   ApiBookingGetBookingsPostRequest,
   ApiBookingTimeslotsAllPostRequest,
   ApiBookingTimeslotsAvailableDatesPostRequest,
@@ -8,6 +9,7 @@ import {
   ApiBookingTimeslotsPostRequest,
   ApiPhoneVerificationSendCodePostRequest,
   ApiPhoneVerificationVerifyCodePostRequest,
+  ApiUserAllGetRequest,
   ApiUserProfilePutRequest,
 } from "../codegen";
 
@@ -15,6 +17,10 @@ export type CustomBaseQueryType =
   | {
       endpoint: "user.getUserProfile";
       params?: null;
+    }
+  | {
+      endpoint: "user.getAllUsers";
+      params: { request: ApiUserAllGetRequest };
     }
   | {
       endpoint: "user.updateUserProfile";
@@ -72,6 +78,12 @@ export type CustomBaseQueryType =
       };
     }
   | {
+      endpoint: "booking.getAllBookings";
+      params: {
+        request: GetAllBookingQueryType;
+      };
+    }
+  | {
       endpoint: "booking.cancelBooking";
       params: {
         request: ApiBookingCancelBookingPostRequest;
@@ -96,6 +108,18 @@ export type GetBookingsQueryType = Omit<
 > & {
   getBookingsDto: Omit<
     ApiBookingGetBookingsPostRequest["getBookingsDto"],
+    "fromDateTime"
+  > & {
+    fromDateTime: string; // ISO string - redux cannot serialize date objects
+  };
+};
+
+export type GetAllBookingQueryType = Omit<
+  ApiBookingGetBookingsAllPostRequest,
+  "getBookingsDto"
+> & {
+  getBookingsDto: Omit<
+    ApiBookingGetBookingsAllPostRequest["getBookingsDto"],
     "fromDateTime"
   > & {
     fromDateTime: string; // ISO string - redux cannot serialize date objects

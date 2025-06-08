@@ -12,6 +12,14 @@ export const customBaseQuery =
       case "user.getUserProfile":
         return transformToRTKResult(await UserService.getUserProfile());
 
+      case "user.getAllUsers":
+        return transformToRTKResult(
+          await UserService.getAllUsers({
+            ...params,
+            request: params.request,
+          })
+        );
+
       case "user.updateUserProfile":
         return transformToRTKResult(
           await UserService.updateUserProfile({
@@ -66,7 +74,7 @@ export const customBaseQuery =
         console.log("booking.getBookings", params.request);
 
         return transformToRTKResult(
-          await BookingService.getBookings({
+          await BookingService.getUserBookings({
             ...params,
             request: {
               ...params.request,

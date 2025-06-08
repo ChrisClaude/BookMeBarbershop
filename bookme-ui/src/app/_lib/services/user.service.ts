@@ -1,4 +1,4 @@
-import { ApiUserProfilePutRequest, UserDto } from "../codegen";
+import { ApiUserAllGetRequest, ApiUserProfilePutRequest, PagedListDtoOfUserDto, UserDto } from "../codegen";
 import { Result } from "../types/common.types";
 import { isStatusCodeSuccess } from "../utils/common.utils";
 import { logError } from "../utils/logging.utils";
@@ -66,6 +66,39 @@ export class UserService {
       return {
         success: false,
         errors: [error?.toString() || "Error updating user"],
+      };
+    }
+  }
+
+  public static async getAllUsers({
+    request,
+  }: {
+    request: ApiUserAllGetRequest;
+  }): Promise<Result<PagedListDtoOfUserDto>> {
+    try {
+      const response = await this.userApi.apiUserAllGetRaw(request);
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: [error?.toString() || "Error fetching users"],
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as PagedListDtoOfUserDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching users",
+        "GetAllUsersError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching users"],
       };
     }
   }

@@ -90,7 +90,7 @@ public class BookingTests : BaseIntegrationTest
 
         bookings.Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(0);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
 
         bookings.Should().HaveCount(0);
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class BookingTests : BaseIntegrationTest
         bookings.Where(booking => booking.Status == BookingStatus.Cancelled).Should().HaveCount(1);
         bookings.Where(booking => booking.Status == BookingStatus.Pending).Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -272,7 +272,7 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -306,7 +306,7 @@ public class BookingTests : BaseIntegrationTest
         var bookings = await _bookMeContext.Bookings.ToListAsync();
         bookings.Should().HaveCount(0);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
     #endregion
 
@@ -354,7 +354,7 @@ public class BookingTests : BaseIntegrationTest
         var timeSlot = await _bookMeContext.TimeSlots.FirstAsync(ts => ts.Id == timeSlotId);
 
         timeSlot.IsAvailable.Should().BeTrue();
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
     #endregion
 
@@ -404,7 +404,7 @@ public class BookingTests : BaseIntegrationTest
         var booking = await _bookMeContext.Bookings.FirstAsync(b => b.Id == (Guid)bookingId);
 
         booking.Status.Should().Be(BookingStatus.Confirmed);
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -452,7 +452,7 @@ public class BookingTests : BaseIntegrationTest
 
         booking.Status.Should().Be(BookingStatus.Pending);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -479,7 +479,7 @@ public class BookingTests : BaseIntegrationTest
                 .BeTrue();
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -514,7 +514,7 @@ public class BookingTests : BaseIntegrationTest
             bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -550,7 +550,7 @@ public class BookingTests : BaseIntegrationTest
             bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     #endregion

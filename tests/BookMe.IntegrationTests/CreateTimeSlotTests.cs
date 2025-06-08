@@ -75,7 +75,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
 
         timeSlots.Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
 
         timeSlots.Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
 
         timeSlots.Should().HaveCount(0);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Theory]
@@ -188,7 +188,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             timeSlot.Id.Should().NotBeEmpty();
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Theory]
@@ -224,7 +224,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             timeSlot.AllowAutoConfirmation.Should().BeTrue();
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
     #endregion
 
@@ -269,7 +269,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             orderedTimeSlots.Last().End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -314,7 +314,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
             orderedTimeSlots.Last().End.Should().Be(createTimeSlotsRequest.EndDateTime);
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -345,7 +345,7 @@ public class CreateTimeSlotTests : BaseIntegrationTest
 
         timeSlots.Should().HaveCount(0);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
     #endregion
 }

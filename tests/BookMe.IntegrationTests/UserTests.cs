@@ -55,7 +55,7 @@ public class UserTests : BaseIntegrationTest
 
         _bookMeContext.Users.Where(x => x.Email == email).Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class UserTests : BaseIntegrationTest
 
         _bookMeContext.Users.Where(x => x.Email == email).Should().HaveCount(1);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -119,7 +119,7 @@ public class UserTests : BaseIntegrationTest
         updatedUser.Name.Should().Be("Chris");
         updatedUser.Surname.Should().Be("Claude");
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
     [Fact]
@@ -139,6 +139,6 @@ public class UserTests : BaseIntegrationTest
             users.Items.Last().Name.Should().Be("Jane");
         });
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 }

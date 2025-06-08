@@ -1,11 +1,11 @@
-namespace BookMe.IntegrationTests;
+// namespace BookMe.IntegrationTests;
 
-public class TestCleanup : IAsyncLifetime
-{
-    public Task InitializeAsync() => Task.CompletedTask;
+// public class TestCleanup : IAsyncLifetime
+// {
+//     public Task InitializeAsync() => Task.CompletedTask;
 
-    public async Task DisposeAsync()
-    {
-        await IntegrationTestWebAppFactory.CleanupContainerAsync();
-    }
-}
+//     public async Task DisposeAsync()
+//     {
+//         await IntegrationTestWebAppFactory.CleanupContainerAsync();
+//     }
+// }

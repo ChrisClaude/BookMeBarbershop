@@ -30,6 +30,6 @@ public abstract class BaseIntegrationTest
         _bookMeContext.Dispose();
         GC.SuppressFinalize(this);
 
-        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 }

@@ -213,6 +213,18 @@ const useBookingForm = () => {
     );
   }, [availableDates]);
 
+  const updateFormData = useCallback((field: string, value: string | DateValue | TimeSlotDto | undefined) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [field]: value,
+    }));
+  }, []);
+
+  const hasPhoneError = useMemo(
+    () => errors.some((error) => error.field === "phone-number"),
+    [errors]
+  );
+
   return {
     errors,
     formData,
@@ -228,12 +240,14 @@ const useBookingForm = () => {
     isFetchingAvailableDates,
     errorFetchingAvailableDates,
     canShowCalendar,
+    hasPhoneError,
     setFormData,
     onSubmit,
     handleVerifyCode,
     handleCreateBooking,
     setBookingSuccess,
     setShowConfirmation,
+    updateFormData,
   };
 };
 

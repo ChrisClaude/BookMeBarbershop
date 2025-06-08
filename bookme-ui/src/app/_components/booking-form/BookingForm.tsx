@@ -14,7 +14,6 @@ const BookingForm = () => {
     errors,
     formData,
     userProfile,
-    setFormData,
     isPhoneNumberVerificationProcess,
     isVerifyingPhoneNumber,
     isCodeSent,
@@ -26,10 +25,12 @@ const BookingForm = () => {
     errorFetchingAvailableDates,
     canShowCalendar,
     isVerifyingCode,
+    hasPhoneError,
     onSubmit,
     handleVerifyCode,
     handleCreateBooking,
     setShowConfirmation,
+    updateFormData,
   } = useBookingForm();
 
   return (
@@ -40,6 +41,7 @@ const BookingForm = () => {
       <Form
         className="flex w-full justify-center items-center space-y-4"
         onSubmit={onSubmit}
+        aria-label="Booking appointment form"
       >
         <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-full px-4 sm:px-0 sm:max-w-md">
           <FormSuccessErrorDisplay
@@ -54,23 +56,18 @@ const BookingForm = () => {
               id="phone-input"
               placeholder="Enter phone number"
               value={formData.phoneNumber}
-              onChange={(value) => {
-                setFormData((prevState) => {
-                  return {
-                    ...prevState,
-                    phoneNumber: value,
-                  };
-                });
-              }}
+              onChange={(value) => updateFormData("phoneNumber", value)}
               defaultCountry="PL"
+              aria-required="true"
+              aria-invalid={hasPhoneError}
             />
             {isCodeSent && (
               <p className="text-sm text-gray-500 text-center">
                 We&apos;ll send you a verification code to confirm your number.
               </p>
             )}
-            {errors.find((error) => error.field === "phone-number") && (
-              <p className="text-red-500">
+            {hasPhoneError && (
+              <p className="text-red-500" role="alert">
                 {
                   errors.find((error) => error.field === "phone-number")
                     ?.message
@@ -78,33 +75,24 @@ const BookingForm = () => {
               </p>
             )}
           </div>
-          {isPhoneNumberVerificationProcess && (
+
+          {isPhoneNumberVerificationProcess ? (
             <PhoneVerificationFormFragment
               errors={errors}
               formData={formData}
-              updateVerificationCode={(verificationCode) => {
-                setFormData((prevState) => {
-                  return {
-                    ...prevState,
-                    verificationCode: verificationCode,
-                  };
-                });
-              }}
+              updateVerificationCode={(verificationCode) =>
+                updateFormData("verificationCode", verificationCode)
+              }
               handleVerifyCode={handleVerifyCode}
               isVerifyingCode={isVerifyingCode}
             />
-          )}
-
-          {!isPhoneNumberVerificationProcess && (
+          ) : (
             <>
               <CalendarContainer
                 mappedAvailableDates={mappedAvailableDates}
-                updateBookingDate={(date) => {
-                  setFormData({
-                    ...formData,
-                    bookingDate: date,
-                  });
-                }}
+                updateBookingDate={(date) =>
+                  updateFormData("bookingDate", date)
+                }
                 canShowCalendar={canShowCalendar}
                 isFetchingAvailableDates={isFetchingAvailableDates}
                 errorFetchingAvailableDates={errorFetchingAvailableDates}
@@ -112,27 +100,38 @@ const BookingForm = () => {
 
               <TimeSlotListSlider
                 selectedDate={formData.bookingDate}
-                onSelectTimeSlot={(timeSlot) => {
-                  setFormData({
-                    ...formData,
-                    selectedTimeSlot: timeSlot,
-                  });
-                }}
+                onSelectTimeSlot={(timeSlot) =>
+                  updateFormData("selectedTimeSlot", timeSlot)
+                }
                 selectedTimeSlot={formData.selectedTimeSlot}
               />
+
               <Button
                 className="w-full"
                 color="primary"
                 type="submit"
                 isLoading={isVerifyingPhoneNumber || isCreatingBooking}
-                isDisabled={!formData.selectedTimeSlot}
+                isDisabled={
+                  !formData.selectedTimeSlot ||
+                  isVerifyingPhoneNumber ||
+                  isCreatingBooking
+                }
+                aria-label={
+                  userProfile?.isPhoneNumberVerified
+                    ? "Book Appointment"
+                    : "Verify Phone Number"
+                }
               >
                 {userProfile?.isPhoneNumberVerified
                   ? "Book Appointment"
                   : "Verify Phone Number"}
               </Button>
+
               {!formData.selectedTimeSlot && (
-                <p className="text-sm text-center text-gray-500">
+                <p
+                  className="text-sm text-center text-gray-500"
+                  aria-live="polite"
+                >
                   Please select a time slot to continue
                 </p>
               )}
@@ -140,6 +139,7 @@ const BookingForm = () => {
           )}
         </div>
       </Form>
+
       {showConfirmation && (
         <BookingConfirmationDialog
           selectedTimeSlot={formData.selectedTimeSlot}

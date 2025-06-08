@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
 import { withAuth } from "@/_components/auth/AuthGuard";
-import Header from "@/_components/Header";
+import Header from "@/_components/header/Header";
 import BookingForm from "@/_components/BookingForm";
 
 const BookingsPage = () => {
-
   return (
     <>
       <Header />

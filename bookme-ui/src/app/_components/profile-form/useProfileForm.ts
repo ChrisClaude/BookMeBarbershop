@@ -201,6 +201,13 @@ const useProfileForm = () => {
       });
   };
 
+const handleInputChange = useCallback((field: string, value: string) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [field]: value,
+    }));
+  }, [setFormData]);
+
   return {
     errors,
     formData,
@@ -215,6 +222,7 @@ const useProfileForm = () => {
     setFormData,
     onSubmit,
     handleVerifyCode,
+    handleInputChange,
   };
 };
 

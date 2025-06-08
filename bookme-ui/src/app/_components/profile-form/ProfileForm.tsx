@@ -21,6 +21,7 @@ const ProfileForm = () => {
     setFormData,
     onSubmit,
     handleVerifyCode,
+    handleInputChange,
   } = useProfileForm();
 
   return (
@@ -28,7 +29,7 @@ const ProfileForm = () => {
       <h1 className="text-2xl font-bold mb-12 text-center">Profile</h1>
 
       <div className="flex justify-center mb-12">
-        <CgProfile size={80} className="text-primary" />
+        <CgProfile size={80} className="text-primary" aria-hidden="true" />
       </div>
 
       <Form
@@ -53,6 +54,7 @@ const ProfileForm = () => {
             type="email"
             value={userProfile?.email || ""}
             isReadOnly
+            aria-readonly="true"
           />
 
           <Input
@@ -64,14 +66,8 @@ const ProfileForm = () => {
             placeholder="Enter your name"
             type="text"
             value={userProfile?.name || ""}
-            onChange={(e) => {
-              setFormData((prevState) => {
-                return {
-                  ...prevState,
-                  name: e.target.value,
-                };
-              });
-            }}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+            aria-invalid={errors.some((e) => e.field === "name")}
           />
 
           <Input
@@ -83,14 +79,8 @@ const ProfileForm = () => {
             placeholder="Enter your surname"
             type="text"
             value={userProfile?.surname || ""}
-            onChange={(e) => {
-              setFormData((prevState) => {
-                return {
-                  ...prevState,
-                  surname: e.target.value,
-                };
-              });
-            }}
+            onChange={(e) => handleInputChange("surname", e.target.value)}
+            aria-invalid={errors.some((e) => e.field === "surname")}
           />
 
           <div className="flex flex-col gap-2">
@@ -100,14 +90,13 @@ const ProfileForm = () => {
               placeholder="Enter phone number"
               value={formData.phoneNumberE164}
               onChange={(value) => {
-                setFormData((prevState) => {
-                  return {
-                    ...prevState,
-                    phoneNumberE164: value,
-                  };
-                });
+                setFormData((prevState) => ({
+                  ...prevState,
+                  phoneNumberE164: value,
+                }));
               }}
               defaultCountry="PL"
+              aria-invalid={errors.some((e) => e.field === "phone-number")}
             />
             {isCodeSent && (
               <p className="text-sm text-gray-500 text-center">
@@ -115,7 +104,7 @@ const ProfileForm = () => {
               </p>
             )}
             {errors.find((error) => error.field === "phone-number") && (
-              <p className="text-red-500">
+              <p className="text-red-500" role="alert">
                 {
                   errors.find((error) => error.field === "phone-number")
                     ?.message
@@ -129,12 +118,7 @@ const ProfileForm = () => {
               errors={errors}
               formData={formData}
               updateVerificationCode={(verificationCode) => {
-                setFormData((prevState) => {
-                  return {
-                    ...prevState,
-                    verificationCode: verificationCode,
-                  };
-                });
+                handleInputChange("verificationCode", verificationCode);
               }}
               handleVerifyCode={handleVerifyCode}
               isVerifyingCode={isVerifyingCode}
@@ -146,6 +130,7 @@ const ProfileForm = () => {
             color="primary"
             type="submit"
             isLoading={isVerifyingPhoneNumber || isUpdatingUserProfile}
+            isDisabled={isVerifyingPhoneNumber || isUpdatingUserProfile}
           >
             {userProfile?.isPhoneNumberVerified
               ? "Save Profile"

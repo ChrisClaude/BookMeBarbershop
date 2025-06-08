@@ -1,10 +1,13 @@
 import { appInsights } from "@/appInsights";
-import { isNotNullOrWhiteSpace, isNullOrUndefined } from "./common.utils";
-import { APP_INSIGHTS_CONNECTION_STRING } from "@/config";
 
-const hasExternalLoggingService = isNotNullOrWhiteSpace(
-  APP_INSIGHTS_CONNECTION_STRING
-);
+// We do not want to read the connection string from the config file, to prevent a circular dependency
+const APP_INSIGHTS_CONNECTION_STRING =
+  process.env.NEXT_PUBLIC_APPLICATION_INSIGHTS_CONNECTION_STRING;
+
+const hasExternalLoggingService =
+  APP_INSIGHTS_CONNECTION_STRING !== undefined &&
+  APP_INSIGHTS_CONNECTION_STRING !== null &&
+  APP_INSIGHTS_CONNECTION_STRING !== "";
 
 const SeverityLevel = {
   VERBOSE: 0,
@@ -28,7 +31,7 @@ export const logError = (
   cause: string | undefined | unknown = undefined,
   stack: string | undefined = undefined
 ): void => {
-  if (!hasExternalLoggingService || isNullOrUndefined(appInsights)) {
+  if (!hasExternalLoggingService || appInsights === undefined) {
     console.error(message, name, cause, stack);
     return;
   } else {
@@ -49,7 +52,7 @@ export const logInfo = (
   name: string,
   properties?: Record<string, unknown>
 ): void => {
-  if (!hasExternalLoggingService || isNullOrUndefined(appInsights)) {
+  if (!hasExternalLoggingService || appInsights === undefined) {
     console.info(message, name, properties);
     return;
   } else {
@@ -69,7 +72,7 @@ export const logWarning = (
   name: string,
   error: unknown = undefined
 ): void => {
-  if (!hasExternalLoggingService || isNullOrUndefined(appInsights)) {
+  if (!hasExternalLoggingService || appInsights === undefined) {
     console.warn(message, name, error);
     return;
   } else {

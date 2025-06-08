@@ -1,4 +1,6 @@
 import { getConfig } from "./_lib/utils/common.utils";
+import { initializeAppInsights } from "./appInsights";
+
 export const AZURE_AD_B2C_TENANT_NAME: string = getConfig(
   "AZURE_AD_B2C_TENANT_NAME",
   process.env.NEXT_PUBLIC_AZURE_AD_B2C_TENANT_NAME
@@ -53,6 +55,9 @@ export const SLOTS_PER_PAGE_SIZE: number = Number(
 );
 
 export const APP_INSIGHTS_CONNECTION_STRING: string = getConfig(
-  "APPLICATION_INSIGHTS_CONNECTION_STRING",
-  process.env.APPLICATION_INSIGHTS_CONNECTION_STRING
+  "NEXT_PUBLIC_APPLICATION_INSIGHTS_CONNECTION_STRING",
+  process.env.NEXT_PUBLIC_APPLICATION_INSIGHTS_CONNECTION_STRING
 );
+
+// Initialize AppInsights with the connection string
+initializeAppInsights(APP_INSIGHTS_CONNECTION_STRING);

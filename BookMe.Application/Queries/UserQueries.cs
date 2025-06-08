@@ -12,7 +12,14 @@ public class UserQueries(IRepository<User> repository) : IUserQueries
 {
     public async Task<Result<UserDto>> GetUserAsync(Guid id)
     {
-        var user = await repository.GetByIdAsync(id);
+        var user = await repository.GetByIdAsync(
+            id,
+            new string[]
+            {
+                nameof(User.UserRoles),
+                $"{nameof(User.UserRoles)}.{nameof(UserRole.Role)}",
+            }
+        );
         if (user == null)
         {
             return Result<UserDto>.Failure(Error.NotFound("User not found"), ErrorType.NotFound);
@@ -25,7 +32,11 @@ public class UserQueries(IRepository<User> repository) : IUserQueries
     {
         var users = await repository.GetAllPagedAsync(
             queryable => queryable.OrderBy(x => x.Email),
-            includes: new[] { nameof(User.UserRoles) },
+            includes: new[]
+            {
+                nameof(User.UserRoles),
+                $"{nameof(User.UserRoles)}.{nameof(UserRole.Role)}",
+            },
             pageIndex: page,
             pageSize: pageSize
         );

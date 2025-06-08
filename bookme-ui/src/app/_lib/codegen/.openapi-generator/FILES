@@ -25,5 +25,6 @@ models/TimeSlotDto2.ts
 models/UserDto.ts
 models/UserDto2.ts
 models/UserRoleDto.ts
+models/UserUpdateDto.ts
 models/VerifyCodeRequest.ts
 models/index.ts

@@ -17,13 +17,20 @@ import * as runtime from '../runtime';
 import type {
   ProblemDetails,
   UserDto,
+  UserUpdateDto,
 } from '../models/index';
 import {
     ProblemDetailsFromJSON,
     ProblemDetailsToJSON,
     UserDtoFromJSON,
     UserDtoToJSON,
+    UserUpdateDtoFromJSON,
+    UserUpdateDtoToJSON,
 } from '../models/index';
+
+export interface ApiUserProfilePutRequest {
+    userUpdateDto: UserUpdateDto;
+}
 
 /**
  * 
@@ -51,6 +58,40 @@ export class UserApi extends runtime.BaseAPI {
      */
     async apiUserMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
         const response = await this.apiUserMeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiUserProfilePutRaw(requestParameters: ApiUserProfilePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
+        if (requestParameters['userUpdateDto'] == null) {
+            throw new runtime.RequiredError(
+                'userUpdateDto',
+                'Required parameter "userUpdateDto" was null or undefined when calling apiUserProfilePut().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/api/User/profile`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserUpdateDtoToJSON(requestParameters['userUpdateDto']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiUserProfilePut(requestParameters: ApiUserProfilePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
+        const response = await this.apiUserProfilePutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

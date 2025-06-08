@@ -22,4 +22,5 @@ export * from './TimeSlotDto2';
 export * from './UserDto';
 export * from './UserDto2';
 export * from './UserRoleDto';
+export * from './UserUpdateDto';
 export * from './VerifyCodeRequest';

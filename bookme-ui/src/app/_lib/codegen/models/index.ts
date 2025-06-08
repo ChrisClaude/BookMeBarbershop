@@ -13,6 +13,7 @@ export * from './GetTimeSlotsDto';
 export * from './ModelError';
 export * from './PagedListDtoOfBookingDto';
 export * from './PagedListDtoOfTimeSlotDto';
+export * from './PagedListDtoOfUserDto';
 export * from './ProblemDetails';
 export * from './Result';
 export * from './RoleDto';

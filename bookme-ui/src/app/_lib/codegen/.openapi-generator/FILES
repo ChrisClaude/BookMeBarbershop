@@ -16,6 +16,7 @@ models/GetTimeSlotsDto.ts
 models/ModelError.ts
 models/PagedListDtoOfBookingDto.ts
 models/PagedListDtoOfTimeSlotDto.ts
+models/PagedListDtoOfUserDto.ts
 models/ProblemDetails.ts
 models/Result.ts
 models/RoleDto.ts

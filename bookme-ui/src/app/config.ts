@@ -51,3 +51,8 @@ export const SLOTS_PER_PAGE_SIZE: number = Number(
     process.env.NEXT_PUBLIC_SLOTS_PER_PAGE_SIZE
   )
 );
+
+export const APP_INSIGHTS_CONNECTION_STRING: string = getConfig(
+  "APPLICATION_INSIGHTS_CONNECTION_STRING",
+  process.env.APPLICATION_INSIGHTS_CONNECTION_STRING
+);

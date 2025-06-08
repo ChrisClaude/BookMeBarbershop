@@ -16,12 +16,14 @@ public static class LoggingConfiguration
         AppSettings appSettings
     )
     {
+        services.AddApplicationInsightsTelemetry();
+
         var elasticUri = appSettings.Elasticsearch.Uri;
         var environment =
             Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
         var applicationName = "BookMeAPI";
 
-        Log.Logger = new LoggerConfiguration()
+        var loggerConfig = new LoggerConfiguration()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("System", LogEventLevel.Warning)
@@ -31,56 +33,47 @@ public static class LoggingConfiguration
             .Enrich.WithProperty("Application", applicationName)
             .WriteTo.Console(
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
-            )
-            .WriteTo.Conditional(
-                evt => !string.IsNullOrEmpty(elasticUri),
-                sinkConfig =>
-                    sinkConfig
-                        .Elasticsearch(
-                            new[] { new Uri(elasticUri!) },
-                            opts =>
-                            {
-                                // Data stream configuration
-                                opts.DataStream = new DataStreamName(
-                                    "logs",
-                                    applicationName.ToLower(),
-                                    environment.ToLower()
-                                );
-                            },
-                            transport =>
-                            {
-                                if (!string.IsNullOrEmpty(appSettings.Elasticsearch.ApiKey))
-                                {
-                                    transport.Authentication(
-                                        new ApiKey(appSettings.Elasticsearch.ApiKey)
-                                    );
-                                }
+            );
 
-                                if (
-                                    !string.IsNullOrEmpty(appSettings.Elasticsearch.Username)
-                                    && !string.IsNullOrEmpty(appSettings.Elasticsearch.Password)
-                                )
-                                {
-                                    transport.Authentication(
-                                        new BasicAuthentication(
-                                            appSettings.Elasticsearch.Username,
-                                            appSettings.Elasticsearch.Password
-                                        )
-                                    );
-                                }
-                            }
-                        )
-                        .WriteTo.Debug()
-                        .WriteTo.Conditional(
-                            evt => evt.Level == LogEventLevel.Error,
-                            sinkConfig =>
-                                sinkConfig.File(
-                                    path: "logs/errors-.txt",
-                                    rollingInterval: RollingInterval.Day
-                                )
-                        )
-            )
-            .WriteTo.OpenTelemetry(options =>
+        if (!string.IsNullOrEmpty(elasticUri))
+        {
+            loggerConfig.WriteTo.Elasticsearch(
+                new[] { new Uri(elasticUri!) },
+                opts =>
+                {
+                    // Data stream configuration
+                    opts.DataStream = new DataStreamName(
+                        "logs",
+                        applicationName.ToLower(),
+                        environment.ToLower()
+                    );
+                },
+                transport =>
+                {
+                    if (!string.IsNullOrEmpty(appSettings.Elasticsearch.ApiKey))
+                    {
+                        transport.Authentication(new ApiKey(appSettings.Elasticsearch.ApiKey));
+                    }
+
+                    if (
+                        !string.IsNullOrEmpty(appSettings.Elasticsearch.Username)
+                        && !string.IsNullOrEmpty(appSettings.Elasticsearch.Password)
+                    )
+                    {
+                        transport.Authentication(
+                            new BasicAuthentication(
+                                appSettings.Elasticsearch.Username,
+                                appSettings.Elasticsearch.Password
+                            )
+                        );
+                    }
+                }
+            );
+        }
+
+        if (!string.IsNullOrEmpty(appSettings.OpenTelemetry.Seq.LogsUri))
+        {
+            loggerConfig.WriteTo.OpenTelemetry(options =>
             {
                 options.Endpoint = appSettings.OpenTelemetry.Seq.LogsUri;
                 options.Protocol = OtlpProtocol.HttpProtobuf;
@@ -88,12 +81,18 @@ public static class LoggingConfiguration
                 {
                     { "X-Seq-ApiKey", appSettings.OpenTelemetry.Seq.ApiKey },
                 };
-            })
-            .WriteTo.ApplicationInsights(
+            });
+        }
+
+        if (!string.IsNullOrEmpty(appSettings.ApplicationInsights.ConnectionString))
+        {
+            loggerConfig.WriteTo.ApplicationInsights(
                 services.BuildServiceProvider().GetRequiredService<TelemetryConfiguration>(),
-                TelemetryConverter.Traces
-            )
-            .CreateLogger();
+                TelemetryConverter.Events
+            );
+        }
+
+        Log.Logger = loggerConfig.CreateLogger();
 
         services.AddSerilog();
         return services;

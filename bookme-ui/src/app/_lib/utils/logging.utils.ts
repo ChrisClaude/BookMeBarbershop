@@ -5,6 +5,15 @@ import { APP_INSIGHTS_CONNECTION_STRING } from "@/config";
 const hasExternalLoggingService = isNotNullOrWhiteSpace(
   APP_INSIGHTS_CONNECTION_STRING
 );
+
+const SeverityLevel = {
+  VERBOSE: 0,
+  INFO: 1,
+  WARNING: 2,
+  ERROR: 3,
+  CRITICAL: 4,
+};
+
 /**
  * This method provides a wrapper around the error logging mechanism, so that later when an external logging provider is introduced we can do the switch in one place
  * @param message The error message
@@ -30,22 +39,27 @@ export const logError = (
         cause: cause,
         stack: stack,
       },
-      severityLevel: 3,
+      severityLevel: SeverityLevel.ERROR,
     });
   }
 };
 
-export const logInfo = (message: string, name: string): void => {
+export const logInfo = (
+  message: string,
+  name: string,
+  properties?: Record<string, unknown>
+): void => {
   if (!hasExternalLoggingService || isNullOrUndefined(appInsights)) {
-    console.info(message, name);
+    console.info(message, name, properties);
     return;
   } else {
     appInsights.trackTrace({
       message: message,
       properties: {
         name: name,
+        ...properties,
       },
-      severityLevel: 0,
+      severityLevel: SeverityLevel.INFO,
     });
   }
 };
@@ -65,7 +79,7 @@ export const logWarning = (
         name: name,
         error: error,
       },
-      severityLevel: 1,
+      severityLevel: SeverityLevel.WARNING,
     });
   }
 };

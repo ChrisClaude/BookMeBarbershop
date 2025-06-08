@@ -1,33 +1,47 @@
 "use client";
-import { withAuth } from '@/_components/auth/AuthGuard';
-import { PagedListDtoOfUserDto } from '@/_lib/codegen';
-import { ROLES } from '@/_lib/enums/constant';
-import { useGetAllUsersQuery } from '@/_lib/queries';
-import { QueryResult } from '@/_lib/queries/rtk.types';
-import { Button, Input, Pagination, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useCallback, useMemo, useState } from 'react';
+import { withAuth } from "@/_components/auth/AuthGuard";
+import { ApiUserAllGetRequest, PagedListDtoOfUserDto } from "@/_lib/codegen";
+import { ROLES } from "@/_lib/enums/constant";
+import { useGetAllUsersQuery } from "@/_lib/queries";
+import { QueryResult } from "@/_lib/queries/rtk.types";
+import {
+  Button,
+  Input,
+  Pagination,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@heroui/react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useCallback, useMemo, useState } from "react";
 
 const UserAdminPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageIndex = useMemo(() => {
     const page = searchParams.get("page");
     return Number(page) || 1;
   }, [searchParams]);
 
-  const request = useMemo(() => ({
-    page: pageIndex - 1, // API uses 0-based indexing
-    pageSize: 10
-  }), [pageIndex]);
+  const request: ApiUserAllGetRequest = useMemo<ApiUserAllGetRequest>(
+    () => ({
+      pageIndex: pageIndex - 1, // API uses 0-based indexing
+      pageSize: 10,
+    }),
+    [pageIndex]
+  );
 
   const {
     data: users,
     isFetching,
-    error
+    error,
   } = useGetAllUsersQuery<QueryResult<PagedListDtoOfUserDto>>(request);
 
   const handlePageChange = useCallback(
@@ -40,10 +54,11 @@ const UserAdminPage = () => {
   const filteredUsers = useMemo(() => {
     if (!users?.items) return [];
 
-    return users.items.filter(user =>
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.surname?.toLowerCase().includes(searchTerm.toLowerCase())
+    return users.items.filter(
+      (user) =>
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.surname?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [users, searchTerm]);
 
@@ -57,8 +72,19 @@ const UserAdminPage = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-xs"
           startContent={
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5 text-gray-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
             </svg>
           }
         />
@@ -71,7 +97,11 @@ const UserAdminPage = () => {
       ) : error ? (
         <div className="p-4 border rounded-lg bg-red-50 text-center">
           <p className="text-red-500">Error loading users</p>
-          <Button color="primary" className="mt-4" onPress={() => router.refresh()}>
+          <Button
+            color="primary"
+            className="mt-4"
+            onPress={() => router.refresh()}
+          >
             Try Again
           </Button>
         </div>
@@ -96,7 +126,10 @@ const UserAdminPage = () => {
                   <TableCell>
                     <div className="flex gap-1 flex-wrap">
                       {user.roles?.map((role, index) => (
-                        <span key={index} className="px-2 py-1 text-xs rounded-full bg-primary-100 text-primary-700">
+                        <span
+                          key={index}
+                          className="px-2 py-1 text-xs rounded-full bg-primary-100 text-primary-700"
+                        >
                           {role.role?.name}
                         </span>
                       ))}

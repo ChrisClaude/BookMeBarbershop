@@ -52,7 +52,7 @@ const ProfileForm = () => {
             placeholder="Enter your email"
             id="email"
             type="email"
-            value={userProfile?.email || ""}
+            value={formData.email || ""}
             isReadOnly
             aria-readonly="true"
           />
@@ -65,7 +65,7 @@ const ProfileForm = () => {
             name="name"
             placeholder="Enter your name"
             type="text"
-            value={userProfile?.name || ""}
+            value={formData.name || ""}
             onChange={(e) => handleInputChange("name", e.target.value)}
             aria-invalid={errors.some((e) => e.field === "name")}
           />
@@ -78,7 +78,7 @@ const ProfileForm = () => {
             name="surname"
             placeholder="Enter your surname"
             type="text"
-            value={userProfile?.surname || ""}
+            value={formData.surname || ""}
             onChange={(e) => handleInputChange("surname", e.target.value)}
             aria-invalid={errors.some((e) => e.field === "surname")}
           />
@@ -125,17 +125,19 @@ const ProfileForm = () => {
             />
           )}
 
-          <Button
-            className="w-full"
-            color="primary"
-            type="submit"
-            isLoading={isVerifyingPhoneNumber || isUpdatingUserProfile}
-            isDisabled={isVerifyingPhoneNumber || isUpdatingUserProfile}
-          >
-            {userProfile?.isPhoneNumberVerified
-              ? "Save Profile"
-              : "Verify Phone Number"}
-          </Button>
+          {!isPhoneNumberVerificationProcess && (
+            <Button
+              className="w-full"
+              color="primary"
+              type="submit"
+              isLoading={isVerifyingPhoneNumber || isUpdatingUserProfile}
+              isDisabled={isVerifyingPhoneNumber || isUpdatingUserProfile}
+            >
+              {userProfile?.isPhoneNumberVerified
+                ? "Save Profile"
+                : "Verify Phone Number"}
+            </Button>
+          )}
         </div>
       </Form>
     </section>

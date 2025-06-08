@@ -1,4 +1,4 @@
-import { Button } from "@heroui/react";
+import { Button, Input } from "@heroui/react";
 import React from "react";
 
 const PhoneVerificationFormFragment = ({
@@ -18,10 +18,9 @@ const PhoneVerificationFormFragment = ({
     <>
       <div className="flex flex-col gap-2">
         <label htmlFor="verification-code">Verification Code:</label>
-        <input
+        <Input
           id="verification-code"
           type="text"
-          className="w-full font-normal bg-transparent outline-none bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition-colors"
           placeholder="Enter verification code"
           value={formData.verificationCode || ""}
           onChange={(e) => {

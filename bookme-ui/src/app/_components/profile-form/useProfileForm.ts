@@ -201,12 +201,15 @@ const useProfileForm = () => {
       });
   };
 
-const handleInputChange = useCallback((field: string, value: string) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [field]: value,
-    }));
-  }, [setFormData]);
+  const handleInputChange = useCallback(
+    (field: string, value: string) => {
+      setFormData((prevState) => ({
+        ...prevState,
+        [field]: value,
+      }));
+    },
+    [setFormData]
+  );
 
   return {
     errors,

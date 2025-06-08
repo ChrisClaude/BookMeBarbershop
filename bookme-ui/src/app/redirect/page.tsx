@@ -9,11 +9,18 @@ import { localLinks } from "@/_lib/enums/constant";
 
 const Page = () => {
   const router = useRouter();
-  const { status, isAdmin, isCustomer } = useAuth();
-  const [redirectMessage, setRedirectMessage] = useState("Redirecting you to the appropriate page...");
+  const { status, isAdmin, isCustomer, isFetchingUserProfile } = useAuth();
+  const [redirectMessage, setRedirectMessage] = useState(
+    "Redirecting you to the appropriate page..."
+  );
 
   useEffect(() => {
     logInfo("You are being redirected", "RedirectPage");
+
+    if (status === "loading" || isFetchingUserProfile) {
+      setRedirectMessage("Loading...");
+      return;
+    }
 
     let destination = "/";
 
@@ -37,7 +44,7 @@ const Page = () => {
     }, 1500);
 
     return () => clearTimeout(redirectTimer);
-  }, [isAdmin, isCustomer, router, status]);
+  }, [isAdmin, isCustomer, router, status, isFetchingUserProfile]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-100">

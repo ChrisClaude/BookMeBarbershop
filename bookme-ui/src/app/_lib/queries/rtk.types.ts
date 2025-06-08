@@ -8,12 +8,17 @@ import {
   ApiBookingTimeslotsPostRequest,
   ApiPhoneVerificationSendCodePostRequest,
   ApiPhoneVerificationVerifyCodePostRequest,
+  ApiUserProfilePutRequest,
 } from "../codegen";
 
 export type CustomBaseQueryType =
   | {
       endpoint: "user.getUserProfile";
       params?: null;
+    }
+  | {
+      endpoint: "user.updateUserProfile";
+      params: { request: ApiUserProfilePutRequest };
     }
   | {
       endpoint: "booking.createTimeSlot";

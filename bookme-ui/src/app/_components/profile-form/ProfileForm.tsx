@@ -15,6 +15,7 @@ const ProfileForm = () => {
     isVerifyingPhoneNumber,
     isCodeSent,
     isVerifyingCode,
+    isUpdatingUserProfile,
     setFormData,
     onSubmit,
     handleVerifyCode,
@@ -55,6 +56,14 @@ const ProfileForm = () => {
             placeholder="Enter your name"
             type="text"
             value={userProfile?.name || ""}
+            onChange={(e) => {
+              setFormData((prevState) => {
+                return {
+                  ...prevState,
+                  name: e.target.value,
+                };
+              });
+            }}
           />
 
           <Input
@@ -66,6 +75,14 @@ const ProfileForm = () => {
             placeholder="Enter your surname"
             type="text"
             value={userProfile?.surname || ""}
+            onChange={(e) => {
+              setFormData((prevState) => {
+                return {
+                  ...prevState,
+                  surname: e.target.value,
+                };
+              });
+            }}
           />
 
           <div className="flex flex-col gap-2">
@@ -120,7 +137,7 @@ const ProfileForm = () => {
             className="w-full"
             color="primary"
             type="submit"
-            isLoading={isVerifyingPhoneNumber}
+            isLoading={isVerifyingPhoneNumber || isUpdatingUserProfile}
           >
             {userProfile?.isPhoneNumberVerified
               ? "Save Profile"

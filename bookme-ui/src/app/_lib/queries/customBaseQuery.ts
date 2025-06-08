@@ -8,8 +8,20 @@ export const customBaseQuery =
   () =>
   async ({ endpoint, params }: CustomBaseQueryType) => {
     switch (endpoint) {
+      //#region User
       case "user.getUserProfile":
         return transformToRTKResult(await UserService.getUserProfile());
+
+      case "user.updateUserProfile":
+        return transformToRTKResult(
+          await UserService.updateUserProfile({
+            ...params,
+            request: params.request,
+          })
+        );
+      //#endregion
+
+      //#region Booking and TimeSlots
       case "booking.createTimeSlot":
         return transformToRTKResult(
           await BookingService.createTimeSlot(params)
@@ -28,14 +40,6 @@ export const customBaseQuery =
           })
         );
 
-      case "booking.createBooking":
-        return transformToRTKResult(
-          await BookingService.createBooking({
-            ...params,
-            request: params.request,
-          })
-        );
-
       case "booking.getAllTimeSlots":
         return transformToRTKResult(
           await BookingService.getAllTimeSlots({
@@ -47,6 +51,14 @@ export const customBaseQuery =
                 end: new Date(params.request.getTimeSlotsDto.end),
               },
             },
+          })
+        );
+
+      case "booking.createBooking":
+        return transformToRTKResult(
+          await BookingService.createBooking({
+            ...params,
+            request: params.request,
           })
         );
 
@@ -76,6 +88,22 @@ export const customBaseQuery =
           })
         );
 
+      case "booking.getAvailableDates":
+        return transformToRTKResult(
+          await BookingService.getAvailableDates({
+            ...params,
+            request: {
+              ...params.request,
+              getAvailableDatesDto: {
+                start: new Date(params.request.getAvailableDatesDto.start),
+                end: new Date(params.request.getAvailableDatesDto.end),
+              },
+            },
+          })
+        );
+      //#endregion
+
+      //#region PhoneVerification
       case "phoneVerification.verifyPhoneNumber":
         return transformToRTKResult(
           await PhoneVerificationService.verifyPhoneNumber({
@@ -91,20 +119,7 @@ export const customBaseQuery =
             request: params.request,
           })
         );
-
-      case "booking.getAvailableDates":
-        return transformToRTKResult(
-          await BookingService.getAvailableDates({
-            ...params,
-            request: {
-              ...params.request,
-              getAvailableDatesDto: {
-                start: new Date(params.request.getAvailableDatesDto.start),
-                end: new Date(params.request.getAvailableDatesDto.end),
-              },
-            },
-          })
-        );
+      //#endregion
 
       default:
         throw new Error(`Unknown endpoint: ${endpoint}`);

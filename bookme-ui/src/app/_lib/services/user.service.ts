@@ -1,4 +1,4 @@
-import { UserDto } from "../codegen";
+import { ApiUserProfilePutRequest, UserDto } from "../codegen";
 import { Result } from "../types/common.types";
 import { isStatusCodeSuccess } from "../utils/common.utils";
 import { logError } from "../utils/logging.utils";
@@ -32,6 +32,40 @@ export class UserService {
       return {
         success: false,
         errors: [error?.toString() || "Error fetching user"],
+      };
+    }
+  }
+
+  public static async updateUserProfile({
+    request,
+  }: {
+    request: ApiUserProfilePutRequest;
+  }): Promise<Result<UserDto | undefined>> {
+    try {
+      const response = await this.userApi.apiUserProfilePutRaw(request);
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: [error?.toString() || "Error updating user"],
+        };
+      }
+
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as UserDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error updating user",
+        "UpdateUserError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error updating user"],
       };
     }
   }

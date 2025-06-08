@@ -14,6 +14,14 @@ export const api = createApi({
       }),
       providesTags: ["User"],
     }),
+
+    updateUserProfile: builder.mutation({
+      query: (request) => ({
+        endpoint: "user.updateUserProfile",
+        params: { request },
+      }),
+      invalidatesTags: ["User"],
+    }),
     //#endregion
 
     //#region Booking
@@ -69,6 +77,7 @@ export const api = createApi({
       }),
       providesTags: ["Booking"],
     }),
+
     //#endregion
 
     //#region PhoneVerification
@@ -91,6 +100,7 @@ export const api = createApi({
 
 export const {
   useGetUserProfileQuery,
+  useUpdateUserProfileMutation,
   useGetAvailableTimeSlotsQuery,
   useGetAllTimeSlotsQuery,
   useCreateTimeSlotMutation,

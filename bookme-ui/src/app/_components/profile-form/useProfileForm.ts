@@ -7,8 +7,9 @@ import {
   isNotNullOrUndefined,
 } from "@/_lib/utils/common.utils";
 import React, { useCallback, useState } from "react";
-import { UserDto } from "@/_lib/codegen";
+import { ApiUserProfilePutRequest, UserDto } from "@/_lib/codegen";
 import {
+  useUpdateUserProfileMutation,
   useVerifyCodeNumberMutation,
   useVerifyPhoneNumberMutation,
 } from "@/_lib/queries";
@@ -46,22 +47,76 @@ const useProfileForm = () => {
   const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
     useVerifyCodeNumberMutation();
 
+  const [updateUserProfile, { isLoading: isUpdatingUserProfile }] =
+    useUpdateUserProfileMutation();
+
+  const validateFormDate = (
+    formData: UserDto & {
+      verificationCode: string | undefined;
+      phoneNumberE164: E164Number | undefined;
+    },
+    setErrors: React.Dispatch<
+      React.SetStateAction<{ field: string; message: string }[]>
+    >
+  ) => {
+    const phoneErrors = validatePhoneNumber(formData.phoneNumberE164);
+    let isFormValid = true;
+    if (phoneErrors.length > 0) {
+      setErrors(
+        phoneErrors.map((error) => ({
+          field: "phone-number",
+          message: error,
+        }))
+      );
+      isFormValid = isFormValid && false;
+    } else {
+      setErrors((prevErrors) =>
+        prevErrors.filter((error) => error.field !== "phone-number")
+      );
+
+      isFormValid = isFormValid && true;
+    }
+
+    if (isNullOrWhiteSpace(formData.name)) {
+      setErrors([
+        {
+          field: "name",
+          message: "Name is required",
+        },
+      ]);
+      isFormValid = isFormValid && false;
+    } else {
+      setErrors((prevErrors) =>
+        prevErrors.filter((error) => error.field !== "name")
+      );
+      isFormValid = isFormValid && true;
+    }
+
+    if (isNullOrWhiteSpace(formData.surname)) {
+      setErrors([
+        {
+          field: "surname",
+          message: "Surname is required",
+        },
+      ]);
+      isFormValid = isFormValid && false;
+    } else {
+      setErrors((prevErrors) =>
+        prevErrors.filter((error) => error.field !== "surname")
+      );
+
+      isFormValid = isFormValid && true;
+    }
+    return isFormValid;
+  };
+
   const onSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const phoneErrors = validatePhoneNumber(formData.phoneNumberE164);
-      if (phoneErrors.length > 0) {
-        setErrors(
-          phoneErrors.map((error) => ({
-            field: "phone-number",
-            message: error,
-          }))
-        );
+      const isFormValid = validateFormDate(formData, setErrors);
+
+      if (!isFormValid) {
         return;
-      } else {
-        setErrors((prevErrors) =>
-          prevErrors.filter((error) => error.field !== "phone-number")
-        );
       }
 
       if (!userProfile?.isPhoneNumberVerified) {
@@ -82,12 +137,28 @@ const useProfileForm = () => {
             ]);
           });
       } else {
-        // todo: update user profile
+        const updateRequest: ApiUserProfilePutRequest = {
+          userUpdateDto: {
+            name: formData.name,
+            surname: formData.surname,
+          },
+        };
+        updateUserProfile(updateRequest)
+          .unwrap()
+          .then()
+          .catch((error) => {
+            setErrors([
+              {
+                field: "profile-update",
+                message: JSON.stringify(error),
+              },
+            ]);
+          });
       }
     },
     [
-      formData.phoneNumber,
-      formData.phoneNumberE164,
+      formData,
+      updateUserProfile,
       userProfile?.isPhoneNumberVerified,
       verifyPhoneNumber,
     ]
@@ -132,6 +203,7 @@ const useProfileForm = () => {
     isVerifyingPhoneNumber,
     isCodeSent,
     isVerifyingCode,
+    isUpdatingUserProfile,
     setFormData,
     onSubmit,
     handleVerifyCode,

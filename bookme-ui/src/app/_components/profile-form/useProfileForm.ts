@@ -6,7 +6,7 @@ import {
   validatePhoneNumber,
   isNotNullOrUndefined,
 } from "@/_lib/utils/common.utils";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ApiUserProfilePutRequest, UserDto } from "@/_lib/codegen";
 import {
   useUpdateUserProfileMutation,
@@ -14,6 +14,7 @@ import {
   useVerifyPhoneNumberMutation,
 } from "@/_lib/queries";
 import { E164Number } from "libphonenumber-js";
+import { addToast } from "@heroui/react";
 
 const useProfileForm = () => {
   const { userProfile } = useAuth();
@@ -44,8 +45,10 @@ const useProfileForm = () => {
     { isLoading: isVerifyingPhoneNumber, isSuccess: isCodeSent },
   ] = useVerifyPhoneNumberMutation();
 
-  const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
-    useVerifyCodeNumberMutation();
+  const [
+    verifyCodeNumber,
+    { isLoading: isVerifyingCode, isSuccess: isCodeVerified },
+  ] = useVerifyCodeNumberMutation();
 
   const [
     updateUserProfile,
@@ -210,6 +213,26 @@ const useProfileForm = () => {
     },
     [setFormData]
   );
+
+  useEffect(() => {
+    if (isProfileUpdated) {
+      addToast({
+        title: "Profile Updated",
+        description: "Your profile has been updated.",
+        color: "success",
+      });
+    }
+  }, [isProfileUpdated]);
+
+  useEffect(() => {
+    if (isCodeVerified) {
+      addToast({
+        title: "Phone Number Verified",
+        description: "Your phone number has been verified.",
+        color: "success",
+      });
+    }
+  }, [isCodeVerified]);
 
   return {
     errors,

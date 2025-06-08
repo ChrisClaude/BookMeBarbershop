@@ -31,4 +31,18 @@ public static class TimeSlotMapper
             Items = timeSlots.Select(x => x.MapToDto()).ToList(),
         };
     }
+
+    public static PagedListDto<TimeSlotDto> MapToDto(this IPagedList<TimeSlot> timeSlots)
+    {
+        return new PagedListDto<TimeSlotDto>
+        {
+            PageIndex = timeSlots.PageIndex,
+            PageSize = timeSlots.PageSize,
+            TotalCount = timeSlots.TotalCount,
+            TotalPages = timeSlots.TotalPages,
+            HasPreviousPage = timeSlots.HasPreviousPage,
+            HasNextPage = timeSlots.HasNextPage,
+            Items = timeSlots.Select(x => x.MapToDto()).ToList()
+        };
+    }
 }

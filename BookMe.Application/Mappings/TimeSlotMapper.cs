@@ -14,7 +14,7 @@ public static class TimeSlotMapper
             Start = timeSlot.Start,
             End = timeSlot.End,
             IsAvailable = timeSlot.IsAvailable,
-            AllowAutoConfirmation = timeSlot.AllowAutoConfirmation
+            AllowAutoConfirmation = timeSlot.AllowAutoConfirmation,
         };
     }
 
@@ -28,7 +28,7 @@ public static class TimeSlotMapper
             TotalPages = timeSlots.TotalPages,
             HasPreviousPage = timeSlots.HasPreviousPage,
             HasNextPage = timeSlots.HasNextPage,
-            Items = timeSlots.Select(x => x.MapToDto()).ToList()
+            Items = timeSlots.Select(x => x.MapToDto()).ToList(),
         };
     }
 }

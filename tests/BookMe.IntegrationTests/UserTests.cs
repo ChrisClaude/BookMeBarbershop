@@ -28,7 +28,7 @@ public class UserTests : BaseIntegrationTest
         var userQueries = _scope.ServiceProvider.GetRequiredService<IUserQueries>();
         _userController = new UserController(_mediator, userQueries);
 
-       _adminUser = _bookMeContext
+        _adminUser = _bookMeContext
             .Users.Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId))

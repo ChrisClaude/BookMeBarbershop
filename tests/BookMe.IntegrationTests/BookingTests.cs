@@ -517,7 +517,6 @@ public class BookingTests : BaseIntegrationTest
         await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 
-    // TODO: Add tests for admin getting all bookings
     [Fact]
     public async Task GetAllBookings_ShouldSucceedAsync()
     {
@@ -553,8 +552,6 @@ public class BookingTests : BaseIntegrationTest
 
         await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
-
-
 
     #endregion
 }

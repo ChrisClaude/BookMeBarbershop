@@ -131,7 +131,7 @@ public class BookingController(
     [ProducesResponseType<PagedListDto<BookingDto>>(StatusCodes.Status200OK)]
     [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetBookingAsync(
+    public async Task<IActionResult> GetUsersBookingsAsync(
         [FromBody] GetBookingsDto request,
         [FromQuery] int pageIndex = 0,
         [FromQuery] int pageSize = 10
@@ -140,6 +140,27 @@ public class BookingController(
         var user = GetContextUser();
         var result = await bookingQueries.GetPagedBookingsAsync(
             user.Id,
+            request.FromDateTime,
+            request.BookingStatus,
+            pageIndex,
+            pageSize
+        );
+
+        return result.ToActionResult();
+    }
+
+    [HttpPost("get-bookings/all")]
+    [Authorize(Policy = Policy.ADMIN)]
+    [ProducesResponseType<PagedListDto<BookingDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<IEnumerable<Error>>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAllBookingsAsync(
+        [FromBody] GetBookingsDto request,
+        [FromQuery] int pageIndex = 0,
+        [FromQuery] int pageSize = 10
+    )
+    {
+        var result = await bookingQueries.GetPagedBookingsAsync(
             request.FromDateTime,
             request.BookingStatus,
             pageIndex,

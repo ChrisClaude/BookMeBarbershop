@@ -37,4 +37,30 @@ public class BookingQueries(IRepository<Booking> repository) : IBookingQueries
 
         return Result.Success(bookings.MapToDto());
     }
+
+    public async Task<Result<PagedListDto<BookingDto>>> GetPagedBookingsAsync(
+        DateTime fromDateTime,
+        BookingStatus? bookingStatus = null,
+        int pageIndex = 0,
+        int pageSize = 10
+    )
+    {
+        var bookings = await repository.GetAllPagedAsync(
+            queryable =>
+                queryable
+                    .Where(x => x.TimeSlot.Start >= fromDateTime)
+                    .Where(x => bookingStatus == null || x.Status == bookingStatus)
+                    .OrderBy(x =>
+                        x.Status == BookingStatus.Confirmed || x.Status == BookingStatus.Pending
+                            ? 0
+                            : 1
+                    )
+                    .ThenBy(x => x.TimeSlot.Start),
+            includes: new[] { nameof(Booking.User), nameof(Booking.TimeSlot) },
+            pageIndex: pageIndex,
+            pageSize: pageSize
+        );
+
+        return Result.Success(bookings.MapToDto());
+    }
 }

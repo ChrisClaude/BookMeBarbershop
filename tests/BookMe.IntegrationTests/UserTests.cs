@@ -4,6 +4,7 @@ using BookMe.Application.Common.Dtos.Users;
 using BookMe.Application.Entities;
 using BookMe.Application.Enums;
 using BookMe.Application.Interfaces.Queries;
+using BookMe.Application.Mappings;
 using BookMe.IntegrationTests.TestData;
 using BookMeAPI.Apis;
 using FluentAssertions;
@@ -18,12 +19,20 @@ public class UserTests : BaseIntegrationTest
     private IMediator _mediator;
     private UserController _userController;
 
+    private UserDto _adminUser;
+
     public UserTests(IntegrationTestWebAppFactory factory)
         : base(factory)
     {
         _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
         var userQueries = _scope.ServiceProvider.GetRequiredService<IUserQueries>();
         _userController = new UserController(_mediator, userQueries);
+
+       _adminUser = _bookMeContext
+            .Users.Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role)
+            .First(x => x.UserRoles.Any(y => y.RoleId == DefaultRoles.AdminId))
+            .MapToDto();
     }
 
     [Fact]
@@ -109,6 +118,26 @@ public class UserTests : BaseIntegrationTest
         var updatedUser = await _bookMeContext.Users.FirstAsync(x => x.Id == userDto.Id);
         updatedUser.Name.Should().Be("Chris");
         updatedUser.Surname.Should().Be("Claude");
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+    }
+
+    [Fact]
+    public async Task GetUsers_ShouldSucceedAsync()
+    {
+        // Arrange
+        _mockHttpContext.SetUser(_adminUser);
+
+        // Act
+        var result = await _userController.GetUsersAsync();
+
+        // Assert
+        result.ValidateOkResult<PagedListDto<UserDto>>(users =>
+        {
+            users.Items.Should().HaveCount(2);
+            users.Items.First().Name.Should().Be("John");
+            users.Items.Last().Name.Should().Be("Jane");
+        });
 
         await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }

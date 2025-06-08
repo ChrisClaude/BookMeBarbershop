@@ -20,4 +20,16 @@ public class UserQueries(IRepository<User> repository) : IUserQueries
 
         return Result.Success(user.MapToDto());
     }
+
+    public async Task<Result<PagedListDto<UserDto>>> GetUsersAsync(int page, int pageSize)
+    {
+        var users = await repository.GetAllPagedAsync(
+            queryable => queryable.OrderBy(x => x.Email),
+            includes: new[] { nameof(User.UserRoles) },
+            pageIndex: page,
+            pageSize: pageSize
+        );
+
+        return Result.Success(users.MapToDto());
+    }
 }

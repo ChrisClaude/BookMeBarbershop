@@ -14,4 +14,11 @@ public interface IBookingQueries
         int pageIndex = 0,
         int pageSize = 10
     );
+
+    Task<Result<PagedListDto<BookingDto>>> GetPagedBookingsAsync(
+        DateTime fromDateTime,
+        BookingStatus? bookingStatus = null,
+        int pageIndex = 0,
+        int pageSize = 10
+    );
 }

@@ -483,7 +483,7 @@ public class BookingTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task GetBookings_ShouldSucceedAsync()
+    public async Task GetUsersBookings_ShouldSucceedAsync()
     {
         // Arrange
 
@@ -503,7 +503,7 @@ public class BookingTests : BaseIntegrationTest
         var request = new GetBookingsDto { FromDateTime = DateTime.Today };
 
         // Act
-        var result = await _bookingController.GetBookingAsync(request);
+        var result = await _bookingController.GetUsersBookingsAsync(request);
 
         // Assert
         result.ValidateOkResult<PagedListDto<BookingDto>>(bookings =>
@@ -516,5 +516,45 @@ public class BookingTests : BaseIntegrationTest
 
         await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
+
+    // TODO: Add tests for admin getting all bookings
+    [Fact]
+    public async Task GetAllBookings_ShouldSucceedAsync()
+    {
+        // Arrange
+
+        _mockHttpContext.SetUser(_adminUser);
+        var createTimeSlotsCommand = new CreateTimeSlotCommand(
+            DateTime.UtcNow.AddDays(10).AddHours(1),
+            DateTime.UtcNow.AddDays(10).AddHours(2)
+        );
+        var creationResult = await _mediator.Send(createTimeSlotsCommand);
+        var timeSlotId = creationResult.Value.First().Id;
+
+        _mockHttpContext.SetUser(_customerUser);
+        var bookResult = await _bookingController.BookTimeSlotsAsync(
+            new BookTimeSlotsDto { TimeSlotId = timeSlotId }
+        );
+
+        _mockHttpContext.SetUser(_adminUser);
+        var request = new GetBookingsDto { FromDateTime = DateTime.Today };
+
+        // Act
+        var result = await _bookingController.GetAllBookingsAsync(request);
+
+        // Assert
+        result.ValidateOkResult<PagedListDto<BookingDto>>(bookings =>
+        {
+            bookings.Items.Should().HaveCount(1);
+            bookings.Items.First().Status.Should().Be(BookingStatus.Pending);
+            bookings.Items.First().User.Id.Should().Be(_customerUser.Id);
+            bookings.Items.First().TimeSlot.Id.Should().Be(timeSlotId);
+        });
+
+        await TestCDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
+    }
+
+
+
     #endregion
 }

@@ -10,6 +10,7 @@ public class AppSettings
     public OpenTelemetryConfig OpenTelemetry { get; set; }
     public string[] AllowedCorsOrigins { get; set; }
     public TwilioConfig TwilioConfig { get; set; }
+    public ApplicationInsightsConfig ApplicationInsights { get; set; }
 }
 
 #region other config classes
@@ -45,6 +46,11 @@ public class OpenTelemetryConfig
         public string TracesUri { get; set; }
         public string ApiKey { get; set; }
     }
+}
+
+public class ApplicationInsightsConfig
+{
+    public string ConnectionString { get; set; }
 }
 
 #endregion

@@ -1,3 +1,4 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using BookMe.Application.Configurations;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;
@@ -14,6 +15,10 @@ public static class OpenTelemetryTracingConfiguration
     {
         services
             .AddOpenTelemetry()
+            .UseAzureMonitor(options =>
+            {
+                options.ConnectionString = appSettings.ApplicationInsights.ConnectionString;
+            })
             .ConfigureResource(resource => resource.AddService("BookMeAPI"))
             .WithTracing(tracing =>
             {

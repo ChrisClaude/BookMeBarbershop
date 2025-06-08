@@ -5,6 +5,7 @@ import { CgProfile } from "react-icons/cg";
 import { Button, Form, Input } from "@heroui/react";
 import PhoneInput from "react-phone-number-input";
 import PhoneVerificationFormFragment from "../booking-form/PhoneVerificationFragment";
+import FormSuccessErrorDisplay from "../FormSuccessErrorDisplay";
 
 const ProfileForm = () => {
   const {
@@ -16,6 +17,7 @@ const ProfileForm = () => {
     isCodeSent,
     isVerifyingCode,
     isUpdatingUserProfile,
+    isProfileUpdated,
     setFormData,
     onSubmit,
     handleVerifyCode,
@@ -34,6 +36,12 @@ const ProfileForm = () => {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-full px-4 sm:px-0 sm:max-w-md">
+          <FormSuccessErrorDisplay
+            errors={errors}
+            success={isProfileUpdated}
+            successMessage="Profile updated successfully"
+          />
+
           <Input
             isRequired
             errorMessage="Please enter a valid email"

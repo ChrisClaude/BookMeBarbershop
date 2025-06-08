@@ -7,6 +7,7 @@ import useBookingForm from "./useBookingForm";
 import BookingConfirmationDialog from "./BookingConfirmationDialog";
 import PhoneVerificationFormFragment from "./PhoneVerificationFragment";
 import CalendarContainer from "./CalendarContainer";
+import FormSuccessErrorDisplay from "../FormSuccessErrorDisplay";
 
 const BookingForm = () => {
   const {
@@ -41,23 +42,11 @@ const BookingForm = () => {
         onSubmit={onSubmit}
       >
         <div className="flex flex-col gap-4 w-full lg:max-w-lg max-w-full px-4 sm:px-0 sm:max-w-md">
-          {errors.length > 0 && (
-            <div className="p-4 border rounded-lg bg-red-50 text-center">
-              {errors.map((error, index) => (
-                <p className="text-red-500" key={index}>
-                  {error.field} - {error.message}
-                </p>
-              ))}
-            </div>
-          )}
-          {bookingSuccess && (
-            <div className="p-4 border rounded-lg bg-green-50 text-center mb-4">
-              <p className="text-green-600">
-                Success! You&apos;ll be redirected to the bookings list page in
-                a few seconds.
-              </p>
-            </div>
-          )}
+          <FormSuccessErrorDisplay
+            errors={errors}
+            success={bookingSuccess}
+            successMessage="Success! You'll be redirected to the bookings list page in a few seconds."
+          />
 
           <div className="flex flex-col gap-2">
             <label htmlFor="phone-input">Phone Number:</label>

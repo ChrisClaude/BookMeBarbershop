@@ -47,8 +47,14 @@ const useProfileForm = () => {
   const [verifyCodeNumber, { isLoading: isVerifyingCode }] =
     useVerifyCodeNumberMutation();
 
-  const [updateUserProfile, { isLoading: isUpdatingUserProfile }] =
-    useUpdateUserProfileMutation();
+  const [
+    updateUserProfile,
+    {
+      isLoading: isUpdatingUserProfile,
+      isSuccess: isProfileUpdated,
+      error: errorUpdatingProfile,
+    },
+  ] = useUpdateUserProfileMutation();
 
   const validateFormDate = (
     formData: UserDto & {
@@ -204,6 +210,8 @@ const useProfileForm = () => {
     isCodeSent,
     isVerifyingCode,
     isUpdatingUserProfile,
+    isProfileUpdated,
+    errorUpdatingProfile,
     setFormData,
     onSubmit,
     handleVerifyCode,

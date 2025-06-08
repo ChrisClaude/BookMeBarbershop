@@ -88,6 +88,22 @@ export const customBaseQuery =
           })
         );
 
+      case "booking.getAllBookings":
+        return transformToRTKResult(
+          await BookingService.getAllBookings({
+            ...params,
+            request: {
+              ...params.request,
+              getBookingsDto: {
+                fromDateTime: new Date(
+                  params.request.getBookingsDto.fromDateTime
+                ),
+                bookingStatus: params.request.getBookingsDto.bookingStatus,
+              },
+            },
+          })
+        );
+
       case "booking.cancelBooking":
         return transformToRTKResult(
           await BookingService.cancelBooking({

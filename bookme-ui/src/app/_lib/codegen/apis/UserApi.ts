@@ -15,20 +15,67 @@
 
 import * as runtime from '../runtime';
 import type {
+  PagedListDtoOfUserDto,
   ProblemDetails,
   UserDto,
+  UserUpdateDto,
 } from '../models/index';
 import {
+    PagedListDtoOfUserDtoFromJSON,
+    PagedListDtoOfUserDtoToJSON,
     ProblemDetailsFromJSON,
     ProblemDetailsToJSON,
     UserDtoFromJSON,
     UserDtoToJSON,
+    UserUpdateDtoFromJSON,
+    UserUpdateDtoToJSON,
 } from '../models/index';
+
+export interface ApiUserAllGetRequest {
+    page?: number;
+    pageSize?: number;
+}
+
+export interface ApiUserProfilePutRequest {
+    userUpdateDto: UserUpdateDto;
+}
 
 /**
  * 
  */
 export class UserApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async apiUserAllGetRaw(requestParameters: ApiUserAllGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<PagedListDtoOfUserDto>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['page'] != null) {
+            queryParameters['page'] = requestParameters['page'];
+        }
+
+        if (requestParameters['pageSize'] != null) {
+            queryParameters['pageSize'] = requestParameters['pageSize'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/User/all`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => PagedListDtoOfUserDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiUserAllGet(requestParameters: ApiUserAllGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<PagedListDtoOfUserDto> {
+        const response = await this.apiUserAllGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      */
@@ -51,6 +98,40 @@ export class UserApi extends runtime.BaseAPI {
      */
     async apiUserMeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
         const response = await this.apiUserMeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async apiUserProfilePutRaw(requestParameters: ApiUserProfilePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<UserDto>> {
+        if (requestParameters['userUpdateDto'] == null) {
+            throw new runtime.RequiredError(
+                'userUpdateDto',
+                'Required parameter "userUpdateDto" was null or undefined when calling apiUserProfilePut().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json-patch+json';
+
+        const response = await this.request({
+            path: `/api/User/profile`,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UserUpdateDtoToJSON(requestParameters['userUpdateDto']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => UserDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async apiUserProfilePut(requestParameters: ApiUserProfilePutRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<UserDto> {
+        const response = await this.apiUserProfilePutRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

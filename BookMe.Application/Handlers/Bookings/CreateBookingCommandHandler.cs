@@ -10,16 +10,33 @@ using Serilog;
 
 namespace BookMe.Application.Handlers;
 
-public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepository<TimeSlot> timeSlotRepository) : IRequestHandler<CreateBookingCommand, Result<BookingDto>>
+public class CreateBookingCommandHandler(
+    IRepository<Booking> repository,
+    IRepository<TimeSlot> timeSlotRepository
+) : IRequestHandler<CreateBookingCommand, Result<BookingDto>>
 {
-    public async Task<Result<BookingDto>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
+    public async Task<Result<BookingDto>> Handle(
+        CreateBookingCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var timeSlot = await timeSlotRepository.GetByIdAsync(request.TimeSlotId, new string[] { nameof(TimeSlot.Bookings) });
+        var timeSlot = await timeSlotRepository.GetByIdAsync(
+            request.TimeSlotId,
+            new string[] { nameof(TimeSlot.Bookings) }
+        );
         var errors = new List<Error>();
         if (timeSlot == null)
         {
-            Log.Warning("Time slot with id {TimeSlotId} not found by user {UserId}", request.TimeSlotId, request.UserDto.Id);
-            errors.Add(Error.NotFound($"Time slot with id {request.TimeSlotId} not found by user {request.UserDto.Id}"));
+            Log.Warning(
+                "Time slot with id {TimeSlotId} not found by user {UserId}",
+                request.TimeSlotId,
+                request.UserDto.Id
+            );
+            errors.Add(
+                Error.NotFound(
+                    $"Time slot with id {request.TimeSlotId} not found by user {request.UserDto.Id}"
+                )
+            );
         }
 
         if (timeSlot != null && !timeSlot.IsAvailable)
@@ -32,12 +49,14 @@ public class CreateBookingCommandHandler(IRepository<Booking> repository, IRepos
             return Result<BookingDto>.Failure(errors, ErrorType.BadRequest);
         }
 
-
         var booking = new Booking
         {
             UserId = request.UserDto.Id,
             TimeSlotId = request.TimeSlotId,
-            Status = BookingStatus.Pending
+            Status =
+                timeSlot.AllowAutoConfirmation.HasValue && timeSlot.AllowAutoConfirmation.Value
+                    ? BookingStatus.Confirmed
+                    : BookingStatus.Pending,
         };
 
         await repository.InsertAsync(booking, false);

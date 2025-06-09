@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BookMe.Application.Caching;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Configurations;
@@ -8,6 +9,7 @@ using BookMe.Application.Interfaces;
 using BookMe.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace BookMe.Infrastructure;
 
@@ -39,7 +41,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         {
             CacheType.Redis => true,
             CacheType.SqlServer => true,
-            _ => false
+            _ => false,
         };
     }
 
@@ -139,8 +141,40 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         return await getEntitiesAsync();
     }
 
+    public virtual async Task<IList<TResult>> GetAllWithSelectorAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    )
+    {
+        async Task<IList<TResult>> getEntitiesAsync()
+        {
+            var query = Table;
+            if (!includeDeleted && typeof(ISoftDeletedEntity).IsAssignableFrom(typeof(TEntity)))
+            {
+                query = query.Where(e => !((ISoftDeletedEntity)e).Deleted);
+            }
+
+            query = func != null ? func(query) : query;
+            query = Include(query, includes);
+
+            return await query.Select(selector).ToListAsync();
+        }
+
+        if (cacheKey == null)
+            return await getEntitiesAsync();
+
+        if (await _cacheManager.GetAsync(cacheKey, out IList<TResult> entities))
+            return entities;
+
+        return await getEntitiesAsync();
+    }
+
     public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
         int pageIndex = 0,
         int pageSize = int.MaxValue,
         bool getOnlyTotalCount = false,
@@ -155,6 +189,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         }
 
         query = func != null ? func(query) : query;
+        query = Include(query, includes);
 
         return await ToPagedListAsync(query, pageIndex, pageSize, getOnlyTotalCount);
     }
@@ -249,6 +284,44 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         {
             throw new RepositoryException(
                 $"Error updating entities of type {typeof(TEntity).Name}",
+                ex
+            );
+        }
+    }
+
+    public virtual async Task UpdateSpecificPropertiesAsync(
+        Guid id,
+        Dictionary<Expression<Func<TEntity, object>>, object> propertyUpdates,
+        bool publishEvent = true
+    )
+    {
+        try
+        {
+            var entity = await _context.Set<TEntity>().FindAsync(id);
+            if (entity == null)
+                throw new NotFoundException($"Entity with ID {id} not found");
+
+            var entry = _context.Entry(entity);
+
+            foreach (var kvp in propertyUpdates)
+            {
+                entry.Property(kvp.Key).CurrentValue = kvp.Value;
+            }
+
+            await _context.SaveChangesAsync();
+
+            if (publishEvent)
+                await _eventPublisher.PublishAsync(new EntityUpdatedEvent<TEntity>(entity));
+        }
+        catch (DbUpdateException ex)
+        {
+            Log.Error(
+                ex,
+                "Error updating properties of entity type {EntityType}",
+                typeof(TEntity).Name
+            );
+            throw new RepositoryException(
+                $"Error updating properties of entity type {typeof(TEntity).Name}",
                 ex
             );
         }
@@ -349,6 +422,13 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
         if (pageIndex <= 0)
             pageIndex = 0;
 
+        // Add default ordering by Id if no ordering is specified
+        // Entity Framework Core requires explicit ordering when using  Skip with split queries to ensure consistent results
+        if (!query.Expression.ToString().Contains("OrderBy"))
+        {
+            query = query.OrderBy(e => e.Id);
+        }
+
         // Get paginated data
         var items = await query.Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
 
@@ -357,7 +437,7 @@ public partial class EntityRepository<TEntity> : IRepository<TEntity>
 
     private static IQueryable<TEntity> Include(IQueryable<TEntity> query, string[] includes)
     {
-        if (includes != null)
+        if (includes != null && includes.Length > 0)
         {
             foreach (var include in includes)
             {

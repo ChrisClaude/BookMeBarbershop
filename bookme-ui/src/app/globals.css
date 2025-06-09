@@ -113,6 +113,18 @@ button {
   }
 }
 
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
 .action-button {
   @apply fixed bottom-0 -right-2 px-3 py-5 text-lg lg:px-7 lg:py-14 lg:text-xl uppercase bg-foreground text-background tracking-widest z-10 transition-all duration-500;
   background: linear-gradient(315deg, #000000 90%, #00000000 90%);
@@ -173,4 +185,8 @@ button {
 
 .separator::after {
   margin-left: 0.5rem;
+}
+
+#phone-input {
+  @apply w-full font-normal bg-transparent outline-none placeholder:text-foreground-500 focus-visible:outline-none bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition-colors;
 }

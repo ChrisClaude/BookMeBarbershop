@@ -7,6 +7,7 @@ import { Language } from "@/_lib/features/language/language-slice";
 import { useRouter } from "next/navigation";
 import { BOOKING_FEATURE_ENABLED } from "@/config";
 import BannerModal from "./BannerModal";
+import { localLinks } from "@/_lib/enums/constant";
 
 const Banner = ({ language }: { language: Language }) => {
   const router = useRouter();
@@ -18,7 +19,7 @@ const Banner = ({ language }: { language: Language }) => {
       onOpen();
       return;
     }
-    router.push("/customer/bookings");
+    router.push(localLinks.customer.bookingList);
   }, [router, onOpen]);
 
   return (

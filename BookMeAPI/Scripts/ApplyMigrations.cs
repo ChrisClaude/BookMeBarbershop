@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using BookMe.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 public class MigrationScript
 {

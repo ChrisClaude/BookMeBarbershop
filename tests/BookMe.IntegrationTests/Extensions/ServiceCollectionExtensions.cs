@@ -10,12 +10,12 @@ namespace BookMe.IntegrationTests.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-
     public static void ReplaceHealthChecksService(this IServiceCollection services)
     {
         // Remove health checks registration to avoid null reference
-        var healthChecksBuilder = services.SingleOrDefault(
-            s => s.ServiceType == typeof(HealthCheckService));
+        var healthChecksBuilder = services.SingleOrDefault(s =>
+            s.ServiceType == typeof(HealthCheckService)
+        );
         if (healthChecksBuilder != null)
             services.Remove(healthChecksBuilder);
 
@@ -23,10 +23,14 @@ public static class ServiceCollectionExtensions
         services.AddHealthChecks();
     }
 
-    public static void MockHttpContextAccessor(this IServiceCollection services, MockHttpContextAccessor mockHttpContext)
+    public static void MockHttpContextAccessor(
+        this IServiceCollection services,
+        MockHttpContextAccessor mockHttpContext
+    )
     {
-        var httpContextDescriptor = services.SingleOrDefault(
-            s => s.ServiceType == typeof(IHttpContextAccessor));
+        var httpContextDescriptor = services.SingleOrDefault(s =>
+            s.ServiceType == typeof(IHttpContextAccessor)
+        );
         if (httpContextDescriptor != null)
             services.Remove(httpContextDescriptor);
 
@@ -43,25 +47,22 @@ public static class ServiceCollectionExtensions
                 Domain = "test-domain.onmicrosoft.com",
                 TenantId = "test-tenant-id",
                 ClientId = "test-client-id",
-                SignUpSignInPolicyId = "B2C_1_test_policy"
+                SignUpSignInPolicyId = "B2C_1_test_policy",
             },
-            Elasticsearch = new ElasticsearchConfig
-            {
-                Uri = "http://localhost:9200"
-            },
+            Elasticsearch = new ElasticsearchConfig { Uri = "http://localhost:9200" },
             OpenTelemetry = new OpenTelemetryConfig
             {
                 Seq = new OpenTelemetryConfig.SeqConfig
                 {
                     LogsUri = "http://localhost:5341/ingest/otlp/v1/logs",
-                    TracesUri = "http://localhost:5341/ingest/otlp/v1/traces"
-                }
+                    TracesUri = "http://localhost:5341/ingest/otlp/v1/traces",
+                },
             },
+            ApplicationInsights = new ApplicationInsightsConfig { ConnectionString = "" },
         };
 
         services.RemoveAll(typeof(IOptionsSnapshot<AppSettings>));
         services.RemoveAll(typeof(IOptions<AppSettings>));
         services.AddSingleton(Options.Create(appSettings));
     }
-
 }

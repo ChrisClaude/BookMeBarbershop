@@ -1,5 +1,5 @@
 import { API_BASE_PATH } from "@/config";
-import { BookingApi, UserApi, Configuration } from "../codegen";
+import { BookingApi, UserApi, Configuration, PhoneVerificationApi } from "../codegen";
 import { getSession } from "next-auth/react";
 
 const getAccessToken = async () => {
@@ -24,6 +24,12 @@ export class UserApiWithConfig extends UserApi {
 }
 
 export class BookingApiWithConfig extends BookingApi {
+  constructor() {
+    super(API_CONFIG);
+  }
+}
+
+export class PhoneVerificationApiWithConfig extends PhoneVerificationApi {
   constructor() {
     super(API_CONFIG);
   }

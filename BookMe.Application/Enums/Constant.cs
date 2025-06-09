@@ -16,3 +16,8 @@ public static class DefaultRoles
     public static readonly Guid AdminId = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662FD");
     public static readonly Guid CustomerId = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662FC");
 }
+
+public static class CacheKeyConstants
+{
+    public const string TWILIO_VERIFICATION_RESULT = "TwilioVerificationResult";
+}

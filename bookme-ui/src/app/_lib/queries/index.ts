@@ -4,7 +4,7 @@ import { customBaseQuery } from "./customBaseQuery";
 export const api = createApi({
   reducerPath: "api",
   baseQuery: customBaseQuery(),
-  tagTypes: ["TimeSlots"],
+  tagTypes: ["TimeSlots", "User", "Booking"],
   endpoints: (builder) => ({
     //#region User
     getUserProfile: builder.query({
@@ -12,6 +12,23 @@ export const api = createApi({
         endpoint: "user.getUserProfile",
         params: null,
       }),
+      providesTags: ["User"],
+    }),
+
+    getAllUsers: builder.query({
+      query: (request) => ({
+        endpoint: "user.getAllUsers",
+        params: { request },
+      }),
+      providesTags: ["User"],
+    }),
+
+    updateUserProfile: builder.mutation({
+      query: (request) => ({
+        endpoint: "user.updateUserProfile",
+        params: { request },
+      }),
+      invalidatesTags: ["User"],
     }),
     //#endregion
 
@@ -37,13 +54,78 @@ export const api = createApi({
       }),
       providesTags: ["TimeSlots"],
     }),
+    getAvailableDates: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getAvailableDates",
+        params: { request },
+      }),
+      providesTags: ["TimeSlots"],
+    }),
+
+    createBooking: builder.mutation({
+      query: (request) => ({
+        endpoint: "booking.createBooking",
+        params: { request },
+      }),
+      invalidatesTags: ["Booking"],
+    }),
+
+    cancelBooking: builder.mutation({
+      query: (request) => ({
+        endpoint: "booking.cancelBooking",
+        params: { request },
+      }),
+      invalidatesTags: ["Booking"],
+    }),
+
+    getBookings: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getBookings",
+        params: { request },
+      }),
+      providesTags: ["Booking"],
+    }),
+
+    getAllBookings: builder.query({
+      query: (request) => ({
+        endpoint: "booking.getAllBookings",
+        params: { request },
+      }),
+      providesTags: ["Booking"],
+    }),
+
+    //#endregion
+
+    //#region PhoneVerification
+    verifyPhoneNumber: builder.mutation({
+      query: (request) => ({
+        endpoint: "phoneVerification.verifyPhoneNumber",
+        params: { request },
+      }),
+    }),
+    verifyCodeNumber: builder.mutation({
+      query: (request) => ({
+        endpoint: "phoneVerification.verifyCodeNumber",
+        params: { request },
+      }),
+      invalidatesTags: ["User"], // invalidate user profile to refetch it and get the updated phone number verification status
+    }),
     //#endregion
   }),
 });
 
 export const {
   useGetUserProfileQuery,
+  useGetAllUsersQuery,
+  useUpdateUserProfileMutation,
   useGetAvailableTimeSlotsQuery,
   useGetAllTimeSlotsQuery,
   useCreateTimeSlotMutation,
+  useVerifyPhoneNumberMutation,
+  useVerifyCodeNumberMutation,
+  useCreateBookingMutation,
+  useCancelBookingMutation,
+  useGetBookingsQuery,
+  useGetAllBookingsQuery,
+  useGetAvailableDatesQuery,
 } = api;

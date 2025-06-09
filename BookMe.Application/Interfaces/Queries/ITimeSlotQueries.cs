@@ -12,6 +12,11 @@ public interface ITimeSlotQueries
         int pageSize = 10
     );
 
+    Task<Result<GetAvailableDatesResponseDto>> GetAvailableDatesAsync(
+        DateTimeOffset start,
+        DateTimeOffset end
+    );
+
     Task<Result<PagedListDto<TimeSlotDto>>> GetPagedTimeSlotsAsync(
         DateTimeOffset start,
         DateTimeOffset end,

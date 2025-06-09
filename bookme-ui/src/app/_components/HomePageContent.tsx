@@ -2,7 +2,7 @@ import React from 'react';
 import { Language } from '@/_lib/features/language/language-slice';
 import Gallery from './Gallery';
 import Contact from './Contact';
-import Header from './Header';
+import Header from './header/Header';
 import Services from './Services';
 import Goodies from './Goodies';
 import Banner from './Banner';

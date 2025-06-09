@@ -59,6 +59,12 @@ export interface UserDto2 {
     phoneNumber?: string | null;
     /**
      * 
+     * @type {boolean}
+     * @memberof UserDto2
+     */
+    isPhoneNumberVerified?: boolean | null;
+    /**
+     * 
      * @type {Array<UserRoleDto>}
      * @memberof UserDto2
      */
@@ -87,6 +93,7 @@ export function UserDto2FromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'surname': json['surname'] == null ? undefined : json['surname'],
         'email': json['email'] == null ? undefined : json['email'],
         'phoneNumber': json['phoneNumber'] == null ? undefined : json['phoneNumber'],
+        'isPhoneNumberVerified': json['isPhoneNumberVerified'] == null ? undefined : json['isPhoneNumberVerified'],
         'roles': json['roles'] == null ? undefined : ((json['roles'] as Array<any>).map(UserRoleDtoFromJSON)),
     };
 }
@@ -107,6 +114,7 @@ export function UserDto2ToJSONTyped(value?: UserDto2 | null, ignoreDiscriminator
         'surname': value['surname'],
         'email': value['email'],
         'phoneNumber': value['phoneNumber'],
+        'isPhoneNumberVerified': value['isPhoneNumberVerified'],
         'roles': value['roles'] == null ? undefined : ((value['roles'] as Array<any>).map(UserRoleDtoToJSON)),
     };
 }

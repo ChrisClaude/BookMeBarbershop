@@ -1,6 +1,15 @@
 import {
+  ApiBookingBookTimeslotPostRequest,
+  ApiBookingCancelBookingPostRequest,
+  ApiBookingGetBookingsAllPostRequest,
+  ApiBookingGetBookingsPostRequest,
+  ApiBookingTimeslotsAllPostRequest,
+  ApiBookingTimeslotsAvailableDatesPostRequest,
   ApiBookingTimeslotsAvailablePostRequest,
   ApiBookingTimeslotsPostRequest,
+  BookingDto,
+  GetAvailableDatesResponseDto,
+  PagedListDtoOfBookingDto,
   PagedListDtoOfTimeSlotDto,
   TimeSlotDto,
 } from "../codegen";
@@ -14,21 +23,6 @@ import { BookingApiWithConfig } from "./api.service";
 
 export class BookingService {
   protected static bookMeApi = new BookingApiWithConfig();
-
-  private static buildHeaders({
-    token,
-    contentType,
-  }: {
-    token: string;
-    contentType?: string;
-  }) {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      ["content-type"]: contentType || "application/json",
-    };
-
-    return headers;
-  }
 
   public static async createTimeSlot({
     request,
@@ -63,6 +57,41 @@ export class BookingService {
     }
   }
 
+  public static async createBooking({
+    request,
+  }: {
+    request: ApiBookingBookTimeslotPostRequest;
+  }): Promise<Result<BookingDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingBookTimeslotPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as BookingDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error booking time slot",
+        "CreateBookingError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error booking time slot"],
+      };
+    }
+  }
+
   public static async getAvailableTimeSlots({
     request,
   }: {
@@ -73,7 +102,7 @@ export class BookingService {
         request
       );
 
-      if (response.raw.status !== 200) {
+      if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();
         return {
           success: false,
@@ -98,17 +127,51 @@ export class BookingService {
     }
   }
 
+  public static async getAvailableDates({
+    request,
+  }: {
+    request: ApiBookingTimeslotsAvailableDatesPostRequest;
+  }): Promise<Result<GetAvailableDatesResponseDto>> {
+    try {
+      const response =
+        await this.bookMeApi.apiBookingTimeslotsAvailableDatesPostRaw(request);
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as GetAvailableDatesResponseDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching available dates",
+        "GetAvailableDatesError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching available dates"],
+      };
+    }
+  }
+
   public static async getAllTimeSlots({
     request,
   }: {
-    request: ApiBookingTimeslotsAvailablePostRequest;
+    request: ApiBookingTimeslotsAllPostRequest;
   }): Promise<Result<PagedListDtoOfTimeSlotDto>> {
     try {
       const response = await this.bookMeApi.apiBookingTimeslotsAllPostRaw(
         request
       );
 
-      if (response.raw.status !== 200) {
+      if (!isStatusCodeSuccess(response.raw.status)) {
         const error = await response.raw.json();
         return {
           success: false,
@@ -129,6 +192,110 @@ export class BookingService {
       return {
         success: false,
         errors: [error?.toString() || "Error fetching time slots"],
+      };
+    }
+  }
+
+  public static async getUserBookings({
+    request,
+  }: {
+    request: ApiBookingGetBookingsPostRequest;
+  }): Promise<Result<PagedListDtoOfBookingDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingGetBookingsPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as PagedListDtoOfBookingDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching bookings",
+        "GetBookingsError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching bookings"],
+      };
+    }
+  }
+
+  public static async getAllBookings({
+    request,
+  }: {
+    request: ApiBookingGetBookingsAllPostRequest;
+  }): Promise<Result<PagedListDtoOfBookingDto>> {
+    try {
+      const response = await this.bookMeApi.apiBookingGetBookingsAllPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      const body = await response.raw.json();
+      return {
+        success: true,
+        data: body as PagedListDtoOfBookingDto,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error fetching bookings",
+        "GetAllBookingsError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error fetching bookings"],
+      };
+    }
+  }
+
+  public static async cancelBooking({
+    request,
+  }: {
+    request: ApiBookingCancelBookingPostRequest;
+  }): Promise<Result<boolean>> {
+    try {
+      const response = await this.bookMeApi.apiBookingCancelBookingPostRaw(
+        request
+      );
+
+      if (!isStatusCodeSuccess(response.raw.status)) {
+        const error = await response.raw.json();
+        return {
+          success: false,
+          errors: getErrorsFromApiResult(error),
+        };
+      }
+      return {
+        success: true,
+        data: true,
+      };
+    } catch (error) {
+      logError(
+        error?.toString() || "Error cancelling booking",
+        "CancelBookingError",
+        error
+      );
+      return {
+        success: false,
+        errors: [error?.toString() || "Error cancelling booking"],
       };
     }
   }

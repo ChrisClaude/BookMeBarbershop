@@ -1,5 +1,6 @@
 import { ApiBookingTimeslotsPostRequest } from "@/_lib/codegen";
 import { useCreateTimeSlotMutation } from "@/_lib/queries";
+import { ValidationErrors } from "@/_lib/types/common.types";
 import { Button, Checkbox, DatePicker, Form } from "@heroui/react";
 import {
   now,
@@ -8,9 +9,6 @@ import {
   toCalendarDateTime,
 } from "@internationalized/date";
 import React, { useCallback, useEffect } from "react";
-
-export type ValidationError = string | string[];
-export type ValidationErrors = Record<string, ValidationError>;
 
 const CreateTimeSlotForm = ({
   selectedDate,
@@ -24,6 +22,7 @@ const CreateTimeSlotForm = ({
     startDateTime: DateValue;
     endDateTime: DateValue;
     isAllDay: boolean;
+    autoConfirmation: boolean;
   }>({
     startDateTime: toCalendarDateTime(
       selectedDate,
@@ -34,6 +33,7 @@ const CreateTimeSlotForm = ({
       now(getLocalTimeZone()).add({ hours: 2 })
     ),
     isAllDay: false,
+    autoConfirmation: true,
   });
 
   const [createTimeSlot, { isLoading, error, isSuccess }] =
@@ -58,6 +58,7 @@ const CreateTimeSlotForm = ({
           startDateTime: formData.startDateTime.toDate(getLocalTimeZone()),
           endDateTime: formData.endDateTime.toDate(getLocalTimeZone()),
           isAllDay: formData.isAllDay,
+          allowAutoConfirmation: formData.autoConfirmation,
         },
       };
 
@@ -69,14 +70,7 @@ const CreateTimeSlotForm = ({
           }
         });
     },
-    [
-      createTimeSlot,
-      errors,
-      formData.endDateTime,
-      formData.startDateTime,
-      formData.isAllDay,
-      onSuccess,
-    ]
+    [createTimeSlot, errors, formData, onSuccess]
   );
 
   useEffect(() => {
@@ -85,12 +79,12 @@ const CreateTimeSlotForm = ({
         return {
           ...prevState,
           startDateTime: prevState.startDateTime.set({
-            hour: 0,
+            hour: 9,
             minute: 0,
             second: 0,
           }),
           endDateTime: prevState.endDateTime.set({
-            hour: 23,
+            hour: 21,
             minute: 59,
             second: 59,
           }),
@@ -172,6 +166,21 @@ const CreateTimeSlotForm = ({
             variant="bordered"
             isReadOnly={isLoading}
           />
+
+          <Checkbox
+            id="auto-confirmation"
+            name="autoConfirmation"
+            isSelected={formData.autoConfirmation}
+            onValueChange={(isSelected) => {
+              setFormData({
+                ...formData,
+                autoConfirmation: isSelected,
+              });
+            }}
+            isDisabled={isLoading}
+          >
+            Allow auto confirmation
+          </Checkbox>
 
           <Checkbox
             id="isAllDay"

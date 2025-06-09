@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BookMe.Application.Caching;
 using BookMe.Application.Entities;
 
@@ -32,8 +33,17 @@ public interface IRepository<TEntity>
         bool includeDeleted = true
     );
 
+    Task<IList<TResult>> GetAllWithSelectorAsync<TResult>(
+        Expression<Func<TEntity, TResult>> selector,
+        Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
+        CacheKey cacheKey = null,
+        bool includeDeleted = true
+    );
+
     Task<IPagedList<TEntity>> GetAllPagedAsync(
         Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
+        string[] includes = null,
         int pageIndex = 0,
         int pageSize = int.MaxValue,
         bool getOnlyTotalCount = false,
@@ -47,6 +57,12 @@ public interface IRepository<TEntity>
     Task UpdateAsync(TEntity entity, bool publishEvent = true);
 
     Task UpdateAsync(IList<TEntity> entities, bool publishEvent = true);
+
+    Task UpdateSpecificPropertiesAsync(
+        Guid id,
+        Dictionary<Expression<Func<TEntity, object>>, object> propertyUpdates,
+        bool publishEvent = true
+    );
 
     Task DeleteAsync(TEntity entity, bool publishEvent = true);
 

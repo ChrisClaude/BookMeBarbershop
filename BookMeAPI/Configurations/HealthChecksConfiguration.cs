@@ -7,37 +7,48 @@ namespace BookMeAPI.Configurations;
 
 public static class HealthChecksConfiguration
 {
-    public static readonly HealthCheckOptions HealthCheckOptions = new()
-    {
-        ResponseWriter = async (context, report) =>
+    public static readonly HealthCheckOptions HealthCheckOptions =
+        new()
         {
-            context.Response.ContentType = "application/json";
-
-            var response = new
+            ResponseWriter = async (context, report) =>
             {
-                Status = report.Status.ToString(),
-                Duration = report.TotalDuration,
-                Checks = report.Entries.Select(entry => new
-                {
-                    Name = entry.Key,
-                    Status = entry.Value.Status.ToString(),
-                    Duration = entry.Value.Duration,
-                    Description = entry.Value.Description,
-                    Exception = entry.Value.Exception?.Message
-                }),
-                Timestamp = DateTime.UtcNow,
-            };
+                context.Response.ContentType = "application/json";
 
-            await JsonSerializer.SerializeAsync(context.Response.Body, response);
-        }
-    };
-    public static IServiceCollection ConfigureHealthChecks(this IServiceCollection services, AppSettings appSettings, IConfiguration configuration)
+                var response = new
+                {
+                    Status = report.Status.ToString(),
+                    Duration = report.TotalDuration,
+                    Checks = report.Entries.Select(
+                        entry =>
+                            new
+                            {
+                                Name = entry.Key,
+                                Status = entry.Value.Status.ToString(),
+                                Duration = entry.Value.Duration,
+                                Description = entry.Value.Description,
+                                Exception = entry.Value.Exception?.Message
+                            }
+                    ),
+                    Timestamp = DateTime.UtcNow,
+                };
+
+                await JsonSerializer.SerializeAsync(context.Response.Body, response);
+            }
+        };
+
+    public static IServiceCollection ConfigureHealthChecks(
+        this IServiceCollection services,
+        AppSettings appSettings,
+        IConfiguration configuration
+    )
     {
-        var healthChecks = services.AddHealthChecks()
+        var healthChecks = services
+            .AddHealthChecks()
             .AddSqlServer(
                 configuration.GetConnectionString("BookMeDb"),
                 name: "sql-server",
-                tags: new[] { "database" })
+                tags: new[] { "database" }
+            )
             // TODO: Uncomment when this issue is resolved https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/issues/2355
             // .AddElasticsearch(
             //     appSettings.Elasticsearch.Uri,
@@ -45,14 +56,21 @@ public static class HealthChecksConfiguration
             //     tags: new[] { "logging" })
             .AddCheck<CustomHealthCheck>("custom-check");
 
-        if (appSettings != null && appSettings.AzureAdB2C != null
+        if (
+            appSettings != null
+            && appSettings.AzureAdB2C != null
             && !string.IsNullOrEmpty(appSettings.AzureAdB2C.Instance)
             && !string.IsNullOrEmpty(appSettings.AzureAdB2C.Domain)
-            && !string.IsNullOrEmpty(appSettings.AzureAdB2C.SignUpSignInPolicyId))
+            && !string.IsNullOrEmpty(appSettings.AzureAdB2C.SignUpSignInPolicyId)
+        )
         {
-            healthChecks.AddUrlGroup(new Uri($"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"),
+            healthChecks.AddUrlGroup(
+                new Uri(
+                    $"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"
+                ),
                 name: "azure-b2c",
-                tags: new[] { "auth" });
+                tags: new[] { "auth" }
+            );
         }
 
         return services;

@@ -1,6 +1,6 @@
+using BookMe.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using BookMe.Application.Entities;
 
 namespace BookMe.Infrastructure.Data.Configurations;
 

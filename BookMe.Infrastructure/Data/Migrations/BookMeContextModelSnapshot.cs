@@ -82,6 +82,9 @@ namespace BookMe.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool?>("AllowAutoConfirmation")
+                        .HasColumnType("bit");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -123,6 +126,9 @@ namespace BookMe.Infrastructure.Data.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("IsPhoneNumberVerified")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

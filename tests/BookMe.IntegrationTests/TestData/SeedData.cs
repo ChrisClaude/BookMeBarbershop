@@ -15,10 +15,8 @@ public static class SeedData
             Surname = "Doe",
             Email = "john.doe.admin@test.com",
             PhoneNumber = "1234567890",
-            UserRoles = new List<UserRole>
-            {
-                new() { RoleId = DefaultRoles.AdminId }
-            },
+            IsPhoneNumberVerified = true,
+            UserRoles = new List<UserRole> { new() { RoleId = DefaultRoles.AdminId } },
         };
 
         var customer = new User
@@ -27,11 +25,9 @@ public static class SeedData
             Name = "Jane",
             Surname = "Doe",
             Email = "jane.doe.customer@test.com",
-            PhoneNumber = "1234567890",
-            UserRoles = new List<UserRole>
-            {
-                new() { RoleId = DefaultRoles.CustomerId }
-            },
+            PhoneNumber = "+48600697524",
+            IsPhoneNumberVerified = true,
+            UserRoles = new List<UserRole> { new() { RoleId = DefaultRoles.CustomerId } },
         };
 
         context.Users.AddRange(admin, customer);

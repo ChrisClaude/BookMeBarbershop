@@ -9,9 +9,13 @@ using MediatR;
 
 namespace BookMe.Application.Handlers.Bookings;
 
-public class ConfirmBookingCommandHandler(IRepository<Booking> bookingRepository) : IRequestHandler<ConfirmBookingCommand, Result<BookingDto>>
+public class ConfirmBookingCommandHandler(IRepository<Booking> bookingRepository)
+    : IRequestHandler<ConfirmBookingCommand, Result<BookingDto>>
 {
-    public async Task<Result<BookingDto>> Handle(ConfirmBookingCommand request, CancellationToken cancellationToken)
+    public async Task<Result<BookingDto>> Handle(
+        ConfirmBookingCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var booking = await bookingRepository.GetByIdAsync(request.BookingId);
         var errors = new List<Error>();

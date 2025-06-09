@@ -23,10 +23,10 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Add test configuration
         builder.ConfigureAppConfiguration(
             (context, config) =>
             {
+            // TODO: Review this - because the tests are loading configs from appsettings.json, we need to add the test config instead
                 config.AddInMemoryCollection(TestConfig.GetConfiguration());
             }
         );
@@ -65,8 +65,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         }
     }
 
-    public new Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
-        return _sqlContainer.StopAsync();
+        await _sqlContainer.StopAsync();
     }
 }

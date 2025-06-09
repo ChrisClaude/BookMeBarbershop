@@ -13,7 +13,8 @@ public static class TimeSlotMapper
             Id = timeSlot.Id,
             Start = timeSlot.Start,
             End = timeSlot.End,
-            IsAvailable = timeSlot.Bookings == null
+            IsAvailable = timeSlot.IsAvailable,
+            AllowAutoConfirmation = timeSlot.AllowAutoConfirmation,
         };
     }
 
@@ -27,7 +28,7 @@ public static class TimeSlotMapper
             TotalPages = timeSlots.TotalPages,
             HasPreviousPage = timeSlots.HasPreviousPage,
             HasNextPage = timeSlots.HasNextPage,
-            Items = timeSlots.Select(x => x.MapToDto()).ToList()
+            Items = timeSlots.Select(x => x.MapToDto()).ToList(),
         };
     }
 }

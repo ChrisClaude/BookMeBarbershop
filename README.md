@@ -1,4 +1,5 @@
 # BookMe
+
 This is a web application to allow customers to book appointments with a hairdresser.
 
 ## Requirements
@@ -12,14 +13,15 @@ This is a web application to allow customers to book appointments with a hairdre
 | Email Notifications | ❌ Not Started |
 | Admin Dashboard | ❌ Not Started |
 | Service Management | ❌ Not Started |
-Language support (ENG and PL)| ✅ Completed |
-Update language flags with svg files| 🟡 Not Started |
-Store Language preference in local storage (ENG and PL)| ❌ Not Started |
-Create an application wide loader| ✅ Completed |
+| Language support (ENG and PL)| ✅ Completed |
+| Update language flags with svg files| 🟡 Not Started |
+| Store Language preference in local storage (ENG and PL)| ❌ Not Started |
+| Create an application wide loader| ✅ Completed |
 | Add cookiebot| ✅ Completed |
 | Implement alive and health checks endpoints [docs](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-9.0)| ✅ Completed |
 
 Legend:
+
 - ✅ Completed
 - 🟡 In Progress
 - ❌ Not Started
@@ -27,13 +29,15 @@ Legend:
 ## Getting Started
 
 Running the api:
-```
+
+```sh
 dotnet run --project BookMeAPI
 ```
 
 Navigate to `https://localhost:6002/scalar/v1` to view the API documentation.
 
 ### Setting up elasticsearch
+
 [Link to docs](https://www.elastic.co/guide/en/elasticsearch/reference/current/run-elasticsearch-locally.html)
 
 Elasticsearch: `http://localhost:9200`
@@ -41,7 +45,7 @@ Kibana: `http://localhost:5601`
 
 ### Running Jaegar
 
-```
+```sh
 docker run --rm --name jaeger \
   -p 16686:16686 \
   -p 4317:4317 \
@@ -53,13 +57,14 @@ docker run --rm --name jaeger \
 
 ## Generate migrations and update database
 
-```
+```sh
 dotnet ef migrations add <migration_name> --context BookMeContext -o ./Data/Migrations --project BookMe.Infrastructure --startup-project BookMeAPI
 
 dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI
 ```
 
 ### Remove migrations
-```
+
+```sh
 dotnet ef migrations remove --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI
 ```

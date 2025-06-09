@@ -10,19 +10,27 @@ using MediatR;
 
 namespace BookMe.Application.Handlers;
 
-public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotRepository) : IRequestHandler<CreateTimeSlotCommand, Result<IEnumerable<TimeSlotDto>>>
+public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotRepository)
+    : IRequestHandler<CreateTimeSlotCommand, Result<IEnumerable<TimeSlotDto>>>
 {
-    public async Task<Result<IEnumerable<TimeSlotDto>>> Handle(CreateTimeSlotCommand request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<TimeSlotDto>>> Handle(
+        CreateTimeSlotCommand request,
+        CancellationToken cancellationToken
+    )
     {
-
         var overlappingSlots = await timeSlotRepository.GetAllAsync(query =>
-            query.Where(x =>
-                (request.StartDateTime < x.End && request.EndDateTime > x.Start)
-            ));
+            query.Where(x => (request.StartDateTime < x.End && request.EndDateTime > x.Start))
+        );
 
         if (overlappingSlots.Any())
         {
-            return Result<IEnumerable<TimeSlotDto>>.Failure(new List<Error> { Error.Conflict("The requested time slot overlaps with existing time slots") }, ErrorType.BadRequest);
+            return Result<IEnumerable<TimeSlotDto>>.Failure(
+                new List<Error>
+                {
+                    Error.Conflict("The requested time slot overlaps with existing time slots"),
+                },
+                ErrorType.BadRequest
+            );
         }
 
         if (request.IsAllDay)
@@ -33,33 +41,41 @@ public class CreateTimeSlotCommandHandler(IRepository<TimeSlot> timeSlotReposito
 
             await timeSlotRepository.InsertAsync(newTimeSlotList, false);
 
-            return Result<IEnumerable<TimeSlotDto>>.Success(newTimeSlotList.Select(x => x.MapToDto()).ToList());
+            return Result<IEnumerable<TimeSlotDto>>.Success(
+                newTimeSlotList.Select(x => x.MapToDto()).ToList()
+            );
         }
 
         var timeSlot = new TimeSlot
         {
             Start = request.StartDateTime,
-            End = request.EndDateTime
+            End = request.EndDateTime,
+            AllowAutoConfirmation = request.AllowAutoConfirmation,
         };
 
         timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);
 
         await timeSlotRepository.InsertAsync(timeSlot, false);
 
-
-        return Result<IEnumerable<TimeSlotDto>>.Success(new List<TimeSlotDto> { timeSlot.MapToDto() });
+        return Result<IEnumerable<TimeSlotDto>>.Success(
+            new List<TimeSlotDto> { timeSlot.MapToDto() }
+        );
     }
 
-    private static List<TimeSlot> GenerateTimeSlotsForAllDay(CreateTimeSlotCommand request, int count)
+    private static List<TimeSlot> GenerateTimeSlotsForAllDay(
+        CreateTimeSlotCommand request,
+        int count
+    )
     {
         var newTimeSlotList = new List<TimeSlot>();
 
         for (var i = 0; i < count; i++)
         {
-            TimeSlot timeSlot = new TimeSlot
+            var timeSlot = new TimeSlot
             {
                 Start = request.StartDateTime.AddHours(i),
-                End = request.StartDateTime.AddHours(i + 1)
+                End = request.StartDateTime.AddHours(i + 1),
+                AllowAutoConfirmation = request.AllowAutoConfirmation,
             };
 
             timeSlot.SetAuditableProperties(request.UserDto.Id, AuditEventType.Created);

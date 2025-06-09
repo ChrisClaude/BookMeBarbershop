@@ -47,6 +47,11 @@ public class Result
     {
         return new Result(false, errors, errorType);
     }
+
+    public static Result<T> Success<T>(T value)
+    {
+        return Result<T>.Success(value);
+    }
 }
 
 public class Result<T> : Result

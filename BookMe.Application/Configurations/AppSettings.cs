@@ -9,9 +9,19 @@ public class AppSettings
     public SerilogConfig Serilog { get; set; }
     public OpenTelemetryConfig OpenTelemetry { get; set; }
     public string[] AllowedCorsOrigins { get; set; }
+    public TwilioConfig TwilioConfig { get; set; }
+    public ApplicationInsightsConfig ApplicationInsights { get; set; }
 }
 
 #region other config classes
+
+public class TwilioConfig
+{
+    public string AccountSid { get; set; }
+    public string AuthToken { get; set; }
+    public string VerifyServiceSid { get; set; }
+    public int MinSecondsBetweenRequests { get; set; }
+}
 
 public class ElasticsearchConfig
 {
@@ -36,6 +46,11 @@ public class OpenTelemetryConfig
         public string TracesUri { get; set; }
         public string ApiKey { get; set; }
     }
+}
+
+public class ApplicationInsightsConfig
+{
+    public string ConnectionString { get; set; }
 }
 
 #endregion

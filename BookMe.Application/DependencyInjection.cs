@@ -1,9 +1,10 @@
 using BookMe.Application.Behaviors;
 using BookMe.Application.Extensions;
+using BookMe.Application.Interfaces;
 using BookMe.Application.Interfaces.Queries;
 using BookMe.Application.Queries;
+using BookMe.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
-
 
 namespace BookMe.Application;
 
@@ -27,7 +28,9 @@ public static class DependencyInjection
         // Register queries
         services.AddScoped<IUserQueries, UserQueries>();
         services.AddScoped<ITimeSlotQueries, TimeSlotQueries>();
+        services.AddScoped<IBookingQueries, BookingQueries>();
 
+        services.AddScoped<IUserService, UserService>();
 
         return services;
     }

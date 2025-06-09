@@ -13,7 +13,7 @@ public static class ResultExtensions
             ErrorType.InternalServerError => new StatusCodeResult(500),
             ErrorType.BadRequest => new BadRequestObjectResult(errors),
             ErrorType.Unauthorized => new UnauthorizedObjectResult(errors),
-            _ => throw new ArgumentOutOfRangeException(nameof(errorType))
+            _ => throw new ArgumentOutOfRangeException(nameof(errorType)),
         };
 
     private static IActionResult HandleSuccess<T>(
@@ -26,14 +26,20 @@ public static class ResultExtensions
     {
         return successType switch
         {
-            ResultSuccessType.Retrieved
-                => value is not null ? new OkObjectResult(value) : new OkResult(),
-            ResultSuccessType.Created
-                => new CreatedAtActionResult(actionName, controllerName, routeValues, value),
-            ResultSuccessType.Updated
-                => value is not null ? new OkObjectResult(value) : new NoContentResult(),
+            ResultSuccessType.Retrieved => value is not null
+                ? new OkObjectResult(value)
+                : new OkResult(),
+            ResultSuccessType.Created => new CreatedAtActionResult(
+                actionName,
+                controllerName,
+                routeValues,
+                value
+            ),
+            ResultSuccessType.Updated => value is not null
+                ? new OkObjectResult(value)
+                : new NoContentResult(),
             ResultSuccessType.Deleted => new NoContentResult(),
-            _ => throw new ArgumentOutOfRangeException(nameof(successType))
+            _ => throw new ArgumentOutOfRangeException(nameof(successType)),
         };
     }
 

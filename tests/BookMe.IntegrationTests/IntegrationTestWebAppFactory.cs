@@ -26,6 +26,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         builder.ConfigureAppConfiguration(
             (context, config) =>
             {
+            // TODO: Review this - because the tests are loading configs from appsettings.json, we need to add the test config instead
                 config.AddInMemoryCollection(TestConfig.GetConfiguration());
             }
         );

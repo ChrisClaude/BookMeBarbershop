@@ -35,6 +35,7 @@ public static class TestConfig
             { "AppSettings:Elasticsearch:Password", "test-password" },
             { "AppSettings:OpenTelemetry:Seq:ApiKey", "test-seq-api-key" },
             { "AppSettings:TwilioConfig:MinSecondsBetweenRequests", "60" },
+            { "AppSettings:ApplicationInsights:ConnectionString", "" },
         };
     }
 }

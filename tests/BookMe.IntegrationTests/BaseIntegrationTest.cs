@@ -23,7 +23,9 @@ public abstract class BaseIntegrationTest
         _mockHttpContext = _factory.MockHttpContext;
     }
 
+#pragma warning disable 1998
     public async ValueTask DisposeAsync()
+#pragma warning restore 1998
     {
         _scope.Dispose();
         _bookMeContext.Dispose();

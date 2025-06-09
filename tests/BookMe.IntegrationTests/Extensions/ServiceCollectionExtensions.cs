@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
                     TracesUri = "http://localhost:5341/ingest/otlp/v1/traces",
                 },
             },
+            ApplicationInsights = new ApplicationInsightsConfig { ConnectionString = "" },
         };
 
         services.RemoveAll(typeof(IOptionsSnapshot<AppSettings>));

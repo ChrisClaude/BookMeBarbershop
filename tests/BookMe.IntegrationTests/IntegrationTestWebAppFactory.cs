@@ -46,7 +46,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
             services.ReplaceHealthChecksService();
             services.MockHttpContextAccessor(MockHttpContext);
-            services.AddTestConfiguration();
         });
     }
 
@@ -64,8 +63,8 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
         }
     }
 
-    public new Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
-        return _sqlContainer.StopAsync();
+        await _sqlContainer.StopAsync();
     }
 }

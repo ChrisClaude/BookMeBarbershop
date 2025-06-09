@@ -237,7 +237,6 @@ public class BookingTests : BaseIntegrationTest
     public async Task BookAlreadyBookedTimeSlot_ShouldFailAsync()
     {
         // Arrange
-
         _mockHttpContext.SetUser(_adminUser);
         var createTimeSlotsCommand = new CreateTimeSlotCommand(
             DateTime.UtcNow.AddDays(10).AddHours(1),
@@ -329,12 +328,10 @@ public class BookingTests : BaseIntegrationTest
             new BookTimeSlotsDto { TimeSlotId = timeSlotId }
         );
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         var bookingId = ((OkObjectResult)bookResult)
             .Value.GetType()
             .GetProperty("Id")
             .GetValue(((OkObjectResult)bookResult).Value);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
         // Act

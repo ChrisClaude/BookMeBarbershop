@@ -2,10 +2,14 @@ namespace BookMe.IntegrationTests.TestData;
 
 public static class TestConfig
 {
-    public static Dictionary<string, string?> GetConfiguration()
+    public static Dictionary<string, string?>
+
+    GetConfiguration()
     {
         return new Dictionary<string, string?>
         {
+            { "ASPNETCORE_ENVIRONMENT", "Development" },
+            { "ApplicationInsights:ConnectionString", "" },
             { "Logging:LogLevel:Default", "Warning" },
             { "AppSettings:Serilog:MinimumLevel:Default", "Warning" },
             { "ConnectionStrings:BookMeDb", "TestConnectionString" },

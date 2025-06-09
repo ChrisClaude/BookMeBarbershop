@@ -25,11 +25,8 @@ public abstract class BaseIntegrationTest
 
     public async ValueTask DisposeAsync()
     {
-        // Dispose resources
         _scope.Dispose();
         _bookMeContext.Dispose();
         GC.SuppressFinalize(this);
-
-        await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);
     }
 }

@@ -23,7 +23,6 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        // Add test configuration
         builder.ConfigureAppConfiguration(
             (context, config) =>
             {

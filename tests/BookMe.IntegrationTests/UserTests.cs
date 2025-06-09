@@ -135,8 +135,12 @@ public class UserTests : BaseIntegrationTest
         result.ValidateOkResult<PagedListDto<UserDto>>(users =>
         {
             users.Items.Should().HaveCount(2);
-            users.Items.First().Name.Should().Be("John");
-            users.Items.Last().Name.Should().Be("Jane");
+            var john = users.Items.First(x => x.Name == "John");
+            var jane = users.Items.First(x => x.Name == "Jane");
+            john.Roles.Count().Should().Be(1);
+            john.Roles.First().Role.Name.Should().Be(RoleName.ADMIN);
+            jane.Roles.Count().Should().Be(1);
+            jane.Roles.First().Role.Name.Should().Be(RoleName.CUSTOMER);
         });
 
         await TestDataCleanUp.CleanUpDatabaseAsync(_bookMeContext);

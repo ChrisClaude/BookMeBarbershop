@@ -47,6 +47,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>, IAsy
 
             services.ReplaceHealthChecksService();
             services.MockHttpContextAccessor(MockHttpContext);
+            services.AddTestConfiguration();
         });
     }
 

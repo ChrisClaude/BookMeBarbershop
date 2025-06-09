@@ -13,12 +13,9 @@ public static class OpenTelemetryTracingConfiguration
         AppSettings appSettings
     )
     {
-        services
-            .AddOpenTelemetry()
-            .UseAzureMonitor(options =>
-            {
-                options.ConnectionString = appSettings.ApplicationInsights.ConnectionString;
-            })
+        var builder = services.AddOpenTelemetry();
+
+        builder
             .ConfigureResource(resource => resource.AddService("BookMeAPI"))
             .WithTracing(tracing =>
             {
@@ -34,6 +31,14 @@ public static class OpenTelemetryTracingConfiguration
                     otlpOptions.Headers = $"X-Seq-ApiKey={appSettings.OpenTelemetry.Seq.ApiKey}";
                 });
             });
+
+        if (!string.IsNullOrEmpty(appSettings.ApplicationInsights.ConnectionString))
+        {
+            builder.UseAzureMonitor(options =>
+            {
+                options.ConnectionString = appSettings.ApplicationInsights.ConnectionString;
+            });
+        }
 
         return services;
     }

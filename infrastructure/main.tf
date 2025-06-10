@@ -1,0 +1,113 @@
+# Configure the Azure provider
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0.2"
+    }
+  }
+
+  required_version = ">= 1.1.0"
+}
+
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = "rg-book-me-${local.suffix}-001"
+  location = lower(var.location)
+}
+
+// create a web app
+resource "azurerm_app_service_plan" "app_service_plan" {
+  name                = "app-service-plan-book-me-${local.suffix}-001"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  kind                = "Linux"
+  reserved            = true
+
+  sku {
+    tier = var.app_service_tier
+    size = var.app_service_size
+  }
+
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}
+
+resource "azurerm_app_service" "app_service" {
+  name                = "app-service-book-me-${local.suffix}-001"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_app_service_plan.app_service_plan.id
+  https_only          = true
+
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}
+
+// create an azure sql database dtu
+resource "azurerm_sql_server" "sql_server" {
+  name                         = "sql-server-book-me-${local.suffix}-001"
+  resource_group_name          = azurerm_resource_group.rg.name
+  location                     = azurerm_resource_group.rg.location
+  version                      = "12.0"
+  administrator_login          = "sqladmin"
+  administrator_login_password = local.sql_password
+
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}
+
+resource "azurerm_sql_database" "sql_database" {
+  name                             = "sql-database-book-me-${local.suffix}-001"
+  resource_group_name              = azurerm_resource_group.rg.name
+  location                         = azurerm_resource_group.rg.location
+  server_name                      = azurerm_sql_server.sql_server.name
+  edition                          = var.sql_edition
+  collation                        = "SQL_Latin1_General_CP1_CI_AS"
+  max_size_gb                      = 50
+  requested_service_objective_name = var.sql_service_objective
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}
+
+// create an application insights resource
+resource "azurerm_log_analytics_workspace" "law" {
+  name                = "log-analytics-book-me-${var.environment}-${var.location}-001"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}
+
+resource "azurerm_application_insights" "app_insights" {
+  name                = "app-insights-book-me-${local.suffix}-001"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+  workspace_id        = azurerm_log_analytics_workspace.law.id
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}

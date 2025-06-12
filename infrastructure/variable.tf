@@ -33,12 +33,10 @@ locals {
   suffix       = "${lower(var.environment)}-${lower(var.location)}"
 }
 
-variable "app_service_tier" {
-  default = "Free"
-}
-
-variable "app_service_size" {
-  default = "F1"
+variable "app_service_sku_name" {
+  type        = string
+  description = "SKU name for the service plan (e.g., F1, B1, S1)"
+  default     = "F1"
 }
 
 variable "sql_edition" {

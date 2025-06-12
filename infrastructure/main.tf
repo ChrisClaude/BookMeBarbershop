@@ -20,17 +20,13 @@ resource "azurerm_resource_group" "rg" {
 }
 
 // create a web app
-resource "azurerm_app_service_plan" "app_service_plan" {
+resource "azurerm_service_plan" "app_service_plan" {
   name                = "app-service-plan-book-me-${local.suffix}-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  kind                = "Linux"
-  reserved            = true
+  os_type             = "Linux"
 
-  sku {
-    tier = var.app_service_tier
-    size = var.app_service_size
-  }
+  sku_name = var.app_service_sku_name
 
   tags = {
     environment = var.environment
@@ -38,12 +34,11 @@ resource "azurerm_app_service_plan" "app_service_plan" {
     project     = "book-me"
   }
 }
-
 resource "azurerm_app_service" "app_service" {
   name                = "app-service-book-me-${local.suffix}-001"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  app_service_plan_id = azurerm_app_service_plan.app_service_plan.id
+  app_service_plan_id = azurerm_service_plan.app_service_plan.id
   https_only          = true
 
   tags = {

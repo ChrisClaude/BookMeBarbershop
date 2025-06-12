@@ -63,3 +63,4 @@ terraform state show <resource>
 ```
 
 [Azure Estimation](https://azure.com/e/4aefaf11653e4e6894695f18fdee782b)
+[Terraform - store remote state](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/azure-remote)

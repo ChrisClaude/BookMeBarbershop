@@ -53,7 +53,7 @@ resource "azurerm_linux_web_app" "app_service" {
 }
 
 // create an azure sql database dtu
-resource "azurerm_sql_server" "sql_server" {
+resource "azurerm_mssql_server" "sql_server" {
   name                         = "sql-server-book-me-${local.suffix}-001"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
@@ -68,15 +68,12 @@ resource "azurerm_sql_server" "sql_server" {
   }
 }
 
-resource "azurerm_sql_database" "sql_database" {
-  name                             = "sql-database-book-me-${local.suffix}-001"
-  resource_group_name              = azurerm_resource_group.rg.name
-  location                         = azurerm_resource_group.rg.location
-  server_name                      = azurerm_sql_server.sql_server.name
-  edition                          = var.sql_edition
-  collation                        = "SQL_Latin1_General_CP1_CI_AS"
-  max_size_gb                      = 50
-  requested_service_objective_name = var.sql_service_objective
+resource "azurerm_mssql_database" "sql_database" {
+  name           = "sql-database-book-me-${local.suffix}-001"
+  server_id      = azurerm_mssql_server.sql_server.id
+  collation      = "SQL_Latin1_General_CP1_CI_AS"
+  max_size_gb    = 50
+  sku_name       = var.sql_service_objective
   tags = {
     environment = var.environment
     location    = var.location

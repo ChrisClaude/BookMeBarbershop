@@ -9,7 +9,7 @@ variable "environment" {
 
 variable "location" {
   type    = string
-  default = "eastus"
+  default = "westeurope"
   validation {
     condition     = contains(["eastus", "westus", "westeurope"], var.location)
     error_message = "Location must be one of: eastus, westus, westeurope."

@@ -69,11 +69,11 @@ resource "azurerm_mssql_server" "sql_server" {
 }
 
 resource "azurerm_mssql_database" "sql_database" {
-  name           = "sql-database-book-me-${local.suffix}-001"
-  server_id      = azurerm_mssql_server.sql_server.id
-  collation      = "SQL_Latin1_General_CP1_CI_AS"
-  max_size_gb    = 50
-  sku_name       = var.sql_service_objective
+  name        = "sql-database-book-me-${local.suffix}-001"
+  server_id   = azurerm_mssql_server.sql_server.id
+  collation   = "SQL_Latin1_General_CP1_CI_AS"
+  max_size_gb = 2
+  sku_name    = "Basic"
   tags = {
     environment = var.environment
     location    = var.location

@@ -65,7 +65,7 @@ jobs:
         continue-on-error: false
 
       - name: Run unit tests
-        run: dotnet test --no-build tests/BookMe.Unitests/BookMe.UnitTests.csproj
+        run: dotnet test --no-build tests/BookMe.UnitTests/BookMe.UnitTests.csproj
         continue-on-error: false
 
       - name: Run integration tests

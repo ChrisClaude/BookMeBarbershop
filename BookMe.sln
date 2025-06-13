@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMe.Infrastructure", "Bo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMe.UnitTests", "tests\BookMe.Unitests\BookMe.UnitTests.csproj", "{9EA448BC-D193-4593-BBDA-BEBDA06C915C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMe.UnitTests", "tests\BookMe.UnitTests\BookMe.UnitTests.csproj", "{9EA448BC-D193-4593-BBDA-BEBDA06C915C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMe.IntegrationTests", "tests\BookMe.IntegrationTests\BookMe.IntegrationTests.csproj", "{7668AA9D-D4A0-4911-929A-28CF182CDE5E}"
 EndProject

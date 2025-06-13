@@ -62,15 +62,19 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test --no-build tests/BookMe.Unitests/BookMe.UnitTests.csproj
+        continue-on-error: false
 
       - name: Run integration tests
         run: dotnet test --no-build tests/BookMe.IntegrationTests/BookMe.IntegrationTests.csproj
+        continue-on-error: true
 
       - name: Build solution
         run: dotnet build --configuration Release
+        continue-on-error: false
 
       - name: Publish project
         run: dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/bookme-api'
+        continue-on-error: false
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -107,3 +111,8 @@ jobs:
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
             --settings DEPLOY_VERSION=${{ needs.build.outputs.build_number }}
+
+      - name: Verify deployment
+        run: |
+          sleep 30
+          curl -sSf https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/healthz || exit 1

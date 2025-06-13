@@ -37,13 +37,6 @@ jobs:
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
         with:
@@ -69,7 +62,7 @@ jobs:
         continue-on-error: false
 
       - name: Run integration tests
-        run: dotnet test --no-build tests/BookMe.IntegrationTests/BookMe.IntegrationTests.csproj
+        run: dotnet test --configuration Release tests/BookMe.IntegrationTests/BookMe.IntegrationTests.csproj
         continue-on-error: true
 
       - name: Publish project
@@ -93,6 +86,13 @@ jobs:
       - name: Echo deployment version
         run: |
           echo "Deploying version : ${{ needs.build.outputs.build_number }}"
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v4

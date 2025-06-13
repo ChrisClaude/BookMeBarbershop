@@ -14,18 +14,29 @@ permissions:
   contents: read
 
 env:
+  AZURE_RESOURCE_GROUP: rg-book-me-dev-westeurope-001
   AZURE_WEBAPP_NAME: app-service-book-me-dev-westeurope-001
   AZURE_WEBAPP_PACKAGE_PATH: "."
   DOTNET_VERSION: "9.0.x"
 
 jobs:
   build:
-    environment: Production
+    environment: production
     runs-on: ubuntu-latest
+    outputs:
+      build_number: ${{ steps.buildnumber.outputs.BUILD_NUMBER }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set build number
+        id: buildnumber
+        run: |
+          export BUILD_NUMBER=$(date +'%Y%m%d%H%M%S')
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -49,6 +60,12 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore
 
+      - name: Run unit tests
+        run: dotnet test --no-build tests/BookMe.Unitests/BookMe.UnitTests.csproj
+
+      - name: Run integration tests
+        run: dotnet test --no-build tests/BookMe.IntegrationTests/BookMe.IntegrationTests.csproj
+
       - name: Build solution
         run: dotnet build --configuration Release
 
@@ -58,7 +75,7 @@ jobs:
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: bookme-api
+          name: bookme-api-${{ env.BUILD_NUMBER }}
           path: ${{env.AZURE_WEBAPP_PACKAGE_PATH }}/bookme-api
 
   deploy:
@@ -69,14 +86,24 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: Echo deployment version
+        run: |
+          echo "Deploying version : ${{ needs.build.outputs.build_number }}"
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: bookme-api
+          name: bookme-api-${{ needs.build.outputs.build_number }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/bookme-api"
+          package: "./bookme-api"
+      - name: Set DEPLOY_VERSION app setting
+        run: |
+          az webapp config appsettings set \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --settings DEPLOY_VERSION=${{ needs.build.outputs.build_number }}

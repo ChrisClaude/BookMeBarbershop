@@ -10,35 +10,35 @@ This folder contains the infrastructure code for the BookMe application. It uses
 
 ## Usage
 
-1. Login to Azure using the Azure CLI
+- Login to Azure using the Azure CLI
 
-```bash
-az login
-```
+  ```bash
+  az login
+  ```
 
-2. Initialize Terraform
+- Initialize Terraform
 
-```bash
-terraform init
-```
+  ```bash
+  terraform init
+  ```
 
-3. Plan the infrastructure
+- Plan the infrastructure
 
-```bash
-terraform plan
-```
+  ```bash
+  terraform plan
+  ```
 
-4. Apply the infrastructure
+- Apply the infrastructure
 
-```bash
-terraform apply
-```
+  ```bash
+  terraform apply
+  ```
 
-5. Destroy the infrastructure
+- Destroy the infrastructure
 
-```bash
-terraform destroy
-```
+  ```bash
+  terraform destroy
+  ```
 
 ## Other commands
 

@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - development
 
 permissions:
   id-token: write
@@ -135,6 +136,7 @@ jobs:
         run: |
           dotnet tool install --global dotnet-ef
           cd ./bookme-api
+          ls -l
           dotnet ef database update --context BookMeContext --project ../BookMe.Infrastructure --startup-project ../BookMeAPI
         env:
           ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}

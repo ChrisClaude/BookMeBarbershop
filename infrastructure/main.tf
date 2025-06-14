@@ -78,7 +78,7 @@ data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault_secret" "sql_admin_password" {
   name         = "SqlConnectionString"
-  value        = "Server=${azurerm_sql_server.sql_server.fully_qualified_domain_name};Database=${azurerm_sql_database.sql_database.name};User ID=${azurerm_sql_server.sql_server.administrator_login};Password=${local.sql_password};Encrypt=true;Connection Timeout=30;"
+  value        = "Server=${azurerm_mssql_server.sql_server.fully_qualified_domain_name};Database=${azurerm_mssql_database.sql_database.name};User ID=${azurerm_mssql_server.sql_server.administrator_login};Password=${local.sql_password};Encrypt=true;Connection Timeout=30;"
   key_vault_id = azurerm_key_vault.kv.id
 }
 

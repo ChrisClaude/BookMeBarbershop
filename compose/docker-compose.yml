@@ -1,5 +1,12 @@
-version: "1.0"
 services:
+  sql-server:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: sql-server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=FACEpass107_=0x
+    ports:
+      - 1433:1433
   bookme-seq:
     image: datalust/seq:latest
     container_name: bookme-seq

@@ -93,18 +93,18 @@ resource "azurerm_key_vault_secret" "sql_admin_password" {
 }
 
 # Grant the web app access to Key Vault
-# resource "azurerm_key_vault_access_policy" "web_app_policy" {
-#   key_vault_id = azurerm_key_vault.kv.id
-#   tenant_id    = data.azurerm_client_config.current.tenant_id
-#   object_id    = azurerm_linux_web_app.app_service.identity[0].principal_id
+resource "azurerm_key_vault_access_policy" "web_app_policy" {
+  key_vault_id = azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.app_service.identity[0].principal_id
 
-#   secret_permissions = [
-#     "Get",
-#     "List"
-#   ]
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
 
-#   depends_on = [azurerm_linux_web_app.app_service]
-# }
+  depends_on = [azurerm_linux_web_app.app_service]
+}
 
 // create an azure sql database dtu
 resource "azurerm_mssql_server" "sql_server" {

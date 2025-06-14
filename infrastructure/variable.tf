@@ -38,11 +38,3 @@ variable "app_service_sku_name" {
   description = "SKU name for the service plan (e.g., F1, B1, S1)"
   default     = "F1"
 }
-
-variable "sql_edition" {
-  default = "Basic"
-}
-
-variable "sql_service_objective" {
-  default = "Basic"
-}

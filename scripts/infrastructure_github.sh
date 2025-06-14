@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Settings
-KEYVAULT_NAME="kv-book-me-dev-westeurope"
+KEYVAULT_NAME="kv-bm-dev-westeurope"
 SECRET_NAME="SqlConnectionString"
 GITHUB_SECRET_NAME="AZURE_SQL_CONNECTION_STRING"
 GITHUB_REPO="your-username/your-repo"

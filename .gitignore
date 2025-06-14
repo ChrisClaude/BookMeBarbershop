@@ -10,3 +10,4 @@ logs/
 bookme-ui/openapitools.json
 bookme-ui/package-lock.json
 scripts/.env.local
+compose/.containers

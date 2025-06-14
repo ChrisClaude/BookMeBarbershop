@@ -68,11 +68,11 @@ internal static class WebApplicationConfiguration
     {
         var appSettings = app.Configuration.GetSection("AppSettings").Get<AppSettings>();
 
-        if (app.Environment.IsDevelopment())
-        {
+        // if (app.Environment.IsDevelopment())
+        // {
             app.UseScalar(appSettings);
             app.MigrateDatabase();
-        }
+        // }
 
         app.MapHealthChecks("/healthz", HealthChecksConfiguration.HealthCheckOptions);
         app.UseCors(_corsPolicyName);

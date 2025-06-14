@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      # - development
 
 permissions:
   id-token: write
@@ -83,6 +84,11 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -131,13 +137,12 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_VERIFY_SERVICE_SID: ${{ secrets.TWILIO_VERIFY_SERVICE_SID }}
 
-      - name: Apply database migrations
-        run: |
-          dotnet tool install --global dotnet-ef
-          cd ./bookme-api
-          dotnet ef database update --context BookMeContext --project ../BookMe.Infrastructure --startup-project ../BookMeAPI
-        env:
-          ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+      # - name: Apply database migrations
+      #   run: |
+      #     dotnet tool install --global dotnet-ef
+      #     dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
+      #   env:
+      #     ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
 
       - name: Verify deployment
         run: |

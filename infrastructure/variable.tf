@@ -1,6 +1,6 @@
 variable "environment" {
   type    = string
-  default = "dev"
+  default = "prod"
   validation {
     condition     = contains(["dev", "qa", "prod"], var.environment)
     error_message = "Environment must be one of: dev, qa, prod."
@@ -36,5 +36,5 @@ locals {
 variable "app_service_sku_name" {
   type        = string
   description = "SKU name for the service plan (e.g., F1, B1, S1)"
-  default     = "F1"
+  default     = "B1"
 }

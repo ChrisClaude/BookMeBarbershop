@@ -12,6 +12,9 @@ az webapp config appsettings set \
   "AppSettings__CacheConfig__CacheType=memory" \
   "AppSettings__CacheConfig__Enabled=true" \
   "AppSettings__CacheConfig__CacheTime=10" \
+  "AppSettings__EventConfig__Server=localhost:9092" \
+  "AppSettings__EventConfig__Topic=bookme" \
+  "AppSettings__EventConfig__Enabled=false" \
   "AppSettings__Serilog__MinimumLevel__Default=Information" \
   "AppSettings__Serilog__MinimumLevel__Override__Microsoft=Warning" \
   "AppSettings__Serilog__MinimumLevel__Override__System=Warning" \

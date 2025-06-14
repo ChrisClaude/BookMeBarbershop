@@ -53,9 +53,12 @@ public class CustomHealthCheck : IHealthCheck
 
         try
         {
-            // Check event publisher
-            await _eventPublisher.PublishAsync(new HealthCheckEvent());
-            data.Add("EventPublisher", "Working");
+            if (_appSettings.EventConfig.Enabled)
+            {
+                // Check event publisher
+                await _eventPublisher.PublishAsync(new HealthCheckEvent());
+                data.Add("EventPublisher", "Working");
+            }
         }
         catch (Exception ex)
         {

@@ -15,8 +15,8 @@ permissions:
   contents: read
 
 env:
-  AZURE_RESOURCE_GROUP: rg-book-me-dev-westeurope-001
-  AZURE_WEBAPP_NAME: app-service-book-me-dev-westeurope-001
+  AZURE_RESOURCE_GROUP: rg-book-me-prod-westeurope-001
+  AZURE_WEBAPP_NAME: app-service-book-me-prod-westeurope-001
   AZURE_WEBAPP_PACKAGE_PATH: "."
   DOTNET_VERSION: "9.0.x"
 

@@ -41,8 +41,17 @@ resource "azurerm_linux_web_app" "app_service" {
   service_plan_id     = azurerm_service_plan.app_service_plan.id
   https_only          = true
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   site_config {
     always_on = false
+  }
+
+  app_settings = {
+    "ConnectionStrings__BookMeDb" = "@Microsoft.KeyVault(SecretUri=https://${azurerm_key_vault.kv.name}.vault.azure.net/secrets/${azurerm_key_vault_secret.sql_admin_password.name}/)"
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app_insights.connection_string
   }
 
   tags = {
@@ -71,6 +80,18 @@ resource "azurerm_key_vault_secret" "sql_admin_password" {
   name         = "SqlConnectionString"
   value        = "Server=${azurerm_sql_server.sql_server.fully_qualified_domain_name};Database=${azurerm_sql_database.sql_database.name};User ID=${azurerm_sql_server.sql_server.administrator_login};Password=${local.sql_password};Encrypt=true;Connection Timeout=30;"
   key_vault_id = azurerm_key_vault.kv.id
+}
+
+# Grant the web app access to Key Vault
+resource "azurerm_key_vault_access_policy" "web_app_policy" {
+  key_vault_id = azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.app_service.identity[0].principal_id
+
+  secret_permissions = [
+    "Get",
+    "List"
+  ]
 }
 
 // create an azure sql database dtu

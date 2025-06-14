@@ -64,3 +64,17 @@ terraform state show <resource>
 
 [Azure Estimation](https://azure.com/e/4aefaf11653e4e6894695f18fdee782b)
 [Terraform - store remote state](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/azure-remote)
+
+## Provide current user/service principal access to Key Vault via an access policy
+
+- Get your object id
+
+  ```bash
+  az ad signed-in-user show --query id -o tsv
+  ```
+
+- Add the access policy
+
+  ```bash
+  az keyvault set-policy --name <your-key-vault-name> --object-id <your-object-id> --secret-permissions get list set
+  ```

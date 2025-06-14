@@ -69,7 +69,7 @@ resource "azurerm_key_vault" "kv" {
   sku_name                   = "standard"
   purge_protection_enabled   = true
   soft_delete_retention_days = 7
-  enable_rbac_authorization  = false
+  enable_rbac_authorization  = true
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = data.azurerm_client_config.current.object_id
@@ -93,6 +93,7 @@ resource "azurerm_key_vault_secret" "sql_admin_password" {
 }
 
 # Grant the web app access to Key Vault
+# Because we need to reference the web app's identity, we have to create the web app first and then grant it access to Key Vault (That might mean to comment out the access policy and apply, then uncomment and apply again)
 resource "azurerm_key_vault_access_policy" "web_app_policy" {
   key_vault_id = azurerm_key_vault.kv.id
   tenant_id    = data.azurerm_client_config.current.tenant_id

@@ -83,6 +83,9 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Echo deployment version
         run: |
           echo "Deploying version : ${{ needs.build.outputs.build_number }}"

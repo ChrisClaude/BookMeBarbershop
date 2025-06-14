@@ -106,12 +106,15 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: "./bookme-api"
-      - name: Set DEPLOY_VERSION app setting
+
+      - name: Configure App Settings
         run: |
-          az webapp config appsettings set \
-            --name ${{ env.AZURE_WEBAPP_NAME }} \
-            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-            --settings DEPLOY_VERSION=${{ needs.build.outputs.build_number }}
+          chmod +x ./scripts/configure_app_settings.sh
+          ./scripts/configure_app_settings.sh
+        env:
+          AZURE_WEBAPP_NAME: ${{ env.AZURE_WEBAPP_NAME }}
+          AZURE_RESOURCE_GROUP: ${{ env.AZURE_RESOURCE_GROUP }}
+          BUILD_NUMBER: ${{ needs.build.outputs.build_number }}
 
       - name: Apply database migrations
         run: |

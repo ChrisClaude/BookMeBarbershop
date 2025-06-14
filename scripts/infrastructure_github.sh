@@ -4,7 +4,7 @@
 KEYVAULT_NAME="kv-bm-dev-westeurope"
 SECRET_NAME="SqlConnectionString"
 GITHUB_SECRET_NAME="AZURE_SQL_CONNECTION_STRING"
-GITHUB_REPO="your-username/your-repo"
+GITHUB_REPO="ChrisClaude/BookMeBarbershop"
 
 # Get secret from Azure Key Vault
 connection_string=$(az keyvault secret show \

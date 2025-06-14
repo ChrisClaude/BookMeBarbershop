@@ -50,7 +50,7 @@ resource "azurerm_linux_web_app" "app_service" {
   }
 
   app_settings = {
-    "ConnectionStrings__BookMeDb" = "@Microsoft.KeyVault(SecretUri=https://${azurerm_key_vault.kv.name}.vault.azure.net/secrets/${azurerm_key_vault_secret.sql_admin_password.name}/)"
+    "ConnectionStrings__BookMeDb"           = "@Microsoft.KeyVault(SecretUri=https://${azurerm_key_vault.kv.name}.vault.azure.net/secrets/${azurerm_key_vault_secret.sql_admin_password.name}/)"
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app_insights.connection_string
   }
 
@@ -62,7 +62,7 @@ resource "azurerm_linux_web_app" "app_service" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                       = "kv-book-me-${var.environment}-${var.location}"
+  name                       = "kv-bm-${var.environment}-${var.location}"
   location                   = azurerm_resource_group.rg.location
   resource_group_name        = azurerm_resource_group.rg.name
   tenant_id                  = data.azurerm_client_config.current.tenant_id
@@ -70,6 +70,16 @@ resource "azurerm_key_vault" "kv" {
   purge_protection_enabled   = true
   soft_delete_retention_days = 7
   enable_rbac_authorization  = false
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+    ]
+  }
 }
 
 # Retrieve information about the currently authenticated Azure client/account used by Terraform
@@ -83,16 +93,18 @@ resource "azurerm_key_vault_secret" "sql_admin_password" {
 }
 
 # Grant the web app access to Key Vault
-resource "azurerm_key_vault_access_policy" "web_app_policy" {
-  key_vault_id = azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_linux_web_app.app_service.identity[0].principal_id
+# resource "azurerm_key_vault_access_policy" "web_app_policy" {
+#   key_vault_id = azurerm_key_vault.kv.id
+#   tenant_id    = data.azurerm_client_config.current.tenant_id
+#   object_id    = azurerm_linux_web_app.app_service.identity[0].principal_id
 
-  secret_permissions = [
-    "Get",
-    "List"
-  ]
-}
+#   secret_permissions = [
+#     "Get",
+#     "List"
+#   ]
+
+#   depends_on = [azurerm_linux_web_app.app_service]
+# }
 
 // create an azure sql database dtu
 resource "azurerm_mssql_server" "sql_server" {

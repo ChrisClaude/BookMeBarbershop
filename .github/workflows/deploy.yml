@@ -113,6 +113,13 @@ jobs:
             --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
             --settings DEPLOY_VERSION=${{ needs.build.outputs.build_number }}
 
+      - name: Apply database migrations
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI
+        env:
+          ConnectionStrings__BookMeDb: ${{ secrets.DB_CONNECTION_STRING }}
+
       - name: Verify deployment
         run: |
           sleep 30

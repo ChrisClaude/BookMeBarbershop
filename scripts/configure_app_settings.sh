@@ -8,6 +8,7 @@ az webapp config appsettings set \
   "DEPLOY_VERSION=$BUILD_NUMBER" \
   "AppSettings__AllowedCorsOrigins__0=https://book-me-barbershop-sigma.vercel.app" \
   "AppSettings__AllowedCorsOrigins__1=https://sanstache.pl" \
+  "AppSettings__AllowedCorsOrigins__2=https://www.sanstache.pl" \
   "AppSettings__CacheConfig__CacheType=memory" \
   "AppSettings__CacheConfig__Enabled=true" \
   "AppSettings__CacheConfig__CacheTime=10" \

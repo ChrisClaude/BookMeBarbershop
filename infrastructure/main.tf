@@ -3,7 +3,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.0.2"
+      version = "~> 3.96.0"
     }
   }
 
@@ -46,12 +46,18 @@ resource "azurerm_linux_web_app" "app_service" {
   }
 
   site_config {
-    always_on = false
+    always_on = true
+    application_stack {
+      docker_image     = "mcr.microsoft.com/dotnet/aspnet"
+      docker_image_tag = "9.0"
+    }
+    health_check_path = "/healthz"
   }
 
   app_settings = {
     "ConnectionStrings__BookMeDb"           = "@Microsoft.KeyVault(SecretUri=https://${azurerm_key_vault.kv.name}.vault.azure.net/secrets/${azurerm_key_vault_secret.sql_admin_password.name}/)"
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.app_insights.connection_string
+    "ASPNETCORE_ENVIRONMENT"                = var.environment
   }
 
   tags = {

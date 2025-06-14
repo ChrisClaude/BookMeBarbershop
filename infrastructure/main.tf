@@ -104,7 +104,10 @@ resource "azurerm_key_vault_access_policy" "web_app_policy" {
     "List"
   ]
 
-  depends_on = [azurerm_linux_web_app.app_service]
+  depends_on = [
+    azurerm_linux_web_app.app_service,
+    azurerm_key_vault.kv
+  ]
 }
 
 // create an azure sql database dtu

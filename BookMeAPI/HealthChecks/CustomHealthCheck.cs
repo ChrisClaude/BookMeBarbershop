@@ -66,27 +66,28 @@ public class CustomHealthCheck : IHealthCheck
             data.Add("EventPublisher", $"Error: {ex.Message}");
         }
 
-        // Check configuration
+        // Check elasticsearch configuration
         try
         {
             if (string.IsNullOrEmpty(_appSettings.Elasticsearch?.Uri))
             {
-                data.Add("Configuration", "Error: Missing Elasticsearch URI");
+                data.Add("Elasticsearch", "Error: Missing Elasticsearch URI");
                 isHealthy = false;
             }
             else
             {
-                data.Add("Configuration", "Valid");
+                data.Add("Elasticsearch", "Valid");
             }
         }
         catch (Exception ex)
         {
             isHealthy = false;
-            data.Add("Configuration", $"Error: {ex.Message}");
+            data.Add("Elasticsearch", $"Error: {ex.Message}");
         }
 
+        var healthyMessage = $"All custom checks ({string.Join(", ", data.Keys)}) passed";
         return isHealthy
-            ? HealthCheckResult.Healthy("All custom checks passed", data)
+            ? HealthCheckResult.Healthy(healthyMessage, data)
             : HealthCheckResult.Unhealthy("One or more custom checks failed", null, data);
     }
 }

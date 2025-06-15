@@ -48,8 +48,7 @@ resource "azurerm_linux_web_app" "app_service" {
   site_config {
     always_on = true
     application_stack {
-      docker_image     = "mcr.microsoft.com/dotnet/aspnet"
-      docker_image_tag = "9.0"
+      dotnet_version = "8.0"
     }
     health_check_path = "/healthz"
   }

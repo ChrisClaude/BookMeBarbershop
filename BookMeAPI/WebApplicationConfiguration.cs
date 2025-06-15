@@ -68,7 +68,7 @@ internal static class WebApplicationConfiguration
     {
         var appSettings = app.Configuration.GetSection("AppSettings").Get<AppSettings>();
 
-        // if (app.Environment.IsDevelopment())
+        //TODO: Restore this// if (app.Environment.IsDevelopment())
         // {
             app.UseScalar(appSettings);
             app.MigrateDatabase();

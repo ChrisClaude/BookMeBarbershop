@@ -61,7 +61,7 @@ az webapp config appsettings set \
   "AppSettings__AzureAdB2C__ClientSecret=$AZURE_AD_B2C_CLIENT_SECRET" \
   "AppSettings__AzureAdB2C__CallbackPath=/signin-oidc" \
   "AppSettings__AzureAdB2C__SignedOutCallbackPath=/signout-callback-oidc" \
-  "AppSettings__AzureAdB2C__SignUpSignInPolicyId=B2C_1_signup_signin" \
+  "AppSettings__AzureAdB2C__SignUpSignInPolicyId=B2C_1_signupsignin" \
   "AppSettings__TwilioConfig__MinSecondsBetweenRequests=60" \
   "AppSettings__TwilioConfig__AccountSid=$TWILIO_ACCOUNT_SID" \
   "AppSettings__TwilioConfig__AuthToken=$TWILIO_AUTH_TOKEN" \

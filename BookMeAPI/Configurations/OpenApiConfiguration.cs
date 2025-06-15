@@ -51,10 +51,10 @@ public static class OpenApiConfiguration
                                             // valid options are 'SHA-256' | 'plain' | 'no'
                                             Extensions = new Dictionary<string, IOpenApiExtension>()
                                             {
-                                                ["x-usePkce"] = new OpenApiString("SHA-256")
+                                                ["x-usePkce"] = new OpenApiString("SHA-256"),
                                             },
-                                        }
-                                    }
+                                        },
+                                    },
                                 }
                             );
 

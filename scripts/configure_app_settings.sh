@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Remove any quotes from the environment variables
+AZURE_AD_B2C_INSTANCE=$(echo $AZURE_AD_B2C_INSTANCE | tr -d '"')
+AZURE_AD_B2C_DOMAIN=$(echo $AZURE_AD_B2C_DOMAIN | tr -d '"')
+AZURE_AD_B2C_TENANT_ID=$(echo $AZURE_AD_B2C_TENANT_ID | tr -d '"')
+AZURE_AD_B2C_CLIENT_ID=$(echo $AZURE_AD_B2C_CLIENT_ID | tr -d '"')
+AZURE_AD_B2C_CLIENT_SECRET=$(echo $AZURE_AD_B2C_CLIENT_SECRET | tr -d '"')
+TWILIO_ACCOUNT_SID=$(echo $TWILIO_ACCOUNT_SID | tr -d '"')
+TWILIO_AUTH_TOKEN=$(echo $TWILIO_AUTH_TOKEN | tr -d '"')
+TWILIO_VERIFY_SERVICE_SID=$(echo $TWILIO_VERIFY_SERVICE_SID | tr -d '"')
+
 # Set app settings for Azure Web App
 az webapp config appsettings set \
   --name "$AZURE_WEBAPP_NAME" \
@@ -55,4 +65,4 @@ az webapp config appsettings set \
   "AppSettings__TwilioConfig__AccountSid=$TWILIO_ACCOUNT_SID" \
   "AppSettings__TwilioConfig__AuthToken=$TWILIO_AUTH_TOKEN" \
   "AppSettings__TwilioConfig__VerifyServiceSid=$TWILIO_VERIFY_SERVICE_SID" \
-  "AppSettings__ApplicationInsights__ConnectionString=$APPLICATION_INSIGHTS_CONNECTION_STRING"
+  "AppSettings__ApplicationInsights__ConnectionString=" + $APPLICATION_INSIGHTS_CONNECTION_STRING

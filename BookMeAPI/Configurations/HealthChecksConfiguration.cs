@@ -7,34 +7,30 @@ namespace BookMeAPI.Configurations;
 
 public static class HealthChecksConfiguration
 {
-    public static readonly HealthCheckOptions HealthCheckOptions =
-        new()
+    public static readonly HealthCheckOptions HealthCheckOptions = new()
+    {
+        ResponseWriter = async (context, report) =>
         {
-            ResponseWriter = async (context, report) =>
+            context.Response.ContentType = "application/json";
+
+            var response = new
             {
-                context.Response.ContentType = "application/json";
-
-                var response = new
+                Status = report.Status.ToString(),
+                Duration = report.TotalDuration,
+                Checks = report.Entries.Select(entry => new
                 {
-                    Status = report.Status.ToString(),
-                    Duration = report.TotalDuration,
-                    Checks = report.Entries.Select(
-                        entry =>
-                            new
-                            {
-                                Name = entry.Key,
-                                Status = entry.Value.Status.ToString(),
-                                Duration = entry.Value.Duration,
-                                Description = entry.Value.Description,
-                                Exception = entry.Value.Exception?.Message
-                            }
-                    ),
-                    Timestamp = DateTime.UtcNow,
-                };
+                    Name = entry.Key,
+                    Status = entry.Value.Status.ToString(),
+                    Duration = entry.Value.Duration,
+                    Description = entry.Value.Description,
+                    Exception = entry.Value.Exception?.Message,
+                }),
+                Timestamp = DateTime.UtcNow,
+            };
 
-                await JsonSerializer.SerializeAsync(context.Response.Body, response);
-            }
-        };
+            await JsonSerializer.SerializeAsync(context.Response.Body, response);
+        },
+    };
 
     public static IServiceCollection ConfigureHealthChecks(
         this IServiceCollection services,

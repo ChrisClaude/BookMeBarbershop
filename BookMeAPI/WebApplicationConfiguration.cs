@@ -68,11 +68,12 @@ internal static class WebApplicationConfiguration
     {
         var appSettings = app.Configuration.GetSection("AppSettings").Get<AppSettings>();
 
-        // if (app.Environment.IsDevelopment())
-        // {
+        if (app.Environment.IsDevelopment())
+        {
             app.UseScalar(appSettings);
-            app.MigrateDatabase();
-        // }
+        }
+        // TODO: Move this into the isDevelopment check. Migration should be handled in the deployment pipeline
+        app.MigrateDatabase();
 
         app.MapHealthChecks("/healthz", HealthChecksConfiguration.HealthCheckOptions);
         app.UseCors(_corsPolicyName);

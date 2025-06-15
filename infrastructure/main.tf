@@ -51,6 +51,8 @@ resource "azurerm_linux_web_app" "app_service" {
       dotnet_version = "8.0"
     }
     health_check_path = "/healthz"
+
+    app_command_line = "dotnet BookMeAPI.dll"
   }
 
   app_settings = {
@@ -142,6 +144,14 @@ resource "azurerm_mssql_database" "sql_database" {
     location    = var.location
     project     = "book-me"
   }
+}
+
+// Add firewall rule to allow Azure services
+resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
+  name             = "AllowAzureServices"
+  server_id        = azurerm_mssql_server.sql_server.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 // create an application insights resource

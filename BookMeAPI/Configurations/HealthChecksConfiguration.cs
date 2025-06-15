@@ -2,6 +2,7 @@ using System.Text.Json;
 using BookMe.Application.Configurations;
 using BookMeAPI.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Serilog;
 
 namespace BookMeAPI.Configurations;
 
@@ -60,13 +61,18 @@ public static class HealthChecksConfiguration
             && !string.IsNullOrEmpty(appSettings.AzureAdB2C.SignUpSignInPolicyId)
         )
         {
-            healthChecks.AddUrlGroup(
-                new Uri(
-                    $"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration"
-                ),
-                name: "azure-b2c",
-                tags: new[] { "auth" }
-            );
+            try
+            {
+                var uriString =
+                    $"{appSettings.AzureAdB2C.Instance}/{appSettings.AzureAdB2C.Domain}/{appSettings.AzureAdB2C.SignUpSignInPolicyId}/v2.0/.well-known/openid-configuration";
+                var uri = new Uri(uriString);
+
+                healthChecks.AddUrlGroup(uri, name: "azure-b2c", tags: new[] { "auth" });
+            }
+            catch (UriFormatException ex)
+            {
+                Log.Error($"Invalid Azure B2C URI configuration: {ex.Message}");
+            }
         }
 
         return services;

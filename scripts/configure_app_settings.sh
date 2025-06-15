@@ -9,6 +9,7 @@ AZURE_AD_B2C_CLIENT_SECRET=$(echo $AZURE_AD_B2C_CLIENT_SECRET | tr -d '"')
 TWILIO_ACCOUNT_SID=$(echo $TWILIO_ACCOUNT_SID | tr -d '"')
 TWILIO_AUTH_TOKEN=$(echo $TWILIO_AUTH_TOKEN | tr -d '"')
 TWILIO_VERIFY_SERVICE_SID=$(echo $TWILIO_VERIFY_SERVICE_SID | tr -d '"')
+APPLICATION_INSIGHTS_CONNECTION_STRING=$(echo $APPLICATION_INSIGHTS_CONNECTION_STRING | tr -d '"')
 
 # Set app settings for Azure Web App
 az webapp config appsettings set \
@@ -65,4 +66,4 @@ az webapp config appsettings set \
   "AppSettings__TwilioConfig__AccountSid=$TWILIO_ACCOUNT_SID" \
   "AppSettings__TwilioConfig__AuthToken=$TWILIO_AUTH_TOKEN" \
   "AppSettings__TwilioConfig__VerifyServiceSid=$TWILIO_VERIFY_SERVICE_SID" \
-  "AppSettings__ApplicationInsights__ConnectionString=" + $APPLICATION_INSIGHTS_CONNECTION_STRING
+  "AppSettings__ApplicationInsights__ConnectionString=$APPLICATION_INSIGHTS_CONNECTION_STRING"

@@ -24,8 +24,8 @@ public class GlobalExceptionHandler : IExceptionHandler
 
             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
 
-            var errors = validationException.Errors
-                .Select(x => new Error(x.Severity.ToString(), x.ErrorMessage))
+            var errors = validationException
+                .Errors.Select(x => new Error(x.Severity.ToString(), x.ErrorMessage))
                 .ToList();
 
             await httpContext.Response.WriteAsJsonAsync(errors, cancellationToken);

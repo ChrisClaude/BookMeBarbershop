@@ -146,5 +146,5 @@ jobs:
 
       - name: Verify deployment
         run: |
-          sleep 30
+          sleep 1m30s
           curl -sSf https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/healthz || exit 1

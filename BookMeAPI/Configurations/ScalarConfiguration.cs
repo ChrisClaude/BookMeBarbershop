@@ -18,7 +18,7 @@ public static class ScalarConfiguration
                     oauth2.Scopes = new[]
                     {
                         $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read",
-                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write"
+                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write",
                     };
                 });
 
@@ -31,9 +31,9 @@ public static class ScalarConfiguration
                     Scopes = new[]
                     {
                         $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Read",
-                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write"
+                        $"https://{appSettings.AzureAdB2C.Domain}/resume-builder-api/Write",
                     },
-                }
+                },
             };
         });
     }

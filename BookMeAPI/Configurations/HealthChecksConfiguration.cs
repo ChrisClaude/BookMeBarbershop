@@ -72,7 +72,7 @@ public static class HealthChecksConfiguration
             catch (UriFormatException ex)
             {
                 Log.Error(
-                    "Invalid Azure B2C URI configuration exception: @{ex}, appSettings: @{appSettings}",
+                    "Invalid Azure B2C URI configuration exception: {@ex}, appSettings: {@appSettings}",
                     ex,
                     appSettings
                 );

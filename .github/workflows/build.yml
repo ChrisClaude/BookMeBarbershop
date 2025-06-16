@@ -42,6 +42,13 @@ jobs:
     - name: Install dependencies
       working-directory: bookme-ui
       run: npm install
+    - name: Run lint
+      working-directory: bookme-ui
+      run: npm run lint
+
+    - name: Run build
+      working-directory: bookme-ui
+      run: npm run build
     - name: Run tests
       working-directory: bookme-ui
       run: npm run test

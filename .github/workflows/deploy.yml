@@ -140,11 +140,11 @@ jobs:
       - name: Apply database migrations
         run: |
           dotnet tool install --global dotnet-ef
-          echo ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-          echo "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
-          dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI --connection ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-      #   env:
-      #     ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          echo $ConnectionStrings__BookMeDb
+          echo "$ConnectionStrings__BookMeDb"
+          dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI --connection ConnectionStrings__BookMeDb
+        env:
+          ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
 
       - name: Verify deployment
         run: |

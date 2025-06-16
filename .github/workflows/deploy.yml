@@ -109,37 +109,39 @@ jobs:
           name: bookme-api-${{ needs.build.outputs.build_number }}
           path: ./bookme-api
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: "./bookme-api"
+      # - name: Deploy to Azure Web App
+      #   uses: azure/webapps-deploy@v3
+      #   id: deploy-to-webapp
+      #   with:
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     package: "./bookme-api"
 
-      - name: Configure App Settings
-        run: |
-          chmod +x ./scripts/configure_app_settings.sh
-          ./scripts/configure_app_settings.sh
-        env:
-          AZURE_WEBAPP_NAME: ${{ env.AZURE_WEBAPP_NAME }}
-          AZURE_RESOURCE_GROUP: ${{ env.AZURE_RESOURCE_GROUP }}
-          BUILD_NUMBER: ${{ needs.build.outputs.build_number }}
-          # Azure AD B2C
-          AZURE_AD_B2C_INSTANCE: ${{ secrets.AZURE_AD_B2C_INSTANCE }}
-          AZURE_AD_B2C_DOMAIN: ${{ secrets.AZURE_AD_B2C_DOMAIN }}
-          AZURE_AD_B2C_TENANT_ID: ${{ secrets.AZURE_AD_B2C_TENANT_ID }}
-          AZURE_AD_B2C_CLIENT_ID: ${{ secrets.AZURE_AD_B2C_CLIENT_ID }}
-          AZURE_AD_B2C_CLIENT_SECRET: ${{ secrets.AZURE_AD_B2C_CLIENT_SECRET }}
-          # Application Insights
-          APPLICATION_INSIGHTS_CONNECTION_STRING: ${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}
-          # Twilio
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_VERIFY_SERVICE_SID: ${{ secrets.TWILIO_VERIFY_SERVICE_SID }}
+      # - name: Configure App Settings
+      #   run: |
+      #     chmod +x ./scripts/configure_app_settings.sh
+      #     ./scripts/configure_app_settings.sh
+      #   env:
+      #     AZURE_WEBAPP_NAME: ${{ env.AZURE_WEBAPP_NAME }}
+      #     AZURE_RESOURCE_GROUP: ${{ env.AZURE_RESOURCE_GROUP }}
+      #     BUILD_NUMBER: ${{ needs.build.outputs.build_number }}
+      #     # Azure AD B2C
+      #     AZURE_AD_B2C_INSTANCE: ${{ secrets.AZURE_AD_B2C_INSTANCE }}
+      #     AZURE_AD_B2C_DOMAIN: ${{ secrets.AZURE_AD_B2C_DOMAIN }}
+      #     AZURE_AD_B2C_TENANT_ID: ${{ secrets.AZURE_AD_B2C_TENANT_ID }}
+      #     AZURE_AD_B2C_CLIENT_ID: ${{ secrets.AZURE_AD_B2C_CLIENT_ID }}
+      #     AZURE_AD_B2C_CLIENT_SECRET: ${{ secrets.AZURE_AD_B2C_CLIENT_SECRET }}
+      #     # Application Insights
+      #     APPLICATION_INSIGHTS_CONNECTION_STRING: ${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}
+      #     # Twilio
+      #     TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+      #     TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+      #     TWILIO_VERIFY_SERVICE_SID: ${{ secrets.TWILIO_VERIFY_SERVICE_SID }}
 
       - name: Apply database migrations
         run: |
           dotnet tool install --global dotnet-ef
+          echo ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          echo "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
           dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI --connection ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
       #   env:
       #     ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}

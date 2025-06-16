@@ -29,7 +29,7 @@ public class KafkaProducer : IEventPublisher
                 new Message<string, string>
                 {
                     Key = @event.GetType().Name,
-                    Value = JsonConvert.SerializeObject(@event)
+                    Value = JsonConvert.SerializeObject(@event),
                 }
             );
 

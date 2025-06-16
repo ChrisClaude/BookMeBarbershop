@@ -8,7 +8,6 @@ on:
   push:
     branches:
       - main
-      # - development
 
 permissions:
   id-token: write
@@ -137,14 +136,14 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_VERIFY_SERVICE_SID: ${{ secrets.TWILIO_VERIFY_SERVICE_SID }}
 
-      # - name: Apply database migrations
-      #   run: |
-      #     dotnet tool install --global dotnet-ef
-      #     dotnet ef database update --context BookMeContext --project BookMe.Infrastructure --startup-project BookMeAPI --connection "${{ secrets.AZURE_SQL_CONNECTION_STRING }}"
-      #   env:
-      #     ConnectionStrings__BookMeDb: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+      - name: Apply database migrations
+        run: |
+          chmod +x ./scripts/apply_migrations.sh
+          ./scripts/apply_migrations.sh
+        env:
+          CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
 
       - name: Verify deployment
         run: |
-          sleep 30
+          sleep 120
           curl -sSf https://${{ env.AZURE_WEBAPP_NAME }}.azurewebsites.net/healthz || exit 1

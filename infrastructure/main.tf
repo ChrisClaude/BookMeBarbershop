@@ -237,3 +237,5 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "healthz_alert" {
     project     = "book-me"
   }
 }
+
+# TODO: Add azure b2c and storage account

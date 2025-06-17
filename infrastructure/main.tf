@@ -180,3 +180,60 @@ resource "azurerm_application_insights" "app_insights" {
     project     = "book-me"
   }
 }
+
+
+// create alert when healthz endpoint returns a non 200 response
+resource "azurerm_monitor_action_group" "healthz_alert_group" {
+  name                = "healthz-alert-group"
+  resource_group_name = azurerm_resource_group.rg.name
+  short_name          = "healthzAG"
+
+  email_receiver {
+    name                    = "HealthzEmail"
+    email_address           = var.alert_email
+    use_common_alert_schema = true
+  }
+}
+
+resource "azurerm_monitor_scheduled_query_rules_alert" "healthz_alert" {
+  name                = "HealthzFailureAlert"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+
+  action {
+    action_group = [azurerm_monitor_action_group.healthz_alert_group.id]
+  }
+
+  data_source_id = azurerm_application_insights.app_insights.id
+  description    = "Alert when /healthz returns non-200 status codes"
+  enabled        = true
+
+  query = <<-KQL
+    requests
+    | where url endswith "/healthz"
+    | where resultCode != "200"
+    | where timestamp > ago(5m)
+  KQL
+
+  trigger {
+    operator  = "GreaterThan"
+    threshold = 0
+
+    metric_trigger {
+      metric_column       = "requestCount"
+      metric_trigger_type = "Total"
+      operator            = "GreaterThan"
+      threshold           = 0
+    }
+  }
+
+  frequency   = 5
+  severity    = 2
+  time_window = 5
+
+  tags = {
+    environment = var.environment
+    location    = var.location
+    project     = "book-me"
+  }
+}

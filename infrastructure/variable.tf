@@ -38,3 +38,9 @@ variable "app_service_sku_name" {
   description = "SKU name for the service plan (e.g., F1, B1, S1)"
   default     = "B1"
 }
+
+variable "alert_email" {
+  type        = string
+  description = "Email address to send alerts to"
+  default     = "christ.tchambila@gmail.com"
+}

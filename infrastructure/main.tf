@@ -239,3 +239,4 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "healthz_alert" {
 }
 
 # TODO: Add azure b2c and storage account
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/aadb2c_directory

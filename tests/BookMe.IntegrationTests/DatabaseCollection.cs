@@ -1,4 +1,4 @@
-namespace BookMe.IntegrationTests;
+﻿namespace BookMe.IntegrationTests;
 
 [CollectionDefinition("Database collection")]
 public class DatabaseCollection : ICollectionFixture<IntegrationTestWebAppFactory>

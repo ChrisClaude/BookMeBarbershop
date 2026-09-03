@@ -1,4 +1,4 @@
-using BookMe.Application.Configurations;
+﻿using BookMe.Application.Configurations;
 using Elastic.Ingest.Elasticsearch.DataStreams;
 using Elastic.Serilog.Sinks;
 using Elastic.Transport;

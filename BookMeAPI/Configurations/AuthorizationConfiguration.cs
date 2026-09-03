@@ -1,4 +1,4 @@
-using BookMeAPI.Authorization;
+﻿using BookMeAPI.Authorization;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BookMeAPI.Configurations;

@@ -1,4 +1,4 @@
-namespace BookMe.Application.Common.Dtos.Bookings;
+﻿namespace BookMe.Application.Common.Dtos.Bookings;
 
 public record class CancelBookingDto
 {

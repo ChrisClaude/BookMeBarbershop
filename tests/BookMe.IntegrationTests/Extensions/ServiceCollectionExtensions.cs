@@ -1,4 +1,4 @@
-using BookMe.Application.Configurations;
+﻿using BookMe.Application.Configurations;
 using BookMe.IntegrationTests.Mocks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

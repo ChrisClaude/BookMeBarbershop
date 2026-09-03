@@ -102,7 +102,7 @@ public class BookingTests : BaseIntegrationTest
             Id = Guid.NewGuid(),
             Name = "Jane",
             Surname = "Doe",
-            Email = "jane.doe.customer@test.com",
+            Email = "jane.doe.unverified@test.com",
             PhoneNumber = "+48600697524",
             IsPhoneNumberVerified = false,
             UserRoles = new List<UserRole> { new() { RoleId = DefaultRoles.CustomerId } },

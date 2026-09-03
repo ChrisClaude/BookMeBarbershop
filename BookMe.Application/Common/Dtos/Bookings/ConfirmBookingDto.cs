@@ -1,6 +1,6 @@
-namespace BookMe.Application.Common.Dtos.Bookings;
+﻿namespace BookMe.Application.Common.Dtos.Bookings;
 
 public class ConfirmBookingDto
 {
-    public Guid BookingId { get; set;}
+    public Guid BookingId { get; set; }
 }

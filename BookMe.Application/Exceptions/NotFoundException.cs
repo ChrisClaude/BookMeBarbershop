@@ -1,4 +1,4 @@
-namespace BookMe.Application.Exceptions;
+﻿namespace BookMe.Application.Exceptions;
 
 [Serializable]
 public class NotFoundException : Exception

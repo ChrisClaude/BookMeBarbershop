@@ -1,4 +1,4 @@
-namespace BookMe.Application.Entities;
+﻿namespace BookMe.Application.Entities;
 
 public class User : BaseEntity
 {

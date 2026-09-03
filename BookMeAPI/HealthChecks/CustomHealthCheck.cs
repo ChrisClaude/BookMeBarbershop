@@ -1,4 +1,4 @@
-using BookMe.Application.Caching;
+﻿using BookMe.Application.Caching;
 using BookMe.Application.Configurations;
 using BookMe.Application.Events;
 using BookMe.Application.Interfaces;

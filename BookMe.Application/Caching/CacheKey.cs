@@ -1,4 +1,4 @@
-using BookMe.Application.Configurations;
+﻿using BookMe.Application.Configurations;
 
 namespace BookMe.Application.Caching;
 

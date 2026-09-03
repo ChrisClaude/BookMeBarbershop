@@ -11,3 +11,5 @@ bookme-ui/openapitools.json
 bookme-ui/package-lock.json
 scripts/.env.local
 compose/.containers
+BookMe.sln.DotSettings.user
+/.idea

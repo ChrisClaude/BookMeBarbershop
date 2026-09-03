@@ -1,4 +1,4 @@
-using BookMe.Infrastructure.Data;
+﻿using BookMe.Infrastructure.Data;
 using BookMe.IntegrationTests.Extensions;
 using BookMe.IntegrationTests.Mocks;
 using BookMe.IntegrationTests.TestData;

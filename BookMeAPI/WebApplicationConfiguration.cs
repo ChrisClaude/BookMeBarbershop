@@ -1,4 +1,4 @@
-using AspNetCoreRateLimit;
+﻿using AspNetCoreRateLimit;
 using BookMe.Application;
 using BookMe.Application.Configurations;
 using BookMe.Infrastructure;

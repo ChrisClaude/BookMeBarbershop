@@ -1,4 +1,4 @@
-using Azure.Monitor.OpenTelemetry.AspNetCore;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
 using BookMe.Application.Configurations;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Resources;

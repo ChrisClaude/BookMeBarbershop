@@ -1,4 +1,4 @@
-using BookMe.Application.Commands.Bookings;
+﻿using BookMe.Application.Commands.Bookings;
 using BookMe.Application.Extensions;
 using FluentValidation;
 

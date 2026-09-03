@@ -1,4 +1,4 @@
-namespace BookMe.Application.Configurations;
+﻿namespace BookMe.Application.Configurations;
 
 public class EventConfig
 {

@@ -1,4 +1,4 @@
-internal static class DevelopmentConfiguration
+﻿internal static class DevelopmentConfiguration
 {
     public static WebApplicationBuilder AddDevelopmentConfiguration(
         this WebApplicationBuilder builder

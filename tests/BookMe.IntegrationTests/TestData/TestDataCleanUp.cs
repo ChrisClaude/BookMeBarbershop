@@ -1,4 +1,4 @@
-using BookMe.Infrastructure.Data;
+﻿using BookMe.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookMe.IntegrationTests.TestData;

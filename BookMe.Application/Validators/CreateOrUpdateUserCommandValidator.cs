@@ -1,4 +1,4 @@
-using BookMe.Application.Commands.Users;
+﻿using BookMe.Application.Commands.Users;
 using FluentValidation;
 
 namespace BookMe.Application.Validators;

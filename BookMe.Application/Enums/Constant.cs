@@ -1,4 +1,4 @@
-namespace BookMe.Application.Enums;
+﻿namespace BookMe.Application.Enums;
 
 public static class Constant
 {

@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using BookMe.Application.Configurations;
 using BookMeAPI.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

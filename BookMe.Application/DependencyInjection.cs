@@ -1,4 +1,4 @@
-using BookMe.Application.Behaviors;
+﻿using BookMe.Application.Behaviors;
 using BookMe.Application.Extensions;
 using BookMe.Application.Interfaces;
 using BookMe.Application.Interfaces.Queries;

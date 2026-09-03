@@ -1,4 +1,4 @@
-namespace BookMeAPI.Authorization;
+﻿namespace BookMeAPI.Authorization;
 
 public static class Policy
 {

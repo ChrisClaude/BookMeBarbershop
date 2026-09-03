@@ -28,10 +28,10 @@ Legend:
 
 ## Getting Started
 
-Running the api:
+Running aspire:
 
-```sh
-dotnet run --project BookMeAPI
+```
+aspire run
 ```
 
 Navigate to `https://localhost:6002/scalar/v1` to view the API documentation.

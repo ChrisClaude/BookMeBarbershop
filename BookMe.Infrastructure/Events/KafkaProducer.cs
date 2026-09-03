@@ -1,4 +1,4 @@
-using BookMe.Application.Configurations;
+﻿using BookMe.Application.Configurations;
 using BookMe.Application.Interfaces;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;

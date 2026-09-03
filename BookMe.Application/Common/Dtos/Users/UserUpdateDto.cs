@@ -1,4 +1,4 @@
-namespace BookMe.Application.Common.Dtos.Users;
+﻿namespace BookMe.Application.Common.Dtos.Users;
 
 public record class UserUpdateDto
 {

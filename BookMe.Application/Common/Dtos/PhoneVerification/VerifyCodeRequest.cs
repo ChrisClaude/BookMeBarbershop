@@ -1,4 +1,4 @@
-namespace BookMe.Application.Common.Dtos.PhoneVerification;
+﻿namespace BookMe.Application.Common.Dtos.PhoneVerification;
 
 public record class VerifyCodeRequest
 {

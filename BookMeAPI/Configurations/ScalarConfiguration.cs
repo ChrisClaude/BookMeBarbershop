@@ -1,4 +1,4 @@
-using BookMe.Application.Configurations;
+﻿using BookMe.Application.Configurations;
 using Scalar.AspNetCore;
 
 namespace BookMeAPI.Configurations;

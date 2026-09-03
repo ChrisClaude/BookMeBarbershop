@@ -1,4 +1,4 @@
-namespace BookMe.Application.Interfaces;
+﻿namespace BookMe.Application.Interfaces;
 
 public interface IPagedList<T> : IList<T>
 {

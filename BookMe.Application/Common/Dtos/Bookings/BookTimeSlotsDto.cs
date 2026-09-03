@@ -1,4 +1,4 @@
-namespace BookMe.Application.Common.Bookings.Dtos;
+﻿namespace BookMe.Application.Common.Bookings.Dtos;
 
 public record BookTimeSlotsDto
 {

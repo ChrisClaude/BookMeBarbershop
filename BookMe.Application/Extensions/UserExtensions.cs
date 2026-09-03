@@ -1,4 +1,4 @@
-using BookMe.Application.Common.Dtos;
+﻿using BookMe.Application.Common.Dtos;
 using BookMe.Application.Enums;
 
 namespace BookMe.Application.Extensions;

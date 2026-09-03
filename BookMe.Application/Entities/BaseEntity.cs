@@ -1,4 +1,4 @@
-namespace BookMe.Application.Entities;
+﻿namespace BookMe.Application.Entities;
 
 /// <summary>
 /// Represents the base class for entities

@@ -1,12 +1,12 @@
+﻿using BookMe.Application.Caching;
+using BookMe.Application.Interfaces;
+using BookMe.Infrastructure.Caching;
+using BookMe.Infrastructure.Data;
+using BookMe.Infrastructure.Events;
+using BookMe.Infrastructure.SMS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using BookMe.Infrastructure.Data;
-using BookMe.Application.Interfaces;
-using BookMe.Infrastructure.Events;
-using BookMe.Application.Caching;
-using BookMe.Infrastructure.Caching;
-using BookMe.Infrastructure.SMS;
 
 namespace BookMe.Infrastructure;
 

@@ -1,4 +1,4 @@
-namespace BookMe.Application.Common.Dtos;
+﻿namespace BookMe.Application.Common.Dtos;
 
 public record GetAvailableDatesDto
 {

@@ -1,4 +1,4 @@
-using BookMe.Application.Entities;
+﻿using BookMe.Application.Entities;
 
 namespace BookMe.Application.Common.Dtos.Bookings;
 

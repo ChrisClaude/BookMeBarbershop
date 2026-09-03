@@ -1,8 +1,8 @@
-namespace BookMe.Application.Exceptions;
+﻿namespace BookMe.Application.Exceptions;
 
-public class HttpContextUserLoadingProcessFailureException: Exception
+public class HttpContextUserLoadingProcessFailureException : Exception
 {
-    public HttpContextUserLoadingProcessFailureException(string message): base(message)
+    public HttpContextUserLoadingProcessFailureException(string message) : base(message)
     {
     }
 }

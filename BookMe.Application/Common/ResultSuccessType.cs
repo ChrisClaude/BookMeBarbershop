@@ -1,4 +1,4 @@
-namespace BookMe.Application.Common;
+﻿namespace BookMe.Application.Common;
 
 public enum ResultSuccessType
 {

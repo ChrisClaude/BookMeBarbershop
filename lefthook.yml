@@ -1,0 +1,25 @@
+# lefthook.yml
+# https://lefthook.dev/usage/commands/run/
+assert_lefthook_installed: true   # fail loudly if lefthook isn't installed, instead of silently skipping hooks
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: dotnet-format
+      glob: "*.cs"
+      exclude:
+        - "**/obj/**"
+        - "**/bin/**"
+        - "**/Migrations/**"
+        - "**/*.Designer.cs"
+      run: dotnet format BookMe.sln
+      stage_fixed: true
+
+pre-push:
+  parallel: false          # build before test; don't run them concurrently against the same output dir
+  jobs:
+    - name: dotnet-build
+      run: dotnet build BookMe.sln --no-restore --nologo -warnaserror
+
+    - name: dotnet-test
+      run: dotnet test BookMe.sln --no-restore --no-build --nologo

@@ -1,4 +1,4 @@
-namespace BookMe.IntegrationTests;
+﻿namespace BookMe.IntegrationTests;
 
 public class TimeSlotQueryTests : BaseIntegrationTest
 {

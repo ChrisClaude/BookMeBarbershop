@@ -1,4 +1,4 @@
-namespace BookMe.Application.Caching;
+﻿namespace BookMe.Application.Caching;
 
 public interface ICacheManager
 {

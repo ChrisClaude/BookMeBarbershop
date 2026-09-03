@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using BookMe.Application.Caching;
 using BookMe.Application.Common;
 using BookMe.Application.Common.Errors;

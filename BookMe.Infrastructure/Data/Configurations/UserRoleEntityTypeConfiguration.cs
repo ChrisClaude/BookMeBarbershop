@@ -1,4 +1,4 @@
-using BookMe.Application.Entities;
+﻿using BookMe.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

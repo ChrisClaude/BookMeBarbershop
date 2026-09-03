@@ -1,4 +1,4 @@
-using BookMe.Application.Common;
+﻿using BookMe.Application.Common;
 using BookMe.Application.Common.Dtos.PhoneVerification;
 using BookMe.Application.Interfaces;
 using BookMeAPI.Authorization;

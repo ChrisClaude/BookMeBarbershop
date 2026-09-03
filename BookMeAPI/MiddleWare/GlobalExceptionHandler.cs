@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using BookMe.Application.Common;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;

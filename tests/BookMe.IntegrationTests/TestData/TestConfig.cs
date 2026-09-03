@@ -1,4 +1,4 @@
-namespace BookMe.IntegrationTests.TestData;
+﻿namespace BookMe.IntegrationTests.TestData;
 
 public static class TestConfig
 {

@@ -1,11 +1,11 @@
-using BookMe.Application.Commands.Users;
+﻿using BookMe.Application.Commands.Users;
 using BookMe.Application.Common.Dtos;
 using BookMe.Application.Entities;
 using BookMe.Application.Enums;
 using BookMe.Application.Handlers;
 using BookMe.Application.Interfaces;
-using Moq;
 using FluentAssertions;
+using Moq;
 
 namespace BookMe.UnitTests.Application.Handlers;
 

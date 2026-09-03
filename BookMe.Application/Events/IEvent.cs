@@ -1,4 +1,4 @@
-namespace BookMe.Application.Events;
+﻿namespace BookMe.Application.Events;
 
 public interface IEvent
 {

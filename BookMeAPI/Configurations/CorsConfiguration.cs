@@ -1,4 +1,4 @@
-using BookMe.Application.Configurations;
+﻿using BookMe.Application.Configurations;
 using Serilog;
 
 namespace BookMeAPI.Configurations;

@@ -1,4 +1,4 @@
-using BookMe.Application.Common;
+﻿using BookMe.Application.Common;
 
 namespace BookMe.Application.Extensions;
 

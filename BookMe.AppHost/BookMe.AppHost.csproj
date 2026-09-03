@@ -14,10 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.5.3" />
-    <PackageReference Include="Aspire.Hosting.Seq" Version="13.5.3" />
-    <PackageReference Include="Aspire.Hosting.Kafka" Version="13.5.3" />
+    <PackageReference Include="Aspire.Hosting.NodeJs" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" />
+    <PackageReference Include="Aspire.Hosting.Seq" />
+    <PackageReference Include="Aspire.Hosting.Kafka" />
   </ItemGroup>
 
 </Project>

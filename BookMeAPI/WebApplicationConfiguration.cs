@@ -41,10 +41,18 @@ internal static class WebApplicationConfiguration
 
         services.AddEndpointsApiExplorer();
 
+        services.AddApplication().AddInfrastructure(configuration);
+
+        if (builder.Environment.IsEnvironment("Testing"))
+        {
+            services.ConfigureTestAuthentication();
+        }
+        else
+        {
+            services.ConfigureAuthentication(configuration);
+        }
+
         services
-            .AddApplication()
-            .AddInfrastructure(configuration)
-            .ConfigureAuthentication(configuration)
             .ConfigureAuthorization()
             .ConfigureSerilog(appSettings)
             .ConfigureOpenTelemetryTracing(appSettings)
@@ -71,6 +79,10 @@ internal static class WebApplicationConfiguration
         if (app.Environment.IsDevelopment())
         {
             app.UseScalar(appSettings);
+        }
+
+        if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing"))
+        {
             app.MigrateDatabase();
         }
 

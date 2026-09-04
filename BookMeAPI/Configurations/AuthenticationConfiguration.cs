@@ -1,8 +1,4 @@
-﻿using BookMe.Application.Commands;
-using BookMe.Application.Common.Dtos;
-using BookMe.Application.Enums;
-using BookMe.Application.Exceptions;
-using BookMe.Application.Extensions;
+﻿using BookMe.Application.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -53,7 +49,7 @@ public static class AuthenticationConfiguration
                 ?.Principal?.Claims.FirstOrDefault(claim => claim.Type == "emails")
                 ?.Value;
 
-            var (key, user) = await GetAuthenticateUserWithKeyAsync(mediator, userEmail);
+            var (key, user) = await AuthenticatedUserLoader.LoadAsync(mediator, userEmail);
 
             context?.HttpContext.Items.Add(new KeyValuePair<object, object>(key, user));
         }
@@ -93,23 +89,5 @@ public static class AuthenticationConfiguration
 
             context.Fail(ex);
         }
-    }
-
-    private static async Task<(string key, UserDto user)> GetAuthenticateUserWithKeyAsync(
-        IMediator mediator,
-        string userEmail
-    )
-    {
-        // The email is validated as part of the command validation
-        var result = await mediator.Send(new GetOrCreateUserCommand(userEmail));
-
-        if (result.IsFailure)
-        {
-            throw new HttpContextUserLoadingProcessFailureException(
-                result.Errors.ToAggregateString()
-            );
-        }
-
-        return (Constant.HTTP_CONTEXT_USER_ITEM_KEY, result.Value);
     }
 }

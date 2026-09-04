@@ -1,34 +1,41 @@
-﻿using BookMe.Infrastructure.Data;
-using BookMe.IntegrationTests.Mocks;
-using BookMe.IntegrationTests.TestData;
-using Microsoft.Extensions.DependencyInjection;
+﻿using BookMe.Application.Common.Dtos;
+using BookMe.Infrastructure.Data;
 
 namespace BookMe.IntegrationTests;
 
 [Collection("Database collection")]
-public abstract class BaseIntegrationTest
-    : IClassFixture<IntegrationTestWebAppFactory>,
-        IAsyncDisposable
+public abstract class BaseIntegrationTest : IClassFixture<AspireIntegrationTestFixture>, IAsyncDisposable
 {
-    protected readonly IntegrationTestWebAppFactory _factory;
-    protected readonly IServiceScope _scope;
-    protected readonly BookMeContext _bookMeContext;
-    protected readonly MockHttpContextAccessor _mockHttpContext;
+    private const string TEST_USER_EMAIL_HEADER = "X-Test-User-Email";
 
-    protected BaseIntegrationTest(IntegrationTestWebAppFactory factory)
+    protected readonly HttpClient _client;
+    protected readonly BookMeContext _bookMeContext;
+
+    protected BaseIntegrationTest(AspireIntegrationTestFixture factory)
     {
-        _factory = factory;
-        _scope = _factory.Services.CreateScope();
-        _bookMeContext = _scope.ServiceProvider.GetRequiredService<BookMeContext>();
-        _mockHttpContext = _factory.MockHttpContext;
+        _client = factory.CreateApiClient();
+        _bookMeContext = factory.CreateDbContext();
     }
 
-#pragma warning disable 1998
-    public async ValueTask DisposeAsync()
-#pragma warning restore 1998
+    /// <summary>
+    /// Authenticates subsequent requests as the given user (or clears auth when null),
+    /// via the Testing-only header auth handler. See BookMeAPI/Authentication/TestAuthHandler.cs.
+    /// </summary>
+    protected void SetUser(UserDto? user)
     {
-        _scope.Dispose();
+        _client.DefaultRequestHeaders.Remove(TEST_USER_EMAIL_HEADER);
+
+        if (user is not null)
+        {
+            _client.DefaultRequestHeaders.Add(TEST_USER_EMAIL_HEADER, user.Email);
+        }
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _client.Dispose();
         _bookMeContext.Dispose();
         GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
     }
 }

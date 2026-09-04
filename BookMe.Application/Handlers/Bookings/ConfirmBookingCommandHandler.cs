@@ -17,7 +17,14 @@ public class ConfirmBookingCommandHandler(IRepository<Booking> bookingRepository
         CancellationToken cancellationToken
     )
     {
-        var booking = await bookingRepository.GetByIdAsync(request.BookingId);
+        var booking = await bookingRepository.GetByIdAsync(
+            request.BookingId,
+            new[]
+            {
+                $"{nameof(Booking.User)}.{nameof(User.UserRoles)}.{nameof(UserRole.Role)}",
+                nameof(Booking.TimeSlot),
+            }
+        );
         var errors = new List<Error>();
 
         if (booking == null)

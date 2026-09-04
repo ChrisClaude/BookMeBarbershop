@@ -1,61 +1,59 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
+using BookMe.Application.Common;
+using FluentAssertions;
 
 namespace BookMe.IntegrationTests;
 
 public static class AssertionHelper
 {
-    public static void ValidateOkResult<TPayload>(
-        this IActionResult actionResult,
-        Action<TPayload> payloadAssertion
-    )
-        where TPayload : class
+    // BadRequest bodies come from two code paths that don't agree on JSON casing:
+    // ResultExtensions.ToActionResult -> MVC/Newtonsoft (PascalCase), GlobalExceptionHandler's
+    // FluentValidation path -> WriteAsJsonAsync (camelCase). Case-insensitive covers both.
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<OkObjectResult>();
+        PropertyNameCaseInsensitive = true,
+    };
 
-        var okResult = actionResult as OkObjectResult;
+    public static async Task<T> ShouldBeOkAsync<T>(this HttpResponseMessage response)
+    {
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        okResult!.Value.Should().NotBeNull();
-        okResult.Value.Should().BeOfType<TPayload>();
+        var payload = await response.Content.ReadFromJsonAsync<T>(_jsonOptions);
+        payload.Should().NotBeNull();
 
-        var response = okResult.Value as TPayload;
-
-        payloadAssertion(response!);
+        return payload!;
     }
 
-    public static void ValidateCreatedResult(this IActionResult actionResult)
+    public static Task ShouldBeNoContentAsync(this HttpResponseMessage response)
     {
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<CreatedResult>();
-
-        var createdResult = actionResult as CreatedResult;
-
-        createdResult!.Value.Should().NotBeNull();
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        return Task.CompletedTask;
     }
 
-    public static void ValidateNoContentResult(this IActionResult actionResult)
+    public static async Task<List<Error>> ShouldBeBadRequestAsync(this HttpResponseMessage response)
     {
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<NoContentResult>();
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var errors = await response.Content.ReadFromJsonAsync<List<Error>>(_jsonOptions);
+        errors.Should().NotBeNull();
+
+        return errors!;
     }
 
-    public static void ValidateBadRequestResult<TPayload>(
-        this IActionResult actionResult,
-        Action<TPayload> payloadAssertion
-    )
-        where TPayload : class
+    public static Task ShouldBeUnauthorizedAsync(this HttpResponseMessage response)
     {
-        actionResult.Should().NotBeNull();
-        actionResult.Should().BeOfType<BadRequestObjectResult>();
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        return Task.CompletedTask;
+    }
 
-        var badRequestResult = actionResult as BadRequestObjectResult;
-
-        badRequestResult!.Value.Should().NotBeNull();
-        badRequestResult.Value.Should().BeOfType<TPayload>();
-
-        var response = badRequestResult.Value as TPayload;
-
-        payloadAssertion(response!);
+    // The [Authorize(Policy = ...)] check runs before the controller action / FluentValidation
+    // pipeline, so a wrong-role user is rejected here with an empty 403, not a 400 with an
+    // error body.
+    public static Task ShouldBeForbiddenAsync(this HttpResponseMessage response)
+    {
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        return Task.CompletedTask;
     }
 }
